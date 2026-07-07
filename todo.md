@@ -60,6 +60,25 @@ de-risking items (cache-hit on real traffic, confident-wrong rate, authz) + the
 resolution cache — so don't let "could be production" bloat the light MVP; revisit
 only after the *Validation & de-risking* section clears.
 
+## Open design questions (from live use)
+
+Captured while running the v0.2.0 quickstart — shape + leaning written up in
+[`docs/notes/query-api-open-questions.md`](docs/notes/query-api-open-questions.md).
+Each needs its own brainstorm → spec before building; both sharpen the de-risking items below.
+
+- [ ] **Derived / computed fields ("tiny calculations")** — `author_age` from `birth_year`,
+      currency conversions, a `currency` constant. The gap: `want`/`where` assume one existing
+      column per field; computation needs a *validated expression* grammar (kept inside the
+      injection boundary + mirrored in the equivalence oracle). Leaning: **declared virtual
+      fields** for business-critical/external values (never let the LLM guess an FX rate);
+      model-authored expressions only later, for pure date/arithmetic, behind the gate.
+      Interacts with `bind_today`.
+- [ ] **Field exposure & discovery** — is it safe to expose available fields, and how should a
+      client discover them? Leaning: a **curated, authz-filtered capability listing** (NL
+      descriptions, no raw paths/samples) over a raw `/schema` dump or `want: "*"` wildcard.
+      Prerequisites: field-level authz + sample-stripping (and note the `interpreted` echo is
+      already a per-request schema-probing oracle). Sharpens the security / no-schema-probing items.
+
 ## Later
 
 - [ ] **Symbolic / relative dates (`bind_today`)** — *first fast-follow after the MVP
