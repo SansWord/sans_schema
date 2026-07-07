@@ -67,13 +67,25 @@ def _parse_dt(s: str):
 
 
 def _norm(v: Any) -> Any:
+    """Normalize a value so equal-meaning values compare equal regardless of how
+    the model chose to represent them (int vs "2026", bool vs "true", date vs
+    datetime). Order matters: bool before number (bool is an int subclass)."""
     if isinstance(v, bool):
         return v
     if isinstance(v, (int, float)):
         return float(v)
     if isinstance(v, str):
-        dt = _parse_dt(v)
-        return dt if dt is not None else v.strip().lower()
+        s = v.strip()
+        dt = _parse_dt(s)
+        if dt is not None:
+            return dt
+        low = s.lower()
+        if low in ("true", "false"):
+            return low == "true"
+        try:
+            return float(s)          # numeric string -> number ("2026" == 2026)
+        except ValueError:
+            return low
     return v
 
 

@@ -254,8 +254,11 @@ Run: `pip install -r spike/requirements.txt && python -m spike.score`
   against the actual recorded model outputs.
 
 **Read:** strong green light on the core value. Two caveats before treating the
-number as certified: (1) the case set is small (~7 cases) — expand to ~50–100
-across more domains; (2) ambiguous filter *values* ("fiction" → SF? Fantasy?)
+number as certified: (1) that run used ~7 cases — the set has since been
+**expanded to 52 across 4 domains** (library, shop, hr, streaming; 40
+where-scored + 12 want-only, 125 want-key mappings), validated offline, and is
+awaiting a re-run to produce the certified number; (2) ambiguous filter
+*values* ("fiction" → SF? Fantasy?)
 are a real product gap, not a model failure — they need the value-resolution
 step plus a clarify path. Even the cheap model was accurate, so the cost model
 holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
@@ -264,8 +267,11 @@ holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
 
 - [x] **Run the spike** across Haiku/Sonnet/Opus — WANT 100%, WHERE ~100%
       (after switching to execution-equivalence scoring). Green light. See §8.
-- [ ] Expand the case set to ~50–100 across more domains to certify the number;
-      add a non-Anthropic model (GPT/Llama) for a cross-vendor comparison.
+- [x] Expand the case set — now **52 cases across 4 domains** (library, shop,
+      hr, streaming), validated offline (every scored predicate selects a proper
+      non-empty subset). Awaiting a re-run for the certified accuracy number.
+- [ ] Re-run the expanded set across Haiku/Sonnet/Opus + a non-Anthropic model
+      (GPT/Llama) for the certified, cross-vendor number.
 - [ ] Lock the `RawQuery` and `CanonicalQueryIR` type definitions (the public
       contracts everything hangs off).
 - [ ] Decide gateway language (TS vs Python) using the spike's federation-vs-
