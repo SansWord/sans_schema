@@ -36,6 +36,9 @@ holds forever. Each entry links the spec/plan it came from.
   backend-agnostic) / `ResolvedField`. IR carries a **new `where_confidence`**.
 - **Connector:** denormalized-view per backend, **no join planning in v1**; Postgres +
   a fake in-memory connector for the seam test.
+- **Demo:** real Postgres seeded from `seed.sql` + **dynamic schema detection** (no
+  hardcoded schema in the gateway runtime); `BOOKS`/`ECOMMERCE`/`HR`/`STREAMING` stay
+  `spike/` eval fixtures. `core/schemas.py` holds the `Schema`/`Field` *types* only.
 - **Two-part resolution cache:** a field cache (per `want` key) + a where cache (per NL
   phrase + `today`), not a per-whole-request key.
 - **Gate:** `want` below threshold → `null` (declined, visible); `where` below threshold
@@ -62,9 +65,10 @@ holds forever. Each entry links the spec/plan it came from.
 - `[insight]` **The hourglass makes protocol ≠ language forcing function.** New protocol
   = one `RequestAdapter` → `RawQuery`; new backend = one `Connector` ← `CanonicalQueryIR`.
   The core never changes. So the TS/GraphQL-Mesh pull is for deferred, thin edge work.
-- `[note]` **Maintained-law folding deferred.** `architecture.md` §2 (where-confidence)
-  and §7 (language = Python) intentionally left unchanged in this pre-review baseline
-  commit; fold them once the spec review passes (tracked in `todo.md` → Now).
+- `[note]` **Maintained law folded on approval.** Spec approved 2026-07-06; the settled
+  calls were folded into `architecture.md` §2 (where-confidence) + §7 (Python/FastAPI)
+  and `CLAUDE.md` (status + Locked decisions) in a follow-up commit after the pre-review
+  baseline — so the baseline→approval diff stays legible.
 
 **Process learnings:**
 - `[note]` Committed a **pre-review baseline** (spec + docs) before the spec review, on

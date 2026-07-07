@@ -109,7 +109,8 @@ class Connector(Protocol):
     def describe(self) -> Schema: ...
         # Postgres: introspect information_schema over the denormalized view
         #           (name, type, column comments → description, SELECT DISTINCT … LIMIT → samples).
-        # Fake:     return a hardcoded Schema (the spike's BOOKS).
+        # Fake:     return an in-memory Schema mirroring the demo dataset (seed.sql),
+        #           used only for the seam test — NOT the spike's BOOKS.
         # NO LLM enrichment of descriptions in v1.
 
     def execute(self, ir: CanonicalQueryIR) -> list[dict]: ...
@@ -193,7 +194,8 @@ pyproject.toml         # makes core / gateway / spike importable
 core/                  # lifted from spike — the shared, evolving implementation
   resolver.py          #   resolve_want, where_ast (+ confidence), parse_where, validate_ast
   prompts.py           #   layered prompts (want / where / domain hints)
-  schemas.py           #   Schema / Field / rows
+  schemas.py           #   Schema / Field TYPES only — the shape describe() emits and the
+                       #   resolver consumes. NO hardcoded schema instances.
   llm.py               #   LLM / Embed interfaces (LiteLLM impl)
 gateway/               # NEW thin glue
   app.py               #   FastAPI, POST /query
@@ -206,18 +208,33 @@ gateway/               # NEW thin glue
     postgres.py
     fake.py
   demo/
-    seed.sql           #   Postgres: normalized tables + denormalized VIEW
-spike/                 # eval harness — imports core; scorer stays here
+    seed.sql           #   SOURCE OF TRUTH for demo data — normalized tables + denormalized
+                       #   VIEW; loaded into a real Postgres (demo site + integration tests).
+    rows.py            #   small in-memory mirror of seed.sql for the fake connector (seam
+                       #   test); a parity test guards against drift from seed.sql.
+spike/                 # eval harness — imports the core types; scorer + fixtures stay here
+  schemas.py           #   BOOKS / ECOMMERCE / HR / STREAMING instances (import types from
+                       #   core; eval-only — NOT used by the gateway runtime)
   score.py …
 ```
 
-## 9. Demo dataset — single source of truth
+## 9. Demo dataset & dynamic detection
 
-The spike's **`BOOKS`** (`core/schemas.py`) is the one source of truth for v1 data.
-`gateway/demo/seed.sql` materializes the same rows as a denormalized Postgres view;
-the fake connector reads `BOOKS.rows` directly. A test asserts the Postgres view
-returns the same row-set as `BOOKS.rows`, guaranteeing the two connectors mirror each
-other. Only `BOOKS` is seeded in v1 (the other spike schemas stay eval-only).
+**`gateway/demo/seed.sql` is the single source of truth for demo data** — a small
+books/authors dataset as normalized tables + a denormalized view (v1's flat-execution
+surface). It is loaded into a **real Postgres** for the demo site.
+
+The demo deliberately proves the headline capability **end-to-end**: the gateway is
+pointed at that Postgres and **detects the schema dynamically** via `describe()`
+introspection — there is **no hardcoded schema anywhere in the gateway runtime**. (The
+spike's `BOOKS` / `ECOMMERCE` / `HR` / `STREAMING` constants live only in `spike/` as
+eval fixtures and never enter the gateway.)
+
+The **fake connector** (seam test) holds a small in-memory mirror of the same rows
+(`gateway/demo/rows.py`). A **parity test** asserts the Postgres-*introspected* schema
+and query results equal the fake connector's for a fixed `CanonicalQueryIR` — proving
+both the connector-swap seam **and** that dynamic introspection lands on the expected
+schema. Only this one demo dataset is seeded in v1.
 
 ## 10. Packaging & config
 
@@ -234,9 +251,11 @@ other. Only `BOOKS` is seeded in v1 (the other spike schemas stay eval-only).
 1. **Unit (LLM-free):** gateway glue, `validate_ast`, gate, cache key/normalization,
    the field-path→client-key remap.
 2. **Seam test (LLM-free) — the headline:** feed a *fixed* `CanonicalQueryIR` to both
-   the Postgres and fake connectors; assert **equal row-sets** (order not guaranteed
-   without `ORDER BY`). Requires the fake connector to coerce values to schema types so
-   compares match Postgres. Proves the connector swaps without touching resolver/planner.
+   the Postgres (seeded from `seed.sql`) and fake connectors; assert **equal row-sets**
+   (order not guaranteed without `ORDER BY`), and assert the Postgres-**introspected**
+   schema equals the fake connector's mirror. Requires the fake connector to coerce
+   values to schema types so compares match Postgres. Proves the connector swaps without
+   touching resolver/planner **and** that dynamic detection lands on the expected schema.
 3. **Live smoke (opt-in):** a few tests hitting the real LLM, gated behind an env/API
    key, out of default CI.
 

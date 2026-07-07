@@ -24,8 +24,9 @@ Stable facts:
 - **Repo:** local git (no remote yet). Not a package — a spike + docs.
 - **Spike stack:** Python 3.9; `spike/` (the resolution-accuracy experiment);
   multi-vendor LLM via **LiteLLM** (`spike/requirements.txt`).
-- **Gateway (not built yet):** language TBD — leaning TypeScript (GraphQL-Mesh /
-  JSON-native) or Python + Ibis. See [`docs/architecture.md`](docs/architecture.md) §Stack.
+- **Gateway (not built yet):** language **locked — Python (FastAPI)**, lifting the
+  spike resolver into a shared `core/`. See [`docs/architecture.md`](docs/architecture.md)
+  §7 + [`docs/specs/2026-07-first-gateway-slice.md`](docs/specs/2026-07-first-gateway-slice.md).
 - **Starting model:** `gemini/gemini-3.1-flash-lite`, behind the `LLM` interface.
 
 ## Docs — two tiers
@@ -64,6 +65,9 @@ Stable facts:
   default-with-escalation to a stronger model on low confidence.
 - **Prompt-cache layout** — `system[instructions] + system[schema+cache_control] +
   user[request]` so the per-backend schema caches at ~0.1×.
+- **Stack** — Gateway = **Python (FastAPI)**; lift the spike resolver into a shared
+  `core/` (types + resolver). Demo runs over a real Postgres with **dynamic schema
+  detection** (no hardcoded gateway schema). Deploy container-portable.
 
 ## Before you plan or build — consult the tree
 

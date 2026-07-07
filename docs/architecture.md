@@ -34,16 +34,20 @@ POST /query
 
 Two LLM tasks, both against an **unknown** backend schema:
 1. `resolve_want(schema, keys) → {key: field | null, confidence}`
-2. `where → validated predicate AST`
+2. `where → validated predicate AST` **+ a filter confidence** (added in the gateway)
 
 Rules:
 - **NL → validated AST → execute. Never NL → SQL.** The model emits a constrained
   AST; `validate_ast` (in `spike/resolver.py`) rejects anything outside the
   operator whitelist or referencing a non-existent field. **This is the injection
   boundary — it lives in code, never in the prompt.**
-- **Confidence gate:** decline (`field: null`) below threshold. Target **~0.7**
-  (spike used 0.5 and let one junk field through at 0.55). Below-threshold →
-  treat as "no match" / clarify.
+- **Confidence gate:** applies to **both** tasks, threshold **~0.7** (spike used 0.5
+  and let one junk field through at 0.55).
+  - *`want` field* below threshold → decline (`field: null`), still returned as a
+    `null` column (caution surfaced, not silently dropped).
+  - *`where` filter* below threshold → **refuse to execute** (HTTP 422): a filter the
+    resolver doesn't trust must not run — silently returning all/other rows is worse
+    than refusing. (Later, confirm-before-execute converts this into "ask to confirm.")
 - **Value resolution** (enum fuzzing, e.g. `sci-fi → "Science Fiction"`) is a
   distinct step from field resolution. 📐
 - **Ambiguity** (e.g. "managers") is handled by the gate + a clarify/escalation
@@ -110,11 +114,14 @@ Dynamic field access needs a **field allowlist / field-level authz** and value
 sanitization at the boundary. The `validate_ast` whitelist is the first layer;
 authz is TBD in the gateway.
 
-## 7. Stack (gateway) 📐
+## 7. Stack (gateway) 📐 — decided
 
-Leaning **TypeScript** (GraphQL-Mesh gives the adapter/federation plumbing;
-JSON-native; frontend/agent audience) or **Python + Ibis** (if cross-source
-federation/planning dominates). The spike is Python. Decide at first-build time.
+**Locked: Python (FastAPI).** Lift the de-risked spike resolver into a shared `core/`
+package rather than re-implement + re-validate it in TS. Deploy stays container-portable
+(Cloud Run / Fly / Render); the demo UI can still use Vercel. TS/GraphQL-Mesh's edge is
+multi-protocol/federation plumbing — deferred, and the hourglass keeps protocol a thin
+swappable adapter, so it is not a forcing function. Rationale in full:
+[`specs/2026-07-first-gateway-slice.md`](specs/2026-07-first-gateway-slice.md) §1.
 
 ## 8. Glossary
 

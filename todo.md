@@ -12,12 +12,13 @@ restating it. Keep current as part of the end-of-session checklist.
       resolution cache; gates on both `want` and `where`. `docs/HANDOFF.md` removed
       (superseded by `CLAUDE.md` + the tree + the spec). Added maintained
       [`docs/system-design.md`](docs/system-design.md) (topology + swap matrix).
-- [ ] **Review + discuss the spec.** A pre-review baseline was committed 2026-07-06
-      so discussion edits show as diffs. **Then fold the settled decisions into the
-      maintained law** — `docs/architecture.md` §2 (where-confidence) and §7
-      (language = Python) — deferred from the baseline commit to keep it review-clean.
-- [ ] **Write the implementation plan** once the spec is approved (→ `docs/plans/`),
-      then implement the slice.
+- [x] **Review + fold.** Spec approved 2026-07-06; settled decisions folded into the
+      maintained law — `docs/architecture.md` §2 (where-confidence) + §7 (Python/FastAPI)
+      and `CLAUDE.md` (status + Locked decisions). Demo refined to a **real Postgres +
+      dynamic schema detection** (`BOOKS`/etc. stay `spike/`-only eval fixtures).
+- [ ] **Write the implementation plan** (→ `docs/plans/`) — **next, in a fresh session.**
+      Reference [`docs/specs/2026-07-first-gateway-slice.md`](docs/specs/2026-07-first-gateway-slice.md).
+      Then implement the slice against the plan.
 
 ## MVP shape & setup — decide in the first spec
 
