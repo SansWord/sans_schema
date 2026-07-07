@@ -198,6 +198,49 @@ Federation plumbing under the semantic layer is solved — steal it: **Trino**
 discovery), **Apache Calcite / Ibis** (query IR + planner + partial pushdown).
 Our actual new code is the glue + caching + confidence-gate + security boundary.
 
+### Resolver LLM call — prompt-cache-optimized layout (production)
+
+The resolution call's cost is dominated by re-sending the **schema** on every
+request. The schema is stable *per backend*; only the tiny `{want}`/`{where}`
+varies *per request*. Prompt caching is a **prefix match** (`tools → system →
+messages`, and any byte change invalidates everything after it), so the call
+must be structured stable-first, volatile-last:
+
+```
+system[0]:  static resolver instructions        ← cached globally (all backends)
+                                                   (+ per-tenant domain hints:
+                                                    stable per tenant)
+system[1]:  the backend schema  + cache_control  ← cached PER BACKEND (the big win)
+user:       just the {want} / {where} request    ← tiny, volatile, full price
+```
+
+Effect: the expensive schema tokens read at **~0.1× input price on every
+request to that backend**; only the small request is billed in full. This is one
+of the two compounding cost levers (the other is the resolution cache that skips
+the LLM call entirely on a repeat `want`-key → column):
+
+- **Resolution cache** — the primary lever; drives steady-state LLM calls toward
+  zero (see §3 and the 1000-QPS math: cost scales with `1 − cache_rate`).
+- **Prompt cache on the schema prefix** — cuts the *input* cost ~90% on the
+  miss path.
+
+Rules that follow from the prefix-match invariant:
+- **Keep `system` byte-identical.** Do not interpolate schema, request, dates,
+  IDs, or timestamps into it — those belong after the last cache breakpoint.
+  (Per-tenant domain hints are fine: stable per tenant → per-tenant cache key.)
+- **Put the schema before the request** and set the `cache_control` breakpoint at
+  the end of the schema block.
+- **Relative-date context** ("today is …") is volatile — place it in the `user`
+  turn, never in the cached prefix, or it busts the cache daily.
+- On providers with *automatic* prefix caching (OpenAI, Gemini implicit) this
+  still helps; on Anthropic the `cache_control` marker is **required** (opt-in).
+
+> The spike deliberately does **not** set `cache_control` — caching changes cost,
+> not accuracy, and the spike measures accuracy. This layout is a **gateway**
+> decision; the spike's current `system=instructions`, `user=schema+request`
+> shape is already stable-first / volatile-last, so it's a small refactor
+> (hoist the schema into a cached `system` block) when productionizing.
+
 ## 7. Stack decision
 
 The hard/valuable part is semantic resolution (AI + data ecosystem, dev speed),
@@ -364,6 +407,9 @@ holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
       AST shape for small models), raise the **confidence gate** to ~0.7, add the
       low-confidence **clarify/escalation** path.
 - [ ] Re-validate on a larger/messier case set before treating accuracy as an SLA.
+- [x] **Prompt-cache layout decided** (§6): `system[instructions] +
+      system[schema+cache_control] + user[request]` so the per-backend schema
+      caches at ~0.1×. To implement in the gateway (spike stays uncached).
 - [ ] Lock the `RawQuery` and `CanonicalQueryIR` type definitions (the public
       contracts everything hangs off).
 - [ ] Decide gateway language (TS vs Python) using the spike's federation-vs-
