@@ -213,7 +213,7 @@ That rules out Go/Rust for v1.
   on cross-source federation/planning rather than protocol breadth.
 
 **Multi-vendor LLM:** never call a vendor SDK directly. Depend on two tiny
-interfaces — `LLM.complete` and `Embed.embed` (embeddings matter as much as
+interfaces — `LLM.json` and `Embed.embed` (embeddings matter as much as
 completions for the semantic match) — and inject the impl. Concrete options:
 **LiteLLM** (Python), **Vercel AI SDK + AI Gateway** (TS), **OpenRouter**
 (hosted, any language).

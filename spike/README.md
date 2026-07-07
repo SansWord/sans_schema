@@ -18,9 +18,11 @@ For each `(model, schema, case)`:
 1. **`want` resolution accuracy** — top-1 field mapping (`writer → author`,
    `genre → category`, …), plus how often the confidence gate correctly flags
    a miss.
-2. **NL-`where` → AST accuracy** — does the compiled predicate tree match the
-   expected canonical AST (field paths, operators, normalized values like
-   "this year" → `2026-01-01`)?
+2. **NL-`where` → AST accuracy** — the model compiles the filter to a validated
+   predicate AST, scored by **execution equivalence**: does it select the same
+   rows from a sample dataset as the expected AST? (Robust to clause order,
+   gt-vs-gte at a non-boundary, open-vs-bounded ranges, and date-vs-datetime
+   formatting.)
 
 Read the result like this:
 
@@ -30,7 +32,7 @@ Read the result like this:
 
 ## Vendor-agnostic
 
-The LLM is injected behind two tiny interfaces (`LLM.complete`, `Embed.embed`)
+The LLM is injected behind two tiny interfaces (`LLM.json`, `Embed.embed`)
 so you can benchmark the SAME test set across models/vendors. Default impl uses
 [LiteLLM](https://docs.litellm.ai/) (100+ providers, one interface).
 
@@ -93,7 +95,7 @@ OpenAI / Anthropic all work through the same code path.
 |---|---|
 | `llm.py` | `LLM` / `Embed` interfaces + LiteLLM-backed impl (swap by config) |
 | `prompts.py` | The LLM-facing prompts, layered (contract / schema / domain hints / request) |
-| `schemas.py` | Sample backend schemas (books, ecommerce) — the "unknown" backends |
+| `schemas.py` | Sample backend schemas (library, shop, hr, streaming) + sample rows — the "unknown" backends |
 | `cases.py` | Test cases: client `{want, where}` + expected resolution/AST |
 | `resolver.py` | The layer under test: want-resolution + NL-where → AST |
 | `score.py` | Harness: runs `{models} × {cases}`, scores, prints a report |
