@@ -36,7 +36,8 @@ holds forever. Each entry links the spec/plan it came from.
   Gemini flash-lite 100/98, flash 100/100, pro-latest 100/100; OpenAI gpt-5.4-mini
   100/80, gpt-5.4 100/90, gpt-5.5 99/100.
 - **Decision:** start on `gemini-3.1-flash-lite` (cheapest, format-compliant, ~100%).
-- Doc tree adopted to manage the project (this session).
+- Doc tree adopted to manage the project; opted into the dev-cycle loop, the
+  PR/"ship it" gate, a `Before committing` secrets scan, and the `docs/plans/` tier.
 
 **Key learnings:**
 - `[insight]` ~100% of the economic value is in **semantic resolution**; protocol

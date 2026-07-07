@@ -37,6 +37,7 @@ Stable facts:
     Update in the same change when a contract/interface/decision below changes.**
 - **Historical (allowed to go stale, kept forever — how we got here):**
   - [`docs/specs/`](docs/specs/) — per-milestone specs (the concept + spike write-up).
+  - [`docs/plans/`](docs/plans/) — per-milestone implementation plans.
   - [`docs/devlog.md`](docs/devlog.md) — milestone log, newest-on-top.
   - [`docs/HANDOFF.md`](docs/HANDOFF.md) — one-time primer for the first-build session
     (superseded by this file + devlog + todo once the gateway is underway).
@@ -67,11 +68,35 @@ Read the relevant `docs/*.md` (and the Locked decisions) **before** planning,
 brainstorming, or continuing work — then plan against them, and **name the files
 you consulted** so it's visible which docs informed the work.
 
+## Workflow — the dev cycle
+
+The loop each milestone runs through (adapt to tooling):
+
+1. **Brainstorm → spec** before building; **plan** once the spec is agreed. Spec +
+   plan land in the historical tier (`docs/specs/`, `docs/plans/`) — they may go
+   stale later, and that's fine.
+2. **Implement** against the plan.
+3. **Fold lasting decisions into the maintained docs** ([`docs/architecture.md`](docs/architecture.md)
+   + the Locked decisions above) — those, **not** the spec, are the source of
+   truth afterward.
+4. **Close the loop at end of session** (below): refresh maintained docs + devlog + todo.
+5. The next round starts from these docs — so a new idea that diverges from a past
+   decision gets surfaced (see Locked decisions).
+
 ## End of session — close the loop
 
-Before work counts as done: update every maintained `docs/*.md` it touched, add a
-newest-on-top entry to [`docs/devlog.md`](docs/devlog.md) (linking that
-milestone's spec/plan), and update [`todo.md`](todo.md).
+Updating the docs is a **gate, not a nicety** — do it before the work counts as
+done (before a PR opens), and commit the doc changes **in the same PR** as the code:
+
+1. **Update every maintained `docs/*.md`** the session touched, so it matches the
+   shipped state. ("No docs needed" is a claim to justify, not a default.)
+2. **Append a newest-on-top entry to [`docs/devlog.md`](docs/devlog.md)**, linking
+   this milestone's spec/plan.
+3. **Update [`todo.md`](todo.md)** — clear done items, add next steps.
+
+When the user says **"ship it"** / **"raise a PR,"** run this, commit, open the PR —
+then **stop** (don't merge; that's the user's call). If the user heads to
+push/merge without it, **remind them** to update the docs first.
 
 ## Conventions
 
@@ -81,4 +106,9 @@ milestone's spec/plan), and update [`todo.md`](todo.md).
   `git diff --name-only` before committing.
 - **Comments/docs describe the *current* state** — no "used to be…" breadcrumbs; history lives in git + the devlog.
 - **Run logs are gitignored** (`*.log`) — spike output stays local.
-- **Scan commits for secrets** (API keys, `.env*`) before pushing anywhere public.
+
+## Before committing
+
+Scan every commit for **secrets / API keys / tokens**, `.env*` files, and private
+personal info before pushing anywhere public (this repo will likely get a remote).
+This scan is load-bearing, not precautionary.
