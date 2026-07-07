@@ -17,12 +17,40 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.2](#v022--static-type-check-of-the-ast-2026-07-07-0212) | Static pre-execute type check: leaf values validated against each field's declared type → a type-mismatched filter (e.g. the case-35 string-on-int) is a deterministic 422 instead of a backend 502. Conservative (unknown types skipped, coercible values pass); no eval re-measure needed. 60 tests green. |
 | [v0.2.1](#v021--security-review--hardening-2026-07-07-0201) | Adversarial security review (SQLi + prompt injection): no injection found, core claim holds. Hardened anyway — `want`-path schema validation, backend-error→502 containment, empty/malformed-AST→422, configurable ingress limits (`want`/`where` size). 50 tests green. |
 | [v0.2.0](#v020--first-gateway-slice-2026-07-07-0031) | Built the first end-to-end gateway slice — `core/` (resolver + predicate) lifted from the spike, `gateway/` (contracts, gate, two-part cache, 10-step pipeline, Postgres + fake connectors, FastAPI `POST /query`). Seam parity verified against real Postgres 16; 35 tests green. Docker + quickstart. |
 | [v0.2.0-design](#v020-design--first-gateway-slice-design-2026-07-06) | Designed the first gateway slice — locked Python/FastAPI, `RawQuery`/`CanonicalQueryIR` contracts, denorm-view connector + fake seam, two-part cache, want+where gates. Added maintained `system-design.md`. No code. |
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.2 — Static type-check of the AST (2026-07-07 02:12)
+
+**Review:** not yet
+
+**What was built:**
+- **`core.type_check_ast`** — a static pre-execute type check. After `validate_ast` (op/field/
+  shape) passes, each leaf value is checked against the field's *declared* type: a non-numeric
+  value on an int column, an unparseable date on a date column, or `contains` on a non-text field
+  is rejected as a **422** before any SQL is compiled — rather than erroring at the backend as a
+  502. The pipeline runs it right after `validate_ast`, folded into the same `invalid_ast` 422.
+- **Conservative by design:** it reuses the executor's own date/number coercion (so `"20"` on a
+  numeric column still passes), and **skips unknown declared types** — so it can't over-reject a
+  valid model output; the v0.2.1 502 containment remains the backstop for anything it can't judge.
+- Kept **separate from `validate_ast`** (the injection boundary stays focused) and **out of the
+  frozen spike eval** — so no re-measure was needed. Verified against real Postgres: the case-35
+  string-on-int shape and a bad-date filter now return 422, normal queries unaffected.
+- Tests: +9 (`tests/core/test_typecheck.py` + a pipeline case); 55 LLM-free / 60 with Postgres.
+
+**Key technical learnings:**
+- `[insight]` **We already hold the types, so the backend's type error is knowable statically.**
+  `describe()` carries each column's declared type; classifying it into a logical kind
+  (number/string/bool/temporal) and checking the leaf value moves a whole class of runtime 502
+  to a deterministic, DB-free 422 — and makes the fake and Postgres connectors agree on rejection.
+- `[note]` **The type-check must mirror execution coercion, not be stricter.** Reusing
+  `predicate._parse_dt` + the same numeric-string rule keeps it from rejecting values the executor
+  would happily accept (`"2026"`, `"20"`); the goal is to catch only what the backend *would* reject.
 
 ## v0.2.1 — Security review + hardening (2026-07-07 02:01)
 

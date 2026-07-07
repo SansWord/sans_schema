@@ -65,6 +65,17 @@ def test_malformed_ast_is_422_not_500():
             _run(raw, llm)
         assert e.value.status == 422 and e.value.code == "invalid_ast"
 
+def test_type_mismatched_where_is_422_before_execute():
+    # a non-numeric value on the integer book_id column (the case-35 "managers" shape)
+    # is caught by the static type check → 422, never reaching the connector / a 502.
+    raw = RawQuery(["book_title"], "managers", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where={"where": {"op": "in", "field": "books_view.book_id",
+                                   "value": ["select distinct manager_id from x"]}, "confidence": 0.9})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm)
+    assert e.value.status == 422 and e.value.code == "invalid_ast"
+
 def test_field_cache_prevents_second_llm_call():
     cache = ResolutionCache()
     raw = RawQuery(["book_title"], None, "2026-07-06")

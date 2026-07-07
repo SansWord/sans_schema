@@ -136,6 +136,12 @@ within the allowed schema, never emit SQL.
 Boundaries and hardening in place:
 - **`validate_ast`** — the `where`-side injection boundary (operator whitelist + real
   fields + node shape; rejects empty `and/or`, bad `between`/`in` shapes).
+- **`type_check_ast`** — a static pre-execute type check (v0.2.2): leaf values are checked
+  against each field's *declared* type (a non-numeric value on an int column, an unparseable
+  date, `contains` on a non-text field) and rejected as a **422** before any SQL runs, rather
+  than erroring at the backend (502). Conservative — unknown types are skipped, coercible
+  values (`"20"` on numeric) pass — so it never over-rejects valid model output; the 502
+  containment stays as the backstop.
 - **`gate_want` schema check** — the **SELECT-side mirror**: a resolved `want` path is
   trusted only if it exists in the schema, else declined to a null column (stops a
   hijacked/mis-resolved `want` from injecting a bogus column identifier).

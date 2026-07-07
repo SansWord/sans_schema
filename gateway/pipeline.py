@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from core.resolver import resolve_want, where_resolve, validate_ast, WhereResult
+from core.resolver import (resolve_want, where_resolve, validate_ast,
+                           type_check_ast, WhereResult)
 from core.schemas import Schema
 from gateway.cache import ResolutionCache
 from gateway.connectors.base import schema_version
@@ -100,6 +101,7 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
         if ast is not None:
             try:
                 validate_ast(ast, schema)                       # step 7 — injection boundary
+                type_check_ast(ast, schema)                     # + static type check (pre-execute)
             except ValueError as e:
                 raise GatewayError(422, "invalid_ast", str(e),
                                    _interpreted(select, raw, ast, where_conf))

@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from .llm import LLM
+from .predicate import _parse_dt          # reuse the exact date parsing execution uses
 from .prompts import (DomainHints, NO_HINTS, OPS, want_system, want_user,
                       where_system, where_user)
 from .schemas import Schema
@@ -101,3 +102,88 @@ def validate_ast(node: Any, schema: Schema) -> None:
             raise ValueError(f"'between' value must be a two-element list, got {value!r}")
         if op in ("in", "nin") and not isinstance(value, list):
             raise ValueError(f"{op!r} value must be a list, got {value!r}")
+
+
+# --- static type check (a robustness layer over the injection boundary) --------
+# Postgres would reject a type-mismatched query at execute time (a 502); checking the
+# AST against each field's DECLARED type here turns that into a deterministic 422,
+# with no DB round-trip and identical behavior across connectors. Conservative by
+# design: unknown declared types are skipped and only clear mismatches are rejected —
+# the pipeline's 502 containment stays as the backstop.
+
+_NUMBER_TYPES = {"int", "integer", "bigint", "smallint", "numeric", "decimal",
+                 "real", "double precision", "float", "money"}
+_STRING_TYPES = {"text", "character varying", "varchar", "char", "character",
+                 "citext", "uuid", "name"}
+_BOOL_TYPES = {"boolean", "bool"}
+_TEMPORAL_TYPES = {"date", "timestamp", "timestamp without time zone",
+                   "timestamp with time zone", "timestamptz", "datetime",
+                   "time", "time without time zone"}
+
+
+def _kind_of(type_str: Optional[str]) -> Optional[str]:
+    """Map a declared column type to a logical kind, or None (→ skip the check)."""
+    t = (type_str or "").strip().lower()
+    if t in _NUMBER_TYPES:
+        return "number"
+    if t in _BOOL_TYPES:
+        return "bool"
+    if t in _TEMPORAL_TYPES:
+        return "temporal"
+    if t in _STRING_TYPES:
+        return "string"
+    return None
+
+
+def _value_ok(value: Any, kind: str) -> bool:
+    if kind == "number":
+        if isinstance(value, bool):
+            return False                     # a bool is not a number for a numeric column
+        if isinstance(value, (int, float)):
+            return True
+        if isinstance(value, str):
+            try:
+                float(value)                 # numeric string ("20") is coercible
+                return True
+            except ValueError:
+                return False
+        return False
+    if kind == "bool":
+        if isinstance(value, bool):
+            return True
+        return isinstance(value, str) and value.strip().lower() in ("true", "false")
+    if kind == "temporal":
+        return isinstance(value, str) and _parse_dt(value) is not None
+    if kind == "string":
+        return isinstance(value, str)
+    return True
+
+
+def type_check_ast(node: Any, schema: Schema) -> None:
+    """Reject leaf values that are clearly incompatible with the field's declared
+    type (a non-numeric value on an int column, an unparseable date on a date
+    column, `contains` on a non-text field). Assumes validate_ast already ran, so
+    op/field/shape are known-good. Raises ValueError on a mismatch."""
+    op = node["op"]
+    if op in ("and", "or"):
+        for c in node["clauses"]:
+            type_check_ast(c, schema)
+        return
+    if op == "not":
+        type_check_ast(node["clause"], schema)
+        return
+    if op == "is_null":
+        return
+
+    field = node["field"]
+    kind = _kind_of({f.path: f.type for f in schema.fields}.get(field))
+    value = node.get("value")
+    values = value if op in ("in", "nin", "between") else [value]
+    for v in values:
+        if isinstance(v, (list, dict)):
+            raise ValueError(f"{field!r}: expected a scalar value, got {type(v).__name__}")
+        if op == "contains" and kind is not None and kind != "string":
+            raise ValueError(f"'contains' needs a text field; {field!r} is a {kind} column")
+        if kind is not None and not _value_ok(v, kind):
+            raise ValueError(
+                f"{field!r}: value {v!r} is not compatible with a {kind} column")
