@@ -35,6 +35,9 @@ Stable facts:
     (request contract, hourglass + IR contracts, resolution discipline,
     prompt-cache layout, model & gate). **Read before any design/build choice.
     Update in the same change when a contract/interface/decision below changes.**
+  - [`docs/system-design.md`](docs/system-design.md) — the glanceable component map
+    (Mermaid topology + swap-point matrix). Companion to `architecture.md`:
+    this = the boxes and how they swap; `architecture.md` = the exact contracts.
 - **Historical (allowed to go stale, kept forever — how we got here):**
   - [`docs/specs/`](docs/specs/) — per-milestone specs (the concept + spike write-up).
   - [`docs/plans/`](docs/plans/) — per-milestone implementation plans.

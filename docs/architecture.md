@@ -115,3 +115,36 @@ authz is TBD in the gateway.
 Leaning **TypeScript** (GraphQL-Mesh gives the adapter/federation plumbing;
 JSON-native; frontend/agent audience) or **Python + Ibis** (if cross-source
 federation/planning dominates). The spike is Python. Decide at first-build time.
+
+## 8. Glossary
+
+The project's load-bearing vocabulary, in one place. (Component topology →
+[`system-design.md`](system-design.md).)
+
+- **`want`** — the fields a client asks for, in **its own vocabulary** (structured,
+  no DSL). **`where`** — the client's filter, in **natural language**.
+- **`interpreted` echo** — the inspectable response annex (what each key/filter
+  resolved to + confidence); returned only when `isVerbose` is set.
+- **`RawQuery`** — unresolved request in client vocab (ingress → core).
+  **`CanonicalQueryIR`** — resolved, backend-agnostic query (core → egress). The two
+  contracts form the hourglass's **narrow waist**.
+- **Resolver / Semantic Core** — the novel middle: `resolve_want` (client key →
+  real field + confidence) and `where → predicate AST`. The part that is *not*
+  commodity.
+- **`validate_ast`** — the code that rejects any AST outside the operator whitelist
+  or referencing a non-existent field. **The injection boundary** — lives in code,
+  never in a prompt.
+- **Confidence gate** — declines low-confidence `want` fields (→ `null`) and refuses
+  low-confidence `where` filters. Threshold ~0.7.
+- **`RequestAdapter`** (ingress, per protocol) / **`Connector`** (egress, per
+  backend: `describe`/`execute`/`capabilities`).
+- **Seam test** — proof that a **fake in-memory connector** swaps in for Postgres
+  without touching resolver/planner.
+- **Execution equivalence** — the scoring semantics: two predicates are equal if
+  they select the **same rows**, regardless of AST shape.
+- **Resolution cache** — the primary cost lever: a **field cache** (per `want` key)
+  + a **where cache** (per NL phrase + date), skipping the LLM on a repeat.
+- **Domain hints** — optional per-tenant synonyms/glossary/rules/examples that
+  improve resolution accuracy without touching the contract.
+- **`core/`** — the shared, evolving implementation lifted from the spike;
+  **`spike/`** — the frozen eval harness that re-measures `core`.

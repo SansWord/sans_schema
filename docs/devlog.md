@@ -17,9 +17,58 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.0-design](#v020-design--first-gateway-slice-design-2026-07-06) | Designed the first gateway slice — locked Python/FastAPI, `RawQuery`/`CanonicalQueryIR` contracts, denorm-view connector + fake seam, two-part cache, want+where gates. Added maintained `system-design.md`. No code. |
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.0-design — First gateway slice design (2026-07-06)
+
+**Review:** not yet
+**Design docs:**
+- First Gateway Slice: [Spec](specs/2026-07-first-gateway-slice.md)
+
+**What was decided (design only — no code shipped):**
+- **Language locked: Python (FastAPI)**, lifting the spike resolver. The novel/risky
+  layer is already de-risked Python; TS would re-implement + re-validate it. Deploy
+  stays container-portable (Cloud Run / Fly / Render); Vercel kept for the demo UI.
+- **Contracts:** `RawQuery` (unresolved, client vocab) / `CanonicalQueryIR` (resolved,
+  backend-agnostic) / `ResolvedField`. IR carries a **new `where_confidence`**.
+- **Connector:** denormalized-view per backend, **no join planning in v1**; Postgres +
+  a fake in-memory connector for the seam test.
+- **Two-part resolution cache:** a field cache (per `want` key) + a where cache (per NL
+  phrase + `today`), not a per-whole-request key.
+- **Gate:** `want` below threshold → `null` (declined, visible); `where` below threshold
+  → **422** (untrusted filter, don't execute). One threshold (0.7) for both.
+- **Response:** data-only by default; `isVerbose` adds the `interpreted` echo; 4xx
+  always include the diagnostic.
+- **Repo shape:** promote `resolver/prompts/schemas/llm` from `spike/` into a shared
+  `core/`; `spike/` becomes the **eval harness** that re-measures `core`.
+- Added maintained [`system-design.md`](system-design.md) (Mermaid topology + swap
+  matrix) + a glossary section in `architecture.md`.
+
+**Key learnings / decisions:**
+- `[insight]` **Semantic caching doesn't force Python.** Embeddings are one API call
+  (LiteLLM `Embed`), and the vector store is external/language-agnostic (pgvector — we
+  already run Postgres — or Pinecone/Qdrant). The Python call rests on resolver reuse,
+  not on caching.
+- `[insight]` **The spike's `where` output has no confidence** — so a *confidently-wrong
+  filter* (`writer→editor`) is the scariest silent failure and the want-gate can't catch
+  it. Added a `where`-confidence score in v1 (the one resolver change) → the 422 refusal.
+- `[gotcha]` **A compiled relative-date AST is `today`-dependent** ("this year" bakes
+  2026 bounds). So `today` is in the where-cache key (daily bust, acceptable). The clean
+  fix — symbolic dates + deterministic `bind_today` — also removes LLM date-math errors,
+  but it modifies the risky layer, so it's deferred to the **first fast-follow** milestone.
+- `[insight]` **The hourglass makes protocol ≠ language forcing function.** New protocol
+  = one `RequestAdapter` → `RawQuery`; new backend = one `Connector` ← `CanonicalQueryIR`.
+  The core never changes. So the TS/GraphQL-Mesh pull is for deferred, thin edge work.
+- `[note]` **Maintained-law folding deferred.** `architecture.md` §2 (where-confidence)
+  and §7 (language = Python) intentionally left unchanged in this pre-review baseline
+  commit; fold them once the spec review passes (tracked in `todo.md` → Now).
+
+**Process learnings:**
+- `[note]` Committed a **pre-review baseline** (spec + docs) before the spec review, on
+  request, so subsequent discussion edits surface as clean diffs.
 
 ## v0.1.0 — Resolution-accuracy spike (2026-07-06)
 

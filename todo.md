@@ -5,14 +5,19 @@ restating it. Keep current as part of the end-of-session checklist.
 
 ## Now
 
-- [ ] **Brainstorm + spec the first gateway implementation** — the thin
-      end-to-end vertical slice (see [`docs/HANDOFF.md`](docs/HANDOFF.md)):
-      one JSON `{want, where}` adapter → resolver lifted from the spike →
-      minimal `RawQuery`/`CanonicalQueryIR` → a Postgres connector with a
-      fake-connector seam test → response in the client's own keys.
-      **Start by pinning the `RawQuery` and `CanonicalQueryIR` shapes.**
-  - When that spec lands, close the loop and `git rm docs/HANDOFF.md` — it's a
-    one-time bridge primer, superseded by `CLAUDE.md` + the tree + the new spec.
+- [x] **Brainstorm + spec the first gateway slice** — landed
+      [`docs/specs/2026-07-first-gateway-slice.md`](docs/specs/2026-07-first-gateway-slice.md).
+      Language locked **Python/FastAPI**; `RawQuery`/`CanonicalQueryIR` contracts;
+      denormalized-view connector (no joins in v1) + fake-connector seam; two-part
+      resolution cache; gates on both `want` and `where`. `docs/HANDOFF.md` removed
+      (superseded by `CLAUDE.md` + the tree + the spec). Added maintained
+      [`docs/system-design.md`](docs/system-design.md) (topology + swap matrix).
+- [ ] **Review + discuss the spec.** A pre-review baseline was committed 2026-07-06
+      so discussion edits show as diffs. **Then fold the settled decisions into the
+      maintained law** — `docs/architecture.md` §2 (where-confidence) and §7
+      (language = Python) — deferred from the baseline commit to keep it review-clean.
+- [ ] **Write the implementation plan** once the spec is approved (→ `docs/plans/`),
+      then implement the slice.
 
 ## MVP shape & setup — decide in the first spec
 
@@ -29,7 +34,9 @@ an LLM key, and starts receiving `{want, where}` requests. Decisions to settle:
 - [ ] **Config surface:** how the user declares backend + credentials (env vars vs
       a small config file), and later per-tenant domain hints / field allowlist.
 - [ ] **Onboarding flow:** fewest steps from "install" to "first successful query"
-      — target a copy-paste quickstart in the README.
+      — target a copy-paste quickstart in the README. Deliverable: a
+      `gateway/README.md` quickstart (build-time; highest-leverage doc for both
+      adoption and a portfolio reviewer who runs it).
 - [ ] **Public demo site / playground** — a hosted page where anyone pastes weird
       field names + an NL filter against a demo backend and watches it resolve
       (the enthusiast reviewer's top ask; great for adoption). **Cost is the catch
@@ -49,6 +56,12 @@ only after the *Validation & de-risking* section clears.
 
 ## Later
 
+- [ ] **Symbolic / relative dates (`bind_today`)** — *first fast-follow after the MVP
+      slice.* Compile `where` to a **date-independent** AST that references `today`
+      symbolically (e.g. `{rel: "year_start"}`); bind concrete dates deterministically
+      at execute time. Two wins: a date-independent where cache (drops `today` from the
+      cache key) **and** removing LLM date-math errors. Modifies the risky resolver
+      layer → its own measured milestone (re-run the spike eval to confirm no regression).
 - [ ] Connector interface (`describe`/`capabilities`/`execute`) + the seam test.
 - [ ] **Resolution cache** (the primary cost lever): key ≈ `tenant + schema-version
       + normalized(want-key | where-phrase)`; invalidate on schema drift.
@@ -56,7 +69,9 @@ only after the *Validation & de-risking* section clears.
 - [ ] Raise the **confidence gate** to ~0.7 + add the low-confidence
       **clarify / escalate-to-stronger-model** path.
 - [ ] **Value resolution** step (enum fuzzing) as its own stage.
-- [ ] **Security:** field allowlist / field-level authz.
+- [ ] **Security:** field allowlist / field-level authz. *(When this gets designed,
+      consolidate the scattered security notes — architecture §6, the injection
+      boundary, the schema-probing surface — into a maintained `docs/security.md`.)*
 - [ ] Decide the **gateway language** (TS vs Python + Ibis) at build time.
 - [ ] Freedom-to-operate check on patent **US 12045656** if commercializing.
 
