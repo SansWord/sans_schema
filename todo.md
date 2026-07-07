@@ -20,9 +20,9 @@ restating it. Keep current as part of the end-of-session checklist.
       [`docs/plans/2026-07-first-gateway-slice.md`](docs/plans/2026-07-first-gateway-slice.md);
       **built as v0.2.0** (see the devlog top row). `core/` + `gateway/`, Postgres + fake
       connectors, seam parity verified against real Postgres 16, Docker + quickstart shipped.
-- [ ] **Re-run the spike eval** (`python -m spike.score --models gemini/gemini-3.1-flash-lite`)
-      to confirm the where-confidence prompt change didn't regress want/where accuracy —
-      **not yet done (needs an LLM API key)**; record the numbers in the devlog once run.
+- [x] **Re-ran the spike eval** (`spike.score --models gemini/gemini-3.1-flash-lite`, 2026-07-07)
+      to confirm the where-confidence prompt change didn't regress: **WANT 100%, WHERE 98%** —
+      identical to the v0.1.0 baseline. Numbers recorded in the devlog v0.2.0 entry.
 - [ ] **Symbolic / relative dates (`bind_today`)** — **the next milestone** (first fast-follow;
       detail under *Later*). Compile `where` to a date-independent AST → date-independent where
       cache + removes LLM date-math errors. Re-run the spike eval to confirm no regression.

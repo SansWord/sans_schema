@@ -29,9 +29,9 @@ holds forever. Each entry links the spec/plan it came from.
 spec. Verdict: complete and faithful; injection boundary genuinely enforced. Applied its
 fixes: a version leak in `architecture.md` (said v0.1.0), **hardened `validate_ast`** to
 reject malformed shapes as a 422 (see learnings), and **deepened the seam parity test** to
-assert `schema_version` equality (not just column-name sets). Open follow-ups it flagged:
-the spike re-measure (needs a key) and a `contains` ILIKE-vs-substring divergence (noted in
-`postgres.py`, harmless on the demo data).
+assert `schema_version` equality (not just column-name sets). The spike re-measure it flagged
+has since run — **no regression** (WANT 100%, WHERE 98%; see learnings). Remaining follow-up: a
+`contains` ILIKE-vs-substring divergence (noted in `postgres.py`, harmless on the demo data).
 **Live-verified:** the quickstart ran end-to-end against a real Postgres 16 + live LLM — this
 surfaced the field-path convention bug (see the `{view}.{column}` gotcha) and two quickstart
 friction points (missing `.env` template, container→DB host routing), all fixed on the branch.
@@ -103,11 +103,14 @@ friction points (missing `.env` template, container→DB host routing), all fixe
   milestone `v0.1.0`, but `v0.1.0` is the spike and `v0.2.0-design` was this slice's design.
   Per the `vX.Y.0-design → vX.Y.0` convention this build is **v0.2.0** (pyproject + README + this
   entry aligned).
-- `[note]` **Spike re-measure is pending an LLM API key.** Task 12 Step 3 (re-run the spike eval
-  to confirm the where-confidence prompt change didn't regress want/where accuracy) could NOT be
-  run — no API key in this environment. Numbers are not recorded; run
-  `GEMINI_API_KEY=… python -m spike.score --models gemini/gemini-3.1-flash-lite` before trusting
-  the prompt change, and likewise the opt-in `RUN_LIVE_LLM=1` end-to-end test.
+- `[note]` **Spike re-measure done — no regression from the where-confidence change.**
+  `spike.score --models gemini/gemini-3.1-flash-lite` (2026-07-07): **WANT 125/125 = 100%,
+  WHERE→AST 39/40 = 98%** — identical to the v0.1.0 certified baseline (100/98). The single
+  WHERE miss is the known "managers" ambiguity (case 35: the model emitted a subquery-as-value
+  instead of `contains(title, "Manager")`), not caused by the confidence line. Nice side-proof of
+  the injection boundary: that subquery text was treated as a parameterized *value* (matched
+  nothing → 0 rows), never executed as SQL. The opt-in `RUN_LIVE_LLM=1` end-to-end test remains
+  optional (the live `curl` in this session already exercised the real path).
 
 ## v0.2.0-design — First gateway slice design (2026-07-06)
 
