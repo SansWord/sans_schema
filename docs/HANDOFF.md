@@ -117,10 +117,31 @@ broad federation pushdown, the prompt-cache markers (cost, not correctness).
 
 ## Suggested prompt to open the next session
 
-> Read `docs/HANDOFF.md` and `docs/specs/2026-07-concept-and-spike.md`. I want to brainstorm the **first
-> implementation** of the sans_schema gateway — the thin end-to-end vertical
-> slice described in the handoff (one JSON `{want, where}` adapter → resolver
-> lifted from the spike → minimal `RawQuery`/`CanonicalQueryIR` → a Postgres
-> connector with a fake-connector seam test → response in the client's own keys).
-> Start by pinning down the `RawQuery` and `CanonicalQueryIR` shapes, then the
-> connector interface. Push back on scope creep.
+Paste this as-is (`CLAUDE.md` auto-loads; this points at the lazy-loaded docs):
+
+```
+I'm starting the first implementation of the sans_schema gateway. Before
+planning anything, consult the tree: read docs/architecture.md (the current
+rules), docs/HANDOFF.md (the primer), and skim docs/specs/2026-07-concept-and-spike.md
+(the why) and todo.md — including its "Validation & de-risking" section (the
+spike's accuracy number is soft; account for the confident-wrong risk in the
+gate/confirm-before-execute design). Name the docs you consulted.
+
+Then let's brainstorm the first implementation — the thin end-to-end vertical
+slice: one JSON {want, where} adapter → the resolver lifted from spike/ → a
+Postgres connector with a fake-in-memory-connector seam test → response in the
+client's own keys.
+
+Start with the load-bearing decision: the shapes of RawQuery (unresolved,
+client vocab) and CanonicalQueryIR (resolved), then the Connector interface.
+Give me options with a recommendation, and push back on scope creep — defer
+multi-protocol adapters, cross-source joins, aggregation, and caching.
+
+Follow the dev cycle: brainstorm → land a spec in docs/specs/. Don't start
+coding until the spec is agreed.
+
+When the spec is agreed, close the loop (explicit-path git staging, never
+git add -A): add a newest-on-top docs/devlog.md entry linking the new spec,
+update todo.md, and git rm docs/HANDOFF.md — it's a one-time bridge primer,
+superseded by CLAUDE.md + the tree + the new spec.
+```
