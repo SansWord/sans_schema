@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from .cases import CASES, TODAY, Case
 from .llm import LiteLLM, LLM
+from .prompts import want_system, want_user, where_system, where_user
 from .resolver import parse_where, resolve_want
 from .schemas import ALL_SCHEMAS
 
@@ -160,11 +161,35 @@ def run_case(llm: LLM, case: Case) -> Dict[str, Any]:
     return result
 
 
+def show_prompts() -> int:
+    """Print the exact prompts we send — no API calls, no key needed."""
+    print("=" * 70)
+    print("SYSTEM PROMPTS (constant across cases; domain hints would append here)")
+    print("=" * 70)
+    print("\n[resolve_want / system]\n" + want_system())
+    print("\n[parse_where / system]\n" + where_system())
+    print("\n" + "=" * 70)
+    print("PER-CASE USER PROMPTS (schema context + the actual request)")
+    print("=" * 70)
+    for i, case in enumerate(CASES):
+        sp = ALL_SCHEMAS[case.schema].as_prompt()
+        print(f"\n### CASE {i} [{case.schema}] — {case.note}")
+        print("\n[resolve_want / user]\n" + want_user(sp, case.want))
+        if case.where is not None:
+            print("\n[parse_where / user]\n" + where_user(sp, case.where, TODAY))
+    return 0
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+", default=DEFAULT_MODELS)
     ap.add_argument("--verbose", action="store_true", help="print raw resolver output")
+    ap.add_argument("--show-prompts", action="store_true",
+                    help="print the exact assembled prompts and exit (no API calls)")
     args = ap.parse_args(argv)
+
+    if args.show_prompts:
+        return show_prompts()
 
     for model in args.models:
         print(f"\n{'='*70}\nMODEL: {model}\n{'='*70}")

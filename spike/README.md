@@ -60,7 +60,30 @@ your keys support.
 | File | Role |
 |---|---|
 | `llm.py` | `LLM` / `Embed` interfaces + LiteLLM-backed impl (swap by config) |
+| `prompts.py` | The LLM-facing prompts, layered (contract / schema / domain hints / request) |
 | `schemas.py` | Sample backend schemas (books, ecommerce) — the "unknown" backends |
 | `cases.py` | Test cases: client `{want, where}` + expected resolution/AST |
 | `resolver.py` | The layer under test: want-resolution + NL-where → AST |
 | `score.py` | Harness: runs `{models} × {cases}`, scores, prints a report |
+
+## Seeing (and tuning) the prompts
+
+Prompts are not buried in logic — they live in `prompts.py`, split into layers so
+the safe, high-value knob (domain hints: synonyms, glossary, rules, few-shot
+examples) is separate from the contract (operator whitelist, AST shape) that must
+stay in sync with `validate_ast()`.
+
+Inspect exactly what gets sent, no API key or spend required:
+
+```bash
+python -m spike.score --show-prompts
+```
+
+To A/B a prompt change: edit `prompts.py`, commit, re-run `python -m spike.score`,
+and diff the scores against the previous commit. Because prompts are their own
+file, a prompt tweak shows up as its own git diff — attributable separately from
+case-set changes.
+
+Per-tenant customization (product direction) slots into `DomainHints` without
+touching the contract; injection safety always lives in `validate_ast()`, never
+in the prompt.

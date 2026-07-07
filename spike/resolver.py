@@ -9,61 +9,30 @@ Discipline (mirrors the real product):
   - NL -> validated AST -> (later) SQL. Never NL -> SQL directly.
   - The model may only emit a whitelisted operator set and field paths that
     exist in the schema. Anything else is rejected, not executed.
+
+Prompts live in prompts.py (see that module for the layer model). An optional
+DomainHints lets a caller inject per-tenant synonyms/glossary/examples without
+touching the contract.
 """
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
 from .llm import LLM
+from .prompts import (DomainHints, NO_HINTS, OPS, want_system, want_user,
+                      where_system, where_user)
 from .schemas import Schema
 
-OPS = {"eq", "ne", "gt", "gte", "lt", "lte", "in", "nin",
-       "contains", "between", "is_null", "and", "or", "not"}
 
-
-def resolve_want(llm: LLM, schema: Schema, client_keys: List[str]) -> Dict[str, Any]:
-    system = (
-        "You map a client's requested field names onto a backend database "
-        "schema. The client does not know the real schema and uses its own "
-        "vocabulary. For each requested key, return the single best matching "
-        "field path from the schema, or null if nothing matches semantically. "
-        "Also return a confidence 0.0-1.0 per key.\n"
-        "Respond as JSON: "
-        '{"mapping": {"<key>": {"field": "<table.column>|null", "confidence": 0.0}}}'
-    )
-    user = (
-        schema.as_prompt()
-        + "\n\nClient requested fields: "
-        + ", ".join(client_keys)
-    )
-    out = llm.json(system, user)
+def resolve_want(llm: LLM, schema: Schema, client_keys: List[str],
+                 hints: DomainHints = NO_HINTS) -> Dict[str, Any]:
+    out = llm.json(want_system(hints), want_user(schema.as_prompt(), client_keys))
     return out.get("mapping", {})
 
 
-def parse_where(llm: LLM, schema: Schema, nl: str, today: str) -> Optional[Dict[str, Any]]:
-    system = (
-        "You compile a natural-language filter into a canonical predicate AST "
-        "against a backend database schema. Use ONLY these operators: "
-        + ", ".join(sorted(OPS))
-        + ".\n"
-        "Rules:\n"
-        "- Leaf node: {\"op\": \"gte\", \"field\": \"<table.column>\", \"value\": <v>}\n"
-        "- Boolean node: {\"op\": \"and\", \"clauses\": [ ... ]} (also 'or'); "
-        "{\"op\": \"not\", \"clause\": { ... }}\n"
-        "- `field` MUST be a real path from the schema.\n"
-        "- Normalize relative dates against today. Normalize a bare year Y to a "
-        "range Y-01-01 .. Y-12-31 using an 'and' of gte/lte.\n"
-        "- Match filter values to the schema's real enum/sample values "
-        "(e.g. 'sci-fi' -> 'Science Fiction').\n"
-        "- Numbers as numbers, booleans as booleans, dates as 'YYYY-MM-DD' strings.\n"
-        "Respond as JSON with the AST under key \"where\": {\"where\": { ... }}"
-    )
-    user = (
-        schema.as_prompt()
-        + f"\n\nToday is {today}."
-        + f"\n\nNatural-language filter: {nl!r}"
-    )
-    out = llm.json(system, user)
+def parse_where(llm: LLM, schema: Schema, nl: str, today: str,
+                hints: DomainHints = NO_HINTS) -> Optional[Dict[str, Any]]:
+    out = llm.json(where_system(hints), where_user(schema.as_prompt(), nl, today))
     ast = out.get("where")
     if ast is None:
         return None
