@@ -98,6 +98,29 @@ OpenAI / Anthropic all work through the same code path.
 | `resolver.py` | The layer under test: want-resolution + NL-where → AST |
 | `score.py` | Harness: runs `{models} × {cases}`, scores, prints a report |
 
+## Debugging failures
+
+Every failing case prints paste-ready detail automatically (no flag needed):
+- **WANT miss** → `want MISS 'penName': expected author.name  got None (conf 0.0)`
+- **WHERE fail** → the NL filter, the expected AST and got AST, the rows each
+  selects, and the row diff:
+  ```
+       where FAIL
+         nl:       'published this year, sci-fi only'
+         expected: {...}  -> rows [1, 2]
+         got:      {...}  -> rows [1, 2, 6]
+         row diff: only-in-expected []  only-in-got [6]
+  ```
+  The row diff tells you *why* it failed — here the predicate was too broad and
+  wrongly included row 6.
+
+Add `--verbose` to also dump the raw resolver output for PASSING cases. Capture a
+whole run to a file to paste later:
+
+```bash
+python -m spike.score --models gemini --verbose 2>&1 | tee run.log
+```
+
 ## Seeing (and tuning) the prompts
 
 Prompts are not buried in logic — they live in `prompts.py`, split into layers so

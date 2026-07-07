@@ -235,13 +235,41 @@ def show_prompts() -> int:
     return 0
 
 
+def want_misses(case: Case, mapping: Dict[str, Any]):
+    """Return (key, expected, got_field, confidence) for each mismatched key."""
+    out = []
+    for key, exp in case.expect_want.items():
+        cell = (mapping or {}).get(key) or {}
+        gf = cell.get("field")
+        conf = cell.get("confidence", 0)
+        declined = gf is None or (isinstance(conf, (int, float)) and conf < 0.5)
+        ok = declined if exp is None else (gf == exp)
+        if not ok:
+            out.append((key, exp, gf, conf))
+    return out
+
+
+def where_debug(case: Case, got_ast, rows):
+    """Expected/got ASTs plus the rows each selects — the execution-equivalence
+    diff that explains a WHERE failure."""
+    exp = case.expect_where
+    exp_rows = sorted(_selected(exp, rows)) if exp is not None else None
+    try:
+        got_rows = sorted(_selected(got_ast, rows)) if got_ast is not None else None
+    except Exception as e:  # noqa: BLE001
+        got_rows = f"<eval error: {e}>"
+    return exp, got_ast, exp_rows, got_rows
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+", default=DEFAULT_MODELS,
                     help="LiteLLM model ids, and/or a provider keyword "
                          "(anthropic | gemini | openai | all) to run that "
                          "provider's whole tier set. e.g. --models gemini")
-    ap.add_argument("--verbose", action="store_true", help="print raw resolver output")
+    ap.add_argument("--verbose", action="store_true",
+                    help="also print raw resolver output for PASSING cases "
+                         "(failures always print expected/got + row diff)")
     ap.add_argument("--show-prompts", action="store_true",
                     help="print the exact assembled prompts and exit (no API calls)")
     args = ap.parse_args(argv)
@@ -265,18 +293,33 @@ def main(argv: Optional[List[str]] = None) -> int:
                 want_correct += w["correct"]
                 want_total += w["total"]
                 print(f"[{i}] want {w['correct']}/{w['total']}  ({case.note})")
+                # always show which keys missed — paste-ready for debugging
+                if w["correct"] < w["total"]:
+                    for key, exp, gf, conf in want_misses(case, w.get("raw")):
+                        print(f"       want MISS {key!r}: expected {exp}  got {gf} (conf {conf})")
+                if args.verbose:
+                    print("       want raw:", json.dumps(w.get("raw")))
             if "where" in r:
                 wh = r["where"]
                 where_total += 1
                 if "error" in wh:
                     print(f"     where ERROR: {wh['error']}")
+                    print(f"       expected: {json.dumps(case.expect_where)}")
                 else:
-                    where_pass += 1 if wh["pass"] else 0
-                    print(f"     where {'PASS' if wh['pass'] else 'FAIL'}")
-                    if args.verbose and not wh["pass"]:
-                        print("       got:", json.dumps(wh.get("raw")))
-            if args.verbose:
-                print("       want raw:", json.dumps(w.get("raw")))
+                    passed = wh["pass"]
+                    where_pass += 1 if passed else 0
+                    print(f"     where {'PASS' if passed else 'FAIL'}")
+                    if not passed:
+                        exp, got, er, gr = where_debug(case, wh.get("raw"),
+                                                       ALL_SCHEMAS[case.schema].rows)
+                        print(f"       nl:       {case.where!r}")
+                        print(f"       expected: {json.dumps(exp)}  -> rows {er}")
+                        print(f"       got:      {json.dumps(got)}  -> rows {gr}")
+                        if isinstance(er, list) and isinstance(gr, list):
+                            print(f"       row diff: only-in-expected {sorted(set(er) - set(gr))}"
+                                  f"  only-in-got {sorted(set(gr) - set(er))}")
+                    elif args.verbose:
+                        print("       where raw:", json.dumps(wh.get("raw")))
 
         wp = 100 * want_correct / want_total if want_total else 0
         hp = 100 * where_pass / where_total if where_total else 0
