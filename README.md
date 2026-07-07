@@ -45,6 +45,49 @@ The payoff: **clients never need the schema**, and **different clients can use
 their own vocabulary** against the same backend — while queries stay safe,
 structured, and (once cached) cheap.
 
+### Same backend, different vocabularies
+
+The backend (which no client ever sees) stores columns like `author.name`,
+`book.title`, `book.category`, `book.published_at`, `book.price`. Two different
+clients can hit it with **their own field names and their own filters** — and each
+gets its answer back in the keys it asked with.
+
+**Client A — a reading app.** Wants recent non-fiction:
+
+```json
+{ "want":  { "bookTitle": null, "authorName": null, "topic": null, "publishedOn": null },
+  "where": "non-fiction added since 2024" }
+```
+
+*Resolves `bookTitle→book.title`, `authorName→author.name`, `topic→book.category`,
+`publishedOn→book.published_at`; filter → `category = 'Non-Fiction' AND published_at >= 2024-01-01`. Response:*
+
+```json
+{ "data": [
+  { "bookTitle": "Silent Fields", "authorName": "M. Ito", "topic": "Non-Fiction", "publishedOn": "2026-01-15" }
+] }
+```
+
+**Client B — an AI agent.** Same backend, different words, a different filter
+(other category, other time window, plus a price cap):
+
+```json
+{ "want":  { "name": null, "penName": null, "kind": null, "year": null, "price": null },
+  "where": "fantasy from before 2020 under $15" }
+```
+
+*Resolves `name→book.title`, `penName→author.name`, `kind→book.category`,
+`year→book.published_at`, `price→book.price`; filter → `category = 'Fantasy' AND published_at < 2020-01-01 AND price < 15`. Response:*
+
+```json
+{ "data": [
+  { "name": "A Wizard of Earthsea", "penName": "Ursula K. Le Guin", "kind": "Fantasy", "year": "1968-01-01", "price": 9.99 }
+] }
+```
+
+Same data, same backend, zero shared schema knowledge — the gateway meets each
+client in its own vocabulary.
+
 ## Why
 
 Auto-generating an API from a database, natural-language-to-SQL, semantic layers,
