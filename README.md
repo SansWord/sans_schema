@@ -99,10 +99,14 @@ names on the fly.
 
 ## Status
 
-**Early / pre-build.** The hard, load-bearing part — semantic resolution — has been
-**validated by a spike**: across 3 vendors / 9 LLMs it resolved fields and compiled
-filters at ~100% on a 52-case benchmark. The gateway itself is in design; usage
-instructions will land here once the first implementation exists.
+**Early / pre-build.** The load-bearing risk — semantic resolution — has been
+**probed with an early spike**: on a *small, curated* 52-case benchmark over clean,
+well-named schemas, several LLMs across 3 vendors resolved fields and compiled
+filters at a high rate. That's an **encouraging signal, not a production accuracy
+claim** — it has *not* been tested on large, messy, real-world schemas (cryptic
+names, near-duplicate fields, wide tables), and value-matching, latency, cost, and
+security remain open (see [`todo.md`](todo.md) → *Validation & de-risking*). The
+gateway itself is in design; usage instructions land here once it's built.
 
 - **Current state** → [`docs/devlog.md`](docs/devlog.md) (top row)
 - **What's next** → [`todo.md`](todo.md)

@@ -46,6 +46,12 @@ holds forever. Each entry links the spec/plan it came from.
   correct predicates differ in shape. Switched to **execution equivalence** (do
   they select the same sample rows?); a first run's "57%" was oracle error, real
   accuracy ~100%.
+- `[gotcha]` ...but **execution equivalence on ~8 sample rows can *inflate* WHERE
+  scores** — two different predicates can coincidentally select the same rows.
+  Flagged by a 2026-07 persona review (AI-app dev / senior eng / enthusiast): before
+  the accuracy number is trustworthy it needs large/realistic row sets + adversarial
+  equivalence + a **confident-wrong rate**, and testing on messy real schemas. We
+  swung from a too-strict oracle to a too-loose one. See `todo.md` → Validation & de-risking.
 - `[insight]` The residual failures were **not capability walls**: (1) small
   OpenAI models emit off-contract JSON (no `{"op":...}` wrapper) → durable fix is
   **structured output**; (2) genuine NL ambiguity ("managers") → needs a **clarify
