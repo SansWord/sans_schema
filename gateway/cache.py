@@ -1,0 +1,60 @@
+"""Two-part resolution cache (spec §6). Per-key and per-phrase, never per-whole-request.
+In-memory dicts behind a CacheStore Protocol so Redis / semantic lookup swap in later.
+Stores RAW {field/ast, confidence}; the gate is applied at read time by the pipeline."""
+from __future__ import annotations
+
+from typing import Any, Dict, Optional, Tuple
+
+try:
+    from typing import Protocol
+except ImportError:  # pragma: no cover
+    from typing_extensions import Protocol  # type: ignore
+
+
+def normalize_key(s: str) -> str:
+    return " ".join(s.strip().lower().split())
+
+
+normalize_phrase = normalize_key  # same rule for v1; kept distinct for future divergence
+
+
+class CacheStore(Protocol):
+    def get(self, key: Tuple) -> Optional[Dict[str, Any]]: ...
+    def set(self, key: Tuple, value: Dict[str, Any]) -> None: ...
+
+
+class DictCache:
+    """In-memory CacheStore. Swap for Redis behind this same interface."""
+
+    def __init__(self) -> None:
+        self._d: Dict[Tuple, Dict[str, Any]] = {}
+
+    def get(self, key: Tuple) -> Optional[Dict[str, Any]]:
+        return self._d.get(key)
+
+    def set(self, key: Tuple, value: Dict[str, Any]) -> None:
+        self._d[key] = value
+
+
+class ResolutionCache:
+    """The field cache + the where cache, together."""
+
+    def __init__(self, field_store: Optional[CacheStore] = None,
+                 where_store: Optional[CacheStore] = None) -> None:
+        self._field = field_store or DictCache()
+        self._where = where_store or DictCache()
+
+    # field cache: (backend, schema_version, normalized_key)
+    def get_field(self, backend: str, sv: str, key: str) -> Optional[Dict[str, Any]]:
+        return self._field.get((backend, sv, normalize_key(key)))
+
+    def set_field(self, backend: str, sv: str, key: str, value: Dict[str, Any]) -> None:
+        self._field.set((backend, sv, normalize_key(key)), value)
+
+    # where cache: (backend, schema_version, normalized_phrase, today)
+    def get_where(self, backend: str, sv: str, phrase: str, today: str) -> Optional[Dict[str, Any]]:
+        return self._where.get((backend, sv, normalize_phrase(phrase), today))
+
+    def set_where(self, backend: str, sv: str, phrase: str, today: str,
+                  value: Dict[str, Any]) -> None:
+        self._where.set((backend, sv, normalize_phrase(phrase), today), value)
