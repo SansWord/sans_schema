@@ -23,10 +23,11 @@ introspects `books_view` at startup — no schema is hardcoded.
 
 ## 2. Configure the environment
 
+Copy the template and fill in your key:
+
 ```bash
-export DATABASE_URL="postgresql://postgres:pg@localhost:5432/postgres"
-export LLM_MODEL="gemini/gemini-3.1-flash-lite"   # any LiteLLM model id
-export GEMINI_API_KEY="…"                          # key for your chosen model's provider
+cp .env.example .env
+# then edit .env — set the API key matching your LLM_MODEL
 ```
 
 | Env var          | Default                          | Purpose                                   |
@@ -37,7 +38,12 @@ export GEMINI_API_KEY="…"                          # key for your chosen model
 | `RESULT_LIMIT`   | `100`                            | Max rows returned per query               |
 
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
-`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **Never commit keys.**
+`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**
+
+> **`DATABASE_URL` host gotcha:** from the **container** (below), `localhost` is the
+> gateway container itself — use `host.docker.internal:5432` to reach a Postgres
+> published on your host (this is what `.env.example` uses). Running `uvicorn` locally
+> instead? Use `localhost:5432`.
 
 ## 3. Run the gateway
 
