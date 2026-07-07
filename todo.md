@@ -30,6 +30,15 @@ an LLM key, and starts receiving `{want, where}` requests. Decisions to settle:
       a small config file), and later per-tenant domain hints / field allowlist.
 - [ ] **Onboarding flow:** fewest steps from "install" to "first successful query"
       — target a copy-paste quickstart in the README.
+- [ ] **Public demo site / playground** — a hosted page where anyone pastes weird
+      field names + an NL filter against a demo backend and watches it resolve
+      (the enthusiast reviewer's top ask; great for adoption). **Cost is the catch
+      (worry about later, but noted):** a public endpoint invites arbitrary LLM
+      calls → uncapped spend. Guardrails to design when we build it — a **fixed
+      demo dataset** (so schema/prompt caches hit hard), the **cheapest model**
+      (flash-lite), **cache common queries**, per-IP/session **rate limits** + a
+      **global daily spend cap**, and bot/abuse protection. Keep it a bounded
+      sandbox, never an open gateway to a real DB.
 
 **Ambition — the open question:** keep the MVP **dev / prototype grade**, *not* a
 production system serving 100+ QPS at a high cache rate? **Lean: yes, keep it
