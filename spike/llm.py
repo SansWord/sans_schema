@@ -100,9 +100,12 @@ def _extract_json(content: str) -> Dict[str, Any]:
     try:
         return json.loads(content)
     except json.JSONDecodeError:
-        # last resort: grab the outermost {...}
-        start = content.find("{")
-        end = content.rfind("}")
-        if start != -1 and end != -1:
-            return json.loads(content[start : end + 1])
-        raise
+        pass
+    # Reasoning models (e.g. gemini-pro) may wrap the JSON in prose/thinking, or
+    # emit trailing content after it ("Extra data"). Decode the FIRST JSON object
+    # starting at the first '{' and ignore anything after it.
+    start = content.find("{")
+    if start == -1:
+        raise ValueError(f"no JSON object in response: {content[:200]!r}")
+    obj, _end = json.JSONDecoder().raw_decode(content[start:])
+    return obj
