@@ -13,9 +13,9 @@ import sys
 from typing import Any, Dict, List, Optional
 
 from .cases import CASES, TODAY, Case
-from .llm import LiteLLM, LLM
-from .prompts import want_system, want_user, where_system, where_user
-from .resolver import resolve_want, validate_ast, where_ast
+from core.llm import LiteLLM, LLM
+from core.prompts import want_system, want_user, where_system, where_user
+from core.resolver import resolve_want, validate_ast, where_ast
 from .schemas import ALL_SCHEMAS
 
 # Adjust to whatever your keys support. LiteLLM model identifiers.

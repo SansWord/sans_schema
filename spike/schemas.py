@@ -16,30 +16,9 @@ boundary (so an off-by-one day in the model's date math can't change selection).
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Dict
 
-
-@dataclass
-class Field:
-    path: str          # canonical "table.column"
-    type: str          # sql-ish type
-    description: str    # what auto-enrichment would generate
-    samples: List[str] = field(default_factory=list)
-
-
-@dataclass
-class Schema:
-    name: str
-    fields: List[Field]
-    rows: List[Dict[str, Any]] = field(default_factory=list)
-
-    def as_prompt(self) -> str:
-        lines = [f"Backend schema: {self.name}", "Fields:"]
-        for f in self.fields:
-            s = f", e.g. {', '.join(f.samples)}" if f.samples else ""
-            lines.append(f"  - {f.path} ({f.type}): {f.description}{s}")
-        return "\n".join(lines)
+from core.schemas import Field, Schema
 
 
 BOOKS = Schema(
