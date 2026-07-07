@@ -59,6 +59,16 @@ the spike re-measure (needs a key) and a `contains` ILIKE-vs-substring divergenc
   copy-paste quickstart.
 
 **Key technical learnings:**
+- `[gotcha]` **The introspected flat-view paths were bare column names, but the resolver's
+  `<table.column>` prompt convention made the LLM qualify them with the view name**
+  (`category` → `books_view.category`) — so `validate_ast` rejected the where field (422) and,
+  with no `where`, `SELECT "books_view.title"` quoted the whole thing as one identifier
+  (`column does not exist`). Found only on the first **live** `curl` — every unit/seam test
+  hand-built the IR with bare paths and never exercised the LLM→path→validate→SQL round-trip;
+  the one test that would have (the live smoke) needs a key and never ran. Fix: both connectors
+  now emit `{view}.{column}` paths (so the model copies the exact shown path), mapping back to
+  the bare column for SQL and re-keying results by path. Strong argument for running the live
+  test before calling a slice done.
 - `[gotcha]` **A Postgres view does NOT inherit its base tables' column comments.** The seed
   commented `books.category`, but `describe()` introspects `books_view`, so `col_description`
   returned empty and the introspection test failed. Fix: `COMMENT ON COLUMN books_view.<col>`

@@ -3,9 +3,9 @@ from gateway.app import app, get_llm, get_connector
 from gateway.connectors.fake import FakeConnector
 from tests.fakes import FakeLLM
 
-WANT_OK = {"mapping": {"book_title": {"field": "title", "confidence": 0.95},
-                       "genre": {"field": "category", "confidence": 0.92}}}
-WHERE_OK = {"where": {"op": "eq", "field": "category", "value": "Science Fiction"},
+WANT_OK = {"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95},
+                       "genre": {"field": "books_view.category", "confidence": 0.92}}}
+WHERE_OK = {"where": {"op": "eq", "field": "books_view.category", "value": "Science Fiction"},
             "confidence": 0.9}
 
 def _client(llm):
@@ -23,11 +23,13 @@ def test_query_returns_rows_in_client_keys():
     assert r.status_code == 200
     body = r.json()
     assert body["rows"] and all(set(row) == {"book_title", "genre"} for row in body["rows"])
-    assert body["interpreted"]["want"]["book_title"]["field"] == "title"
+    # values actually remapped from the qualified field path (guards the view.column round-trip)
+    assert all(row["genre"] == "Science Fiction" and row["book_title"] for row in body["rows"])
+    assert body["interpreted"]["want"]["book_title"]["field"] == "books_view.title"
 
 def test_low_confidence_where_returns_422_with_interpreted():
     llm = FakeLLM(want=WANT_OK,
-                  where={"where": {"op": "eq", "field": "category", "value": "x"},
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
                          "confidence": 0.3})
     c = _client(llm)
     r = c.post("/query", json={"want": {"book_title": None}, "where": "vague"})
@@ -35,6 +37,6 @@ def test_low_confidence_where_returns_422_with_interpreted():
     assert r.json()["interpreted"]["where"]["confidence"] == 0.3   # present even without isVerbose
 
 def test_want_as_list_is_accepted():
-    c = _client(FakeLLM(want={"mapping": {"book_title": {"field": "title", "confidence": 0.95}}}))
+    c = _client(FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}}))
     r = c.post("/query", json={"want": ["book_title"]})
     assert r.status_code == 200

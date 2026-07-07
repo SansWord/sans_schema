@@ -6,7 +6,8 @@ def test_describe_exposes_the_view_columns():
     c = FakeConnector()
     schema = c.describe()
     paths = {f.path for f in schema.fields}
-    assert {"title", "category", "price", "author_name"} <= paths
+    assert {"books_view.title", "books_view.category",
+            "books_view.price", "books_view.author_name"} <= paths
     assert c.backend_id == "fake"
     assert isinstance(c.capabilities(), Capabilities)
 
@@ -17,10 +18,10 @@ def test_schema_version_is_stable_and_field_sensitive():
 def test_execute_filters_and_keys_by_field_path():
     c = FakeConnector()
     ir = CanonicalQueryIR(
-        select=[ResolvedField("book_title", "title", 0.9),
-                ResolvedField("genre", "category", 0.9)],
-        predicate={"op": "eq", "field": "category", "value": "Science Fiction"},
+        select=[ResolvedField("book_title", "books_view.title", 0.9),
+                ResolvedField("genre", "books_view.category", 0.9)],
+        predicate={"op": "eq", "field": "books_view.category", "value": "Science Fiction"},
         where_confidence=0.9, where_raw="sci-fi")
     rows = c.execute(ir)
-    assert rows and all(r["category"] == "Science Fiction" for r in rows)
-    assert set(rows[0]) == {"title", "category"}          # only selected paths, keyed by path
+    assert rows and all(r["books_view.category"] == "Science Fiction" for r in rows)
+    assert set(rows[0]) == {"books_view.title", "books_view.category"}   # keyed by field_path

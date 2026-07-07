@@ -7,7 +7,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
-# (path, type, description, samples) — the shape describe() emits for each column.
+# The view name both connectors qualify column paths with (`books_view.<column>`),
+# matching seed.sql. Field paths are exposed as `view.column` so the resolver's
+# `table.column` convention lines up with a real, copyable path.
+VIEW_NAME = "books_view"
+
+# (column, type, description, samples) — the shape describe() emits for each column.
+# NOTE: these are BARE column names (a faithful mirror of seed.sql); the connector
+# qualifies them to `books_view.<column>` in describe()/execute().
 VIEW_FIELDS: List[Tuple[str, str, str, List[str]]] = [
     ("book_id",     "integer", "primary key of the book record", []),
     ("title",       "text",    "the title of the book", ["A Wizard of Earthsea"]),

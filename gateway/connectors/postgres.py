@@ -43,10 +43,17 @@ class PostgresConnector:
             fields: List[Field] = []
             for name, dtype, comment in cols:
                 samples = self._samples(conn, name)
-                fields.append(Field(path=name, type=dtype,
+                fields.append(Field(path=f"{self.view}.{name}", type=dtype,
                                     description=comment or "", samples=samples))
         self._schema = Schema(name=self.view, fields=fields)
         return self._schema
+
+    def _col(self, path: str) -> str:
+        """Field path (`view.column`) → the bare column name for SQL. The resolver
+        emits qualified paths (matching the schema's `table.column` convention); the
+        view is flat, so the SQL identifier is just the trailing column."""
+        prefix = f"{self.view}."
+        return path[len(prefix):] if path.startswith(prefix) else path
 
     def _samples(self, conn, column: str, k: int = 5) -> List[str]:
         q = sql.SQL("SELECT DISTINCT {col} FROM {view} WHERE {col} IS NOT NULL LIMIT %s").format(
@@ -55,8 +62,8 @@ class PostgresConnector:
 
     # --- execute ------------------------------------------------------------
     def execute(self, ir: CanonicalQueryIR, limit: int = 100) -> List[dict]:
-        paths = [f.field_path for f in ir.select if f.field_path is not None]
-        select_cols = sql.SQL(", ").join(sql.Identifier(p) for p in paths)
+        fields = [f for f in ir.select if f.field_path is not None]
+        select_cols = sql.SQL(", ").join(sql.Identifier(self._col(f.field_path)) for f in fields)
         query = sql.SQL("SELECT {cols} FROM {view}").format(
             cols=select_cols, view=sql.Identifier(self.view))
         params: List[Any] = []
@@ -67,8 +74,10 @@ class PostgresConnector:
         params.append(limit)
         with psycopg.connect(self.dsn) as conn:
             cur = conn.execute(query, params)
-            names = [d.name for d in cur.description]
-            return [dict(zip(names, row)) for row in cur.fetchall()]
+            # re-key each row by the qualified field path (SELECT order == fields order),
+            # so remap — which looks up by field_path — finds the value.
+            keys = [f.field_path for f in fields]
+            return [dict(zip(keys, row)) for row in cur.fetchall()]
 
     def _compile(self, node: dict) -> Tuple[sql.Composable, List[Any]]:
         op = node["op"]
@@ -83,7 +92,7 @@ class PostgresConnector:
             clause, params = self._compile(node["clause"])
             return sql.SQL("NOT (") + clause + sql.SQL(")"), params
 
-        col = sql.Identifier(node["field"])
+        col = sql.Identifier(self._col(node["field"]))
         val = node.get("value")
         if op in _BINARY_OPS:
             return sql.SQL("{} {} %s").format(col, sql.SQL(_BINARY_OPS[op])), [val]
