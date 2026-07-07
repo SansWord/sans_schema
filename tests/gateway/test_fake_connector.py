@@ -1,0 +1,26 @@
+from gateway.connectors.base import schema_version, Capabilities
+from gateway.connectors.fake import FakeConnector
+from gateway.contracts import CanonicalQueryIR, ResolvedField
+
+def test_describe_exposes_the_view_columns():
+    c = FakeConnector()
+    schema = c.describe()
+    paths = {f.path for f in schema.fields}
+    assert {"title", "category", "price", "author_name"} <= paths
+    assert c.backend_id == "fake"
+    assert isinstance(c.capabilities(), Capabilities)
+
+def test_schema_version_is_stable_and_field_sensitive():
+    c = FakeConnector()
+    assert schema_version(c.describe()) == schema_version(c.describe())
+
+def test_execute_filters_and_keys_by_field_path():
+    c = FakeConnector()
+    ir = CanonicalQueryIR(
+        select=[ResolvedField("book_title", "title", 0.9),
+                ResolvedField("genre", "category", 0.9)],
+        predicate={"op": "eq", "field": "category", "value": "Science Fiction"},
+        where_confidence=0.9, where_raw="sci-fi")
+    rows = c.execute(ir)
+    assert rows and all(r["category"] == "Science Fiction" for r in rows)
+    assert set(rows[0]) == {"title", "category"}          # only selected paths, keyed by path
