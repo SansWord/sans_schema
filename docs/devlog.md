@@ -32,6 +32,9 @@ reject malformed shapes as a 422 (see learnings), and **deepened the seam parity
 assert `schema_version` equality (not just column-name sets). Open follow-ups it flagged:
 the spike re-measure (needs a key) and a `contains` ILIKE-vs-substring divergence (noted in
 `postgres.py`, harmless on the demo data).
+**Live-verified:** the quickstart ran end-to-end against a real Postgres 16 + live LLM — this
+surfaced the field-path convention bug (see the `{view}.{column}` gotcha) and two quickstart
+friction points (missing `.env` template, container→DB host routing), all fixed on the branch.
 **Design docs:**
 - First Gateway Slice: [Spec](specs/2026-07-first-gateway-slice.md) [Plan](plans/2026-07-first-gateway-slice.md)
 
@@ -53,7 +56,7 @@ the spike re-measure (needs a key) and a `contains` ILIKE-vs-substring divergenc
   `information_schema` over a denormalized view + compile the validated AST → parameterized SQL).
 - **Demo** — `demo/seed.sql` (normalized authors/books + `books_view`) as the source of truth,
   `demo/rows.py` as the in-memory mirror for the fake connector.
-- **Tests** — 30 LLM-free + 5 Postgres-backed (35 green against real Postgres 16), incl. the
+- **Tests** — 37 LLM-free + 5 Postgres-backed (42 green against real Postgres 16), incl. the
   headline **seam parity** test (Postgres and fake select the same row-set from one IR) and an
   opt-in live smoke test. **`Dockerfile`** (ships `core/`+`gateway/` only) + **`gateway/README.md`**
   copy-paste quickstart.

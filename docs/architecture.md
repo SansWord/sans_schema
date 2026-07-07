@@ -76,6 +76,14 @@ protocols ─► RequestAdapter ─► RawQuery ─► [resolver] ─► Canonic
 - **`Connector`** (egress, one per backend): `describe()` (auto-introspect +
   LLM-enriched schema — see `spike/schemas.py` for the shape) / `capabilities()`
   (what it can push down) / `execute(CanonicalQueryIR)`.
+  - **Field-path convention — `table.column` (qualified).** `describe()` must expose
+    each field's path in the same `table.column` form the resolver prompt tells the
+    model to emit, so the model **copies the path it is shown** rather than inventing a
+    qualifier. The demo's flat view is one "table": paths are `books_view.<column>`
+    (not bare `<column>`). A connector over a flat surface maps the qualified path back
+    to the real column internally (`gateway/connectors/postgres.py::_col`) and keys
+    result rows by the qualified path so the remap finds them. Bare-column paths were a
+    live bug: the model qualified them anyway and `validate_ast` rejected the result.
 - **`RawQuery`** (unresolved, client vocab) and **`CanonicalQueryIR`** (resolved)
   are the two load-bearing contracts. **Defined** in `gateway/contracts.py`
   (with `ResolvedField`). The 10-step flow lives in `gateway/pipeline.py::run_query`.

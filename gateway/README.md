@@ -10,13 +10,21 @@ for the full design.
 
 ## 1. Start Postgres and load the demo data
 
+Put Postgres on a shared Docker network so the gateway container can reach it by
+name (this avoids host-routing headaches — see the note in step 2):
+
 ```bash
-docker run -d --name sans-pg -e POSTGRES_PASSWORD=pg -p 5432:5432 postgres:16
-export DATABASE_URL="postgresql://postgres:pg@localhost:5432/postgres"
+docker network create sans
+docker run -d --name sans-pg --network sans -e POSTGRES_PASSWORD=pg -p 5432:5432 postgres:16
 
 # Seed the demo dataset (normalized authors/books + the flat books_view).
 docker exec -i sans-pg psql -U postgres -d postgres < gateway/demo/seed.sql
 ```
+
+The `DROP … IF EXISTS` at the top of the seed prints `NOTICE: … does not exist`
+on a fresh DB — that's expected (the seed is re-runnable), not an error. Verify it
+loaded: `docker exec -i sans-pg psql -U postgres -d postgres -c "SELECT count(*) FROM books_view;"`
+should return `6`.
 
 `gateway/demo/seed.sql` is the source of truth for the demo data; the gateway
 introspects `books_view` at startup — no schema is hardcoded.
@@ -40,21 +48,22 @@ cp .env.example .env
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
 `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**
 
-> **`DATABASE_URL` host gotcha:** from the **container** (below), `localhost` is the
-> gateway container itself — use `host.docker.internal:5432` to reach a Postgres
-> published on your host (this is what `.env.example` uses). Running `uvicorn` locally
-> instead? Use `localhost:5432`.
+> **`DATABASE_URL` host gotcha.** Inside a container, `localhost` is the *container
+> itself*, not your machine. With the shared-network setup above, use the Postgres
+> **container name** as the host — `.env.example` defaults to
+> `postgresql://postgres:pg@sans-pg:5432/postgres`. (Running `uvicorn` locally instead
+> of in a container? Then use `localhost:5432`.)
 
 ## 3. Run the gateway
 
-**Container (recommended):**
+**Container (recommended)** — on the same `sans` network as Postgres:
 
 ```bash
 docker build -t sans-schema:dev .
-docker run -p 8000:8000 --env-file .env sans-schema:dev
+docker run -p 8000:8000 --env-file .env --network sans sans-schema:dev
 ```
 
-**Local (dev):**
+**Local (dev)** — set `DATABASE_URL=…@localhost:5432/…` and run:
 
 ```bash
 pip install -e ".[dev]"
