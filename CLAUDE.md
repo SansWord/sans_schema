@@ -21,12 +21,16 @@ assumed**. _(Edit freely.)_
 > [`docs/devlog.md`](docs/devlog.md); **what's next** → [`todo.md`](todo.md).
 
 Stable facts:
-- **Repo:** local git (no remote yet). Not a package — a spike + docs.
-- **Spike stack:** Python 3.9; `spike/` (the resolution-accuracy experiment);
-  multi-vendor LLM via **LiteLLM** (`spike/requirements.txt`).
-- **Gateway (not built yet):** language **locked — Python (FastAPI)**, lifting the
-  spike resolver into a shared `core/`. See [`docs/architecture.md`](docs/architecture.md)
-  §7 + [`docs/specs/2026-07-first-gateway-slice.md`](docs/specs/2026-07-first-gateway-slice.md).
+- **Repo:** local git (no remote yet). Installable package (`pyproject.toml`,
+  `pip install -e ".[dev]"`) — ships `core/` + `gateway/`; `spike/` is eval-only.
+- **Stack:** Python 3.9 (spike) / 3.11 (container); `core/` (shared resolver +
+  predicate) · `gateway/` (FastAPI `POST /query`, connectors, cache, pipeline) ·
+  `spike/` (the frozen resolution-accuracy eval harness that re-measures `core`);
+  multi-vendor LLM via **LiteLLM**.
+- **Gateway (v0.2.0 built):** the first end-to-end slice — resolve `{want,where}` →
+  validated AST → execute on Postgres → rows in client keys. Postgres + fake connectors,
+  two-part cache, want+where gates, Docker + quickstart. See the devlog top row +
+  [`docs/architecture.md`](docs/architecture.md) + [`gateway/README.md`](gateway/README.md).
 - **Starting model:** `gemini/gemini-3.1-flash-lite`, behind the `LLM` interface.
 
 ## Docs — two tiers

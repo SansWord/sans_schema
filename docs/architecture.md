@@ -8,11 +8,12 @@ behind these (prior art, spike results, root-cause analyses) lives in
 **Update when:** a contract, interface, or locked decision below changes — in the
 **same** change, and log the change in [`devlog.md`](devlog.md).
 
-**Status legend:** ✅ implemented in `spike/` · 📐 design only (gateway not built).
+**Status legend:** ✅ implemented (in `core/` + `gateway/`, or the frozen `spike/`
+eval) · 📐 design only (not built yet). The first gateway slice (v0.1.0) is built.
 
 ---
 
-## 1. Request contract ✅ (shape) / 📐 (HTTP surface)
+## 1. Request contract ✅ (shape + HTTP surface)
 
 Client sends a desired-shape body with **its own field names** + an NL filter:
 
@@ -29,16 +30,21 @@ POST /query
   resolved to + a confidence), so the magic is inspectable.
 - You don't need GraphQL — any protocol carrying the field names works; the JSON
   shape body is the default. Others become `RequestAdapter`s later.
+- **Built:** `POST /query` in `gateway/app.py`; the JSON `RequestAdapter`
+  (`to_raw_query`) collapses `{want:{k:null}}` to `[k]`, accepts a `want` list too,
+  and server-stamps `today`.
 
 ## 2. Resolution discipline ✅
 
 Two LLM tasks, both against an **unknown** backend schema:
 1. `resolve_want(schema, keys) → {key: field | null, confidence}`
-2. `where → validated predicate AST` **+ a filter confidence** (added in the gateway)
+2. `where → validated predicate AST` **+ a filter confidence** — `core.where_resolve`
+   returns `WhereResult{ast, confidence}`; `where_ast` keeps its bare-AST signature
+   for the frozen spike eval.
 
 Rules:
 - **NL → validated AST → execute. Never NL → SQL.** The model emits a constrained
-  AST; `validate_ast` (in `spike/resolver.py`) rejects anything outside the
+  AST; `validate_ast` (in `core/resolver.py`) rejects anything outside the
   operator whitelist or referencing a non-existent field. **This is the injection
   boundary — it lives in code, never in the prompt.**
 - **Confidence gate:** applies to **both** tasks, threshold **~0.7** (spike used 0.5
@@ -53,7 +59,7 @@ Rules:
 - **Ambiguity** (e.g. "managers") is handled by the gate + a clarify/escalation
   path, not by guessing. 📐
 
-## 3. Architecture — two-sided hourglass 📐
+## 3. Architecture — two-sided hourglass ✅ (v1 slice) / 📐 (federation)
 
 Many request protocols compile **up** to one IR; many backends compile **down**
 from it. The novel value sits in the shared middle (the resolver); the rest is
@@ -71,10 +77,11 @@ protocols ─► RequestAdapter ─► RawQuery ─► [resolver] ─► Canonic
   LLM-enriched schema — see `spike/schemas.py` for the shape) / `capabilities()`
   (what it can push down) / `execute(CanonicalQueryIR)`.
 - **`RawQuery`** (unresolved, client vocab) and **`CanonicalQueryIR`** (resolved)
-  are the two load-bearing contracts. **Not yet defined — first task of the
-  gateway build.**
-- **MVP seam test:** a fake in-memory connector must swap in for Postgres without
-  touching resolver/planner.
+  are the two load-bearing contracts. **Defined** in `gateway/contracts.py`
+  (with `ResolvedField`). The 10-step flow lives in `gateway/pipeline.py::run_query`.
+- **MVP seam test:** ✅ a fake in-memory connector (`gateway/connectors/fake.py`)
+  swaps in for Postgres — `tests/gateway/test_seam_parity.py` asserts both select the
+  same row-set from the same IR (verified against a real Postgres 16).
 
 ## 4. Prompt-cache layout 📐 (gateway) / intentionally uncached in the spike
 
@@ -93,12 +100,14 @@ user:       just the {want}/{where} request      ← tiny, volatile, full price
   cache daily.
 - Anthropic needs the explicit `cache_control` marker; OpenAI/Gemini auto-cache.
 - Bigger cost lever is the **resolution cache** (skip the LLM on a repeat
-  key→column); prompt caching cuts input ~90% on the miss path. 📐
+  key→column); prompt caching cuts input ~90% on the miss path. ✅ (in-memory:
+  `gateway/cache.py` — a field cache + a where cache behind a `CacheStore` iface;
+  prompt-cache markers themselves are 📐).
 
 ## 5. Model & LLM abstraction ✅ (interface) / 📐 (escalation)
 
 - Depend only on two interfaces: `LLM.json` and `Embed.embed`
-  (`spike/llm.py`); inject the impl (LiteLLM). Any provider LiteLLM supports.
+  (`core/llm.py`); inject the impl (LiteLLM). Any provider LiteLLM supports.
 - **Start on `gemini/gemini-3.1-flash-lite`** — cheapest tier tested, and the
   standout among cheap models (100% field resolution, held the AST format where
   the cheap OpenAI models didn't). **Default-with-escalation:** escalate to a
@@ -106,7 +115,7 @@ user:       just the {want}/{where} request      ← tiny, volatile, full price
 - **Structured output** (schema-constrained `response_format`) is the durable fix
   for small models emitting off-contract JSON — prefer it over prompt-wrestling. 📐
 - **JSON extraction** must tolerate reasoning models that wrap JSON in prose:
-  decode the first JSON object, ignore trailing data (`spike/llm.py::_extract_json`). ✅
+  decode the first JSON object, ignore trailing data (`core/llm.py::_extract_json`). ✅
 
 ## 6. Security 📐
 
@@ -114,11 +123,13 @@ Dynamic field access needs a **field allowlist / field-level authz** and value
 sanitization at the boundary. The `validate_ast` whitelist is the first layer;
 authz is TBD in the gateway.
 
-## 7. Stack (gateway) 📐 — decided
+## 7. Stack (gateway) ✅ — built
 
-**Locked: Python (FastAPI).** Lift the de-risked spike resolver into a shared `core/`
-package rather than re-implement + re-validate it in TS. Deploy stays container-portable
-(Cloud Run / Fly / Render); the demo UI can still use Vercel. TS/GraphQL-Mesh's edge is
+**Locked: Python (FastAPI).** The de-risked spike resolver is now lifted into a shared
+`core/` package (types + resolver + `predicate`), imported by both the gateway and the
+frozen spike eval — one copy, no drift. Deploy is container-portable via one `Dockerfile`
+(the image ships `core/` + `gateway/` only; `spike/` is eval-only, excluded); the demo UI
+can still use Vercel. TS/GraphQL-Mesh's edge is
 multi-protocol/federation plumbing — deferred, and the hourglass keeps protocol a thin
 swappable adapter, so it is not a forcing function. Rationale in full:
 [`specs/2026-07-first-gateway-slice.md`](specs/2026-07-first-gateway-slice.md) §1.
@@ -148,7 +159,10 @@ The project's load-bearing vocabulary, in one place. (Component topology →
 - **Seam test** — proof that a **fake in-memory connector** swaps in for Postgres
   without touching resolver/planner.
 - **Execution equivalence** — the scoring semantics: two predicates are equal if
-  they select the **same rows**, regardless of AST shape.
+  they select the **same rows**, regardless of AST shape. The engine is
+  **`core/predicate.py`** (`matches`/`select_indices`) — one shared oracle used by
+  the fake connector (to filter rows) and the spike scorer (to compare row sets),
+  so a Postgres connector can be asserted equal to the exact semantics the eval trusts.
 - **Resolution cache** — the primary cost lever: a **field cache** (per `want` key)
   + a **where cache** (per NL phrase + date), skipping the LLM on a repeat.
 - **Domain hints** — optional per-tenant synonyms/glossary/rules/examples that

@@ -79,9 +79,9 @@ the current spec.)
 |---|---|---|---|
 | **Ingress** | `RequestAdapter` (`parse`/`format`) | JSON `{want, where}` ✅ | GraphQL (Strawberry), protobuf, OData 📐 |
 | **Semantic Core** | *(not an swap point — the value itself)* | resolver + gate + `validate_ast`, lifted into `core/` ✅ | evolves in `core/`; re-measured against the spike eval harness |
-| **Cache** | `CacheStore` | in-memory field + where dicts 📐 | Redis; semantic / embedding lookup on the where cache 📐 |
+| **Cache** | `CacheStore` | in-memory field + where dicts ✅ (`gateway/cache.py`) | Redis; semantic / embedding lookup on the where cache 📐 |
 | **LLM** | `LLM` / `Embed` (LiteLLM) | `gemini-3.1-flash-lite` ✅ (iface) | escalation to a stronger model; any LiteLLM vendor 📐 |
-| **Backend** | `Connector` (`describe`/`execute`/`capabilities`) | Postgres (denorm view) ✅ + fake in-memory ✅ | other DBs; real FK joins; pushdown via `capabilities()` 📐 |
+| **Backend** | `Connector` (`describe`/`execute`/`capabilities`) | Postgres (denorm view, `gateway/connectors/postgres.py`) ✅ + fake in-memory ✅ | other DBs; real FK joins; pushdown via `capabilities()` 📐 |
 
 The Semantic Core is deliberately the **one box you don't swap** — it's the novel
 value; the surrounding layers are commodity plumbing chosen for reuse.
@@ -93,5 +93,8 @@ value; the surrounding layers are commodity plumbing chosen for reuse.
   `want` fields and refuses low-confidence `where` filters.
 - **Resolution cost:** the Cache layer is the primary lever; the LLM is the cost
   source. See the current spec §6 and `todo.md` de-risking for the economics.
-- **Config:** env-driven (`DATABASE_URL`, LLM key + model, gate threshold, `LIMIT`);
-  the process stays container-portable.
+- **Config:** ✅ env-driven `Settings` (`gateway/config.py`) — `DATABASE_URL`,
+  `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`; the process stays container-portable
+  (one `Dockerfile`; quickstart in `gateway/README.md`).
+- **Execution equivalence:** the shared oracle is `core/predicate.py` — used by the
+  fake connector and the spike scorer, which is what makes the seam parity test meaningful.

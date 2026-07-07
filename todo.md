@@ -16,28 +16,33 @@ restating it. Keep current as part of the end-of-session checklist.
       maintained law — `docs/architecture.md` §2 (where-confidence) + §7 (Python/FastAPI)
       and `CLAUDE.md` (status + Locked decisions). Demo refined to a **real Postgres +
       dynamic schema detection** (`BOOKS`/etc. stay `spike/`-only eval fixtures).
-- [ ] **Write the implementation plan** (→ `docs/plans/`) — **next, in a fresh session.**
-      Reference [`docs/specs/2026-07-first-gateway-slice.md`](docs/specs/2026-07-first-gateway-slice.md).
-      Then implement the slice against the plan.
+- [x] **Write the implementation plan + build the slice** — plan landed
+      [`docs/plans/2026-07-first-gateway-slice.md`](docs/plans/2026-07-first-gateway-slice.md);
+      **built as v0.2.0** (see the devlog top row). `core/` + `gateway/`, Postgres + fake
+      connectors, seam parity verified against real Postgres 16, Docker + quickstart shipped.
+- [ ] **Re-run the spike eval** (`python -m spike.score --models gemini/gemini-3.1-flash-lite`)
+      to confirm the where-confidence prompt change didn't regress want/where accuracy —
+      **not yet done (needs an LLM API key)**; record the numbers in the devlog once run.
+- [ ] **Symbolic / relative dates (`bind_today`)** — **the next milestone** (first fast-follow;
+      detail under *Later*). Compile `where` to a date-independent AST → date-independent where
+      cache + removes LLM date-math errors. Re-run the spike eval to confirm no regression.
 
-## MVP shape & setup — decide in the first spec
+## MVP shape & setup — settled in the v0.2.0 slice
 
 Goal: a **light, easy on-ramp** — a user points the gateway at their DB, gives it
-an LLM key, and starts receiving `{want, where}` requests. Decisions to settle:
+an LLM key, and starts receiving `{want, where}` requests. Settled decisions:
 
-- [ ] **How to serve / package** (undecided): a **Docker image** (point at a DB +
-      set env → running gateway), a runnable process/CLI, a library/framework
-      plugin, or serverless. Lean: Docker for the simplest on-ramp — revisit.
-- [ ] **Which DB first:** Postgres (matches the connector seam plan); config via a
-      standard DSN / env var.
-- [ ] **How to talk to the LLM:** LiteLLM (already), key + model via env; default
-      `gemini-3.1-flash-lite` (see [`docs/architecture.md`](docs/architecture.md) §5).
-- [ ] **Config surface:** how the user declares backend + credentials (env vars vs
-      a small config file), and later per-tenant domain hints / field allowlist.
-- [ ] **Onboarding flow:** fewest steps from "install" to "first successful query"
-      — target a copy-paste quickstart in the README. Deliverable: a
-      `gateway/README.md` quickstart (build-time; highest-leverage doc for both
-      adoption and a portfolio reviewer who runs it).
+- [x] **How to serve / package:** a **Docker image** (`Dockerfile` ships `core/`+`gateway/`;
+      `docker run -p 8000:8000 --env-file .env`). `uvicorn gateway.app:app` for local dev.
+- [x] **Which DB first:** Postgres, via a standard DSN in `DATABASE_URL`
+      (`gateway/connectors/postgres.py` introspects a denormalized view).
+- [x] **How to talk to the LLM:** LiteLLM, key + model via env; default
+      `gemini-3.1-flash-lite` (`LLM_MODEL`).
+- [x] **Config surface:** env-driven `Settings` (`gateway/config.py`) — `DATABASE_URL`,
+      `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`. Per-tenant domain hints / field allowlist
+      still deferred.
+- [x] **Onboarding flow:** copy-paste quickstart shipped at
+      [`gateway/README.md`](gateway/README.md) (Postgres + seed → env → `docker run` → `curl`).
 - [ ] **Public demo site / playground** — a hosted page where anyone pastes weird
       field names + an NL filter against a demo backend and watches it resolve
       (the enthusiast reviewer's top ask; great for adoption). **Cost is the catch

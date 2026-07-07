@@ -1,0 +1,6 @@
+spike/
+tests/
+docs/
+*.log
+__pycache__/
+.git/

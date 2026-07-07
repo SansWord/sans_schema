@@ -1,0 +1,95 @@
+# sans_schema Gateway — Quickstart
+
+A **Semantic Query Gateway**. A client sends `{want, where}` using its *own* field
+names plus a plain-language filter, against a Postgres backend whose schema it
+doesn't know. The gateway resolves the fields, compiles the NL filter to a
+**validated predicate AST**, executes, and returns rows in the client's own keys.
+
+This is the first end-to-end slice (v0.2.0). See [`../docs/architecture.md`](../docs/architecture.md)
+for the full design.
+
+## 1. Start Postgres and load the demo data
+
+```bash
+docker run -d --name sans-pg -e POSTGRES_PASSWORD=pg -p 5432:5432 postgres:16
+export DATABASE_URL="postgresql://postgres:pg@localhost:5432/postgres"
+
+# Seed the demo dataset (normalized authors/books + the flat books_view).
+docker exec -i sans-pg psql -U postgres -d postgres < gateway/demo/seed.sql
+```
+
+`gateway/demo/seed.sql` is the source of truth for the demo data; the gateway
+introspects `books_view` at startup — no schema is hardcoded.
+
+## 2. Configure the environment
+
+```bash
+export DATABASE_URL="postgresql://postgres:pg@localhost:5432/postgres"
+export LLM_MODEL="gemini/gemini-3.1-flash-lite"   # any LiteLLM model id
+export GEMINI_API_KEY="…"                          # key for your chosen model's provider
+```
+
+| Env var          | Default                          | Purpose                                   |
+|------------------|----------------------------------|-------------------------------------------|
+| `DATABASE_URL`   | *(required)*                     | Postgres DSN the connector introspects    |
+| `LLM_MODEL`      | `gemini/gemini-3.1-flash-lite`   | LiteLLM model id for resolution           |
+| `GATE_THRESHOLD` | `0.7`                            | Confidence gate (want-decline / where-422)|
+| `RESULT_LIMIT`   | `100`                            | Max rows returned per query               |
+
+Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
+`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **Never commit keys.**
+
+## 3. Run the gateway
+
+**Container (recommended):**
+
+```bash
+docker build -t sans-schema:dev .
+docker run -p 8000:8000 --env-file .env sans-schema:dev
+```
+
+**Local (dev):**
+
+```bash
+pip install -e ".[dev]"
+uvicorn gateway.app:app --reload
+```
+
+## 4. Query it
+
+```bash
+curl -X POST localhost:8000/query \
+  -H 'content-type: application/json' \
+  -d '{"want": {"title": null, "writer": null},
+       "where": "science fiction only",
+       "isVerbose": true}'
+```
+
+`want` is your field names (an object `{key: null}` or a list `["key", …]`);
+`where` is a plain-language filter; `isVerbose` adds the `interpreted` echo.
+
+Expected response shape:
+
+```json
+{
+  "rows": [
+    {"title": "The Long Orbit", "writer": "R. Novak"},
+    {"title": "Future Shock 2026", "writer": "SansWord"}
+  ],
+  "interpreted": {
+    "want": {
+      "title":  {"field": "title", "confidence": 0.95},
+      "writer": {"field": "author_name", "confidence": 0.93}
+    },
+    "where": {
+      "raw": "science fiction only",
+      "ast": {"op": "eq", "field": "category", "value": "Science Fiction"},
+      "confidence": 0.9
+    }
+  }
+}
+```
+
+Rows come back in **your** keys. A field the gateway can't confidently resolve
+comes back as a `null` column (not an error); a low-confidence or off-contract
+filter returns `422` with the `interpreted` echo so you can see what it understood.

@@ -17,10 +17,72 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.0](#v020--first-gateway-slice-2026-07-07-0031) | Built the first end-to-end gateway slice — `core/` (resolver + predicate) lifted from the spike, `gateway/` (contracts, gate, two-part cache, 10-step pipeline, Postgres + fake connectors, FastAPI `POST /query`). Seam parity verified against real Postgres 16; 35 tests green. Docker + quickstart. |
 | [v0.2.0-design](#v020-design--first-gateway-slice-design-2026-07-06) | Designed the first gateway slice — locked Python/FastAPI, `RawQuery`/`CanonicalQueryIR` contracts, denorm-view connector + fake seam, two-part cache, want+where gates. Added maintained `system-design.md`. No code. |
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.0 — First gateway slice (2026-07-07 00:31)
+
+**Review:** not yet
+**Design docs:**
+- First Gateway Slice: [Spec](specs/2026-07-first-gateway-slice.md) [Plan](plans/2026-07-first-gateway-slice.md)
+
+**What was built:**
+- **`core/`** — lifted the four reusable spike modules (`llm`, `prompts`, `resolver`,
+  `schemas` types) into a shared package imported by both the gateway and the frozen
+  spike eval (one copy, no drift). Added **`core/predicate.py`** — the execution-equivalence
+  matcher, moved out of `spike/score.py` so the fake connector and the scorer share one oracle.
+- **`core.where_resolve`** — the one v1 resolver change: the `where` prompt now emits a
+  `confidence`; `where_resolve` returns `WhereResult{ast, confidence}` while `where_ast`
+  keeps its bare-AST signature for the frozen eval.
+- **`gateway/`** — `contracts.py` (`RawQuery`/`CanonicalQueryIR`/`ResolvedField`),
+  `gate.py` (0.7 threshold, want-decline + where-422), `cache.py` (two-part field+where cache
+  behind a `CacheStore` iface), `pipeline.py` (the 10-step flow + `GatewayError` semantics +
+  field→client remap), `config.py` (env-driven `Settings`), `app.py` (FastAPI `POST /query`
+  + JSON `RequestAdapter`).
+- **Connectors** — `base.py` (`Connector` Protocol, `Capabilities`, stable `schema_version`),
+  `fake.py` (in-memory seam twin over the demo mirror), `postgres.py` (introspect
+  `information_schema` over a denormalized view + compile the validated AST → parameterized SQL).
+- **Demo** — `demo/seed.sql` (normalized authors/books + `books_view`) as the source of truth,
+  `demo/rows.py` as the in-memory mirror for the fake connector.
+- **Tests** — 30 LLM-free + 5 Postgres-backed (35 green against real Postgres 16), incl. the
+  headline **seam parity** test (Postgres and fake select the same row-set from one IR) and an
+  opt-in live smoke test. **`Dockerfile`** (ships `core/`+`gateway/` only) + **`gateway/README.md`**
+  copy-paste quickstart.
+
+**Key technical learnings:**
+- `[gotcha]` **A Postgres view does NOT inherit its base tables' column comments.** The seed
+  commented `books.category`, but `describe()` introspects `books_view`, so `col_description`
+  returned empty and the introspection test failed. Fix: `COMMENT ON COLUMN books_view.<col>`
+  directly (the seed now comments the view columns, mirroring `rows.py`).
+- `[gotcha]` **A static `[tool.setuptools] packages` list that names a dir which isn't present
+  fails the build** ("package directory 'X' does not exist"). Bit twice: first the yet-uncreated
+  `gateway/` at the editable install, then `spike/` inside the Docker image (which ships only
+  `core/`+`gateway/`). Fix: drop `spike/` from the distribution's `packages` — it stays
+  importable in dev because `tests/` is a package, so the repo root lands on `sys.path`.
+- `[insight]` **Sharing `core/predicate.py` is what makes the seam parity test meaningful:**
+  the fake connector filters rows with the *same* oracle the spike scorer trusts for execution
+  equivalence, so asserting Postgres == fake asserts Postgres agrees with the eval's semantics.
+- `[note]` **`_accepts_limit` keeps the pipeline connector-agnostic** — `PostgresConnector.execute`
+  takes a `limit`; the fake one doesn't. The pipeline introspects the signature rather than forcing
+  the fake to carry a LIMIT it can't enforce.
+- `[note]` **The gate is applied at read time, not write time.** Caches store raw
+  `{field/ast, confidence}`; changing `GATE_THRESHOLD` never invalidates a cache entry.
+- `[note]` **Old pip (21.2.4) can't do PEP 660 editable installs** from a pyproject-only
+  setuptools project — upgraded pip+setuptools (user) first.
+
+**Process learnings:**
+- `[gotcha]` **Version collision the plan didn't catch:** the plan's Task 13 labelled this
+  milestone `v0.1.0`, but `v0.1.0` is the spike and `v0.2.0-design` was this slice's design.
+  Per the `vX.Y.0-design → vX.Y.0` convention this build is **v0.2.0** (pyproject + README + this
+  entry aligned).
+- `[note]` **Spike re-measure is pending an LLM API key.** Task 12 Step 3 (re-run the spike eval
+  to confirm the where-confidence prompt change didn't regress want/where accuracy) could NOT be
+  run — no API key in this environment. Numbers are not recorded; run
+  `GEMINI_API_KEY=… python -m spike.score --models gemini/gemini-3.1-flash-lite` before trusting
+  the prompt change, and likewise the opt-in `RUN_LIVE_LLM=1` end-to-end test.
 
 ## v0.2.0-design — First gateway slice design (2026-07-06)
 
