@@ -74,6 +74,10 @@ def want_system(hints: DomainHints = NO_HINTS) -> str:
         "vocabulary. For each requested key, return the single best matching "
         "field path from the schema, or null if nothing matches semantically. "
         "Also return a confidence 0.0-1.0 per key.\n"
+        "Return field null when no schema field is a genuine semantic match — do "
+        "not force a weak guess. A confidence below 0.5 is treated as 'no match', "
+        "so use >= 0.7 only when the mapping is clearly correct, and prefer null "
+        "for tenuous matches.\n"
         "Respond as JSON: "
         '{"mapping": {"<key>": {"field": "<table.column>|null", "confidence": 0.0}}}'
         + hints.block("want")
@@ -93,6 +97,11 @@ def where_system(hints: DomainHints = NO_HINTS) -> str:
         + ", ".join(sorted(OPS))
         + ".\n"
         "Rules:\n"
+        "- STRUCTURE: every node is a JSON object with an \"op\" key. NEVER use an "
+        "operator name or a field name as a key. "
+        "WRONG: {\"and\": [...]}, {\"lt\": {...}}, {\"price\": {\"lt\": 20}}. "
+        "RIGHT: {\"op\": \"and\", \"clauses\": [...]}, "
+        "{\"op\": \"lt\", \"field\": \"t.price\", \"value\": 20}.\n"
         "- Leaf node: {\"op\": \"gte\", \"field\": \"<table.column>\", \"value\": <v>}\n"
         "- For `in`/`nin`, value is an array of options: \"value\": [a, b, ...].\n"
         "- For `between`, value is a two-element array [low, high]: "
@@ -105,7 +114,16 @@ def where_system(hints: DomainHints = NO_HINTS) -> str:
         "range Y-01-01 .. Y-12-31 using an 'and' of gte/lte.\n"
         "- Match filter values to the schema's real enum/sample values "
         "(e.g. 'sci-fi' -> 'Science Fiction').\n"
+        "- Prefer matching a role/status/category word as a VALUE in the matching "
+        "column (eq/in/contains on a name/title/status field) over inferring a "
+        "relationship through id / foreign-key fields.\n"
         "- Numbers as numbers, booleans as booleans, dates as 'YYYY-MM-DD' strings.\n"
+        "Example — for \"active premium users who joined after 2024\" over fields "
+        "users.status, users.plan, users.joined_at:\n"
+        "{\"where\": {\"op\": \"and\", \"clauses\": ["
+        "{\"op\": \"eq\", \"field\": \"users.status\", \"value\": \"active\"}, "
+        "{\"op\": \"eq\", \"field\": \"users.plan\", \"value\": \"premium\"}, "
+        "{\"op\": \"gt\", \"field\": \"users.joined_at\", \"value\": \"2024-12-31\"}]}}\n"
         "Respond as JSON with the AST under key \"where\": {\"where\": { ... }}"
         + hints.block("where")
     )
