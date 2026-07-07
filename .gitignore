@@ -11,5 +11,8 @@ env/
 .env
 *.key
 
+# Run logs (spike output — keep local, don't version)
+*.log
+
 # OS
 .DS_Store
