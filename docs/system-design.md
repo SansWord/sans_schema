@@ -94,9 +94,12 @@ value; the surrounding layers are commodity plumbing chosen for reuse.
 - **Resolution cost:** the Cache layer is the primary lever; the LLM is the cost
   source. See the current spec §6 and `todo.md` de-risking for the economics.
 - **Config:** ✅ env-driven `Settings` (`gateway/config.py`) — `DATABASE_URL`,
-  `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`, and ingress caps `MAX_WANT_FIELDS` /
-  `MAX_FIELD_LEN` / `MAX_WHERE_LEN`; the process stays container-portable
-  (one `Dockerfile`; quickstart in `gateway/README.md`).
+  `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`, ingress caps `MAX_WANT_FIELDS` /
+  `MAX_FIELD_LEN` / `MAX_WHERE_LEN`, and `ENABLE_DEBUG_ENDPOINTS`; the process stays
+  container-portable (one `Dockerfile`; quickstart in `gateway/README.md`).
+- **Debug introspection (v0.2.3):** `/debug/prompts` (system prompts), `/debug/schema`
+  (the schema prompt), `/debug/cache` (resolution cache) — off by default; schema/cache
+  disclose data, so dev-only.
 - **Injection boundary + hardening (v0.2.1):** `validate_ast` (where) + `gate_want`
   schema check (select) + backend-error → 502 containment + ingress limits. Reviewed:
   no SQLi / no prompt-injection path to SQL. Authz/auth still deferred — architecture §6.

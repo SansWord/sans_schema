@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 63 tests green. |
 | [v0.2.2](#v022--static-type-check-of-the-ast-2026-07-07-0212) | Static pre-execute type check: leaf values validated against each field's declared type → a type-mismatched filter (e.g. the case-35 string-on-int) is a deterministic 422 instead of a backend 502. Conservative (unknown types skipped, coercible values pass); no eval re-measure needed. 60 tests green. |
 | [v0.2.1](#v021--security-review--hardening-2026-07-07-0201) | Adversarial security review (SQLi + prompt injection): no injection found, core claim holds. Hardened anyway — `want`-path schema validation, backend-error→502 containment, empty/malformed-AST→422, configurable ingress limits (`want`/`where` size). 50 tests green. |
 | [v0.2.0](#v020--first-gateway-slice-2026-07-07-0031) | Built the first end-to-end gateway slice — `core/` (resolver + predicate) lifted from the spike, `gateway/` (contracts, gate, two-part cache, 10-step pipeline, Postgres + fake connectors, FastAPI `POST /query`). Seam parity verified against real Postgres 16; 35 tests green. Docker + quickstart. |
@@ -24,6 +25,31 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.3 — Debug introspection endpoints (2026-07-07 02:23)
+
+**Review:** not yet
+
+**What was built:**
+- **`GET /debug/prompts`** — the static resolver **system** prompts (`want_system`/`where_system`)
+  + the operator whitelist + the prompt-cache layout. No backend data — safe.
+- **`GET /debug/schema`** — the introspected **schema prompt** (`Schema.as_prompt()`) plus the
+  structured fields. Discloses column names, descriptions, and **sample values**.
+- **`GET /debug/cache`** — the resolution-cache contents (cached `want`-field and `where`-phrase
+  resolutions, raw field/ast + confidence). Added `ResolutionCache.snapshot()` + `DictCache.items()`
+  (enumeration is best-effort — a non-enumerable store like Redis reports `null`).
+- **Gated + off by default** — `ENABLE_DEBUG_ENDPOINTS` (`gateway/config.py`); when disabled the
+  routes return **404** (not advertised). Tests: +4 (63 green).
+
+**Key technical learnings:**
+- `[insight]` **The "system prompt" is safe to expose; the "schema prompt" is not.** The static
+  instructions carry no data, but the schema block folds in real column names + sample values — the
+  same disclosure the security review flagged. Splitting them (`/debug/prompts` vs `/debug/schema`)
+  keeps the safe part safe and puts the disclosure behind the flag.
+- `[note]` **This is the operator's introspection tool, not client discovery.** `/debug/schema` is
+  the raw dump `docs/notes/query-api-open-questions.md` Q2 warns against for *untrusted clients*;
+  gated + dev-only, it's fine for the developer running the gateway. The client-facing answer stays
+  the curated, authz-filtered capability listing.
 
 ## v0.2.2 — Static type-check of the AST (2026-07-07 02:12)
 

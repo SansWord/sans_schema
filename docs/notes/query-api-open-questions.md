@@ -135,6 +135,11 @@ already noted in the demo todo.
 - **Prerequisites for any real-backend exposure:** field-level authz + sample-stripping, and a
   decision on whether the `interpreted` echo stays on by default (it's the current leak channel).
 
+**Built so far (v0.2.3):** a **developer** `/debug/schema` endpoint (the raw schema dump above)
+exists but is **off by default** and dev-only — it is the *operator's* introspection tool, not the
+*client-facing* discovery this question is about. The recommendation stands: the untrusted-client
+path should be the curated, authz-filtered capability listing, not `/debug/schema` or `want: "*"`.
+
 ---
 
 ## Cross-links

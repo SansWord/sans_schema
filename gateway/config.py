@@ -14,6 +14,7 @@ class Settings:
     max_want_fields: int      # cap on how many fields one request may ask for
     max_field_len: int        # cap on the length of a single `want` field name
     max_where_len: int        # cap on the length of the NL `where` string
+    enable_debug_endpoints: bool  # expose /debug/* (discloses schema+samples) — dev only
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -27,4 +28,8 @@ class Settings:
             max_want_fields=int(os.environ.get("MAX_WANT_FIELDS", "50")),
             max_field_len=int(os.environ.get("MAX_FIELD_LEN", "200")),
             max_where_len=int(os.environ.get("MAX_WHERE_LEN", "2000")),
+            # Debug introspection (system + schema prompts). OFF by default — the schema
+            # view discloses column names, descriptions, and sample values.
+            enable_debug_endpoints=os.environ.get(
+                "ENABLE_DEBUG_ENDPOINTS", "0").strip().lower() in ("1", "true", "yes", "on"),
         )

@@ -10,8 +10,10 @@ from fastapi import Body, Depends, FastAPI
 from fastapi.responses import JSONResponse
 
 from core.llm import LiteLLM
+from core.prompts import OPS, want_system, where_system
 from gateway.cache import ResolutionCache
 from gateway.config import Settings
+from gateway.connectors.base import schema_version
 from gateway.connectors.postgres import PostgresConnector
 from gateway.contracts import RawQuery
 from gateway.gate import GateConfig
@@ -97,3 +99,60 @@ def query(body: Dict[str, Any] = Body(...),
         return JSONResponse(status_code=e.status,
                             content={"error": e.code, "message": e.message,
                                      "interpreted": e.interpreted})
+
+
+# --- debug introspection (dev only; OFF unless ENABLE_DEBUG_ENDPOINTS is set) -----
+# When disabled these 404 (not advertised). /debug/schema and /debug/cache DISCLOSE
+# backend schema, sample values, and what has been queried — never expose publicly.
+
+_DISABLED = JSONResponse(status_code=404, content={"error": "not_found"})
+
+
+@app.get("/debug/prompts")
+def debug_prompts(settings: Settings = Depends(get_settings)):
+    """The static resolver prompts the gateway sends the model (no backend data)."""
+    if not settings.enable_debug_endpoints:
+        return _DISABLED
+    return {
+        "system": {"want": want_system(), "where": where_system()},
+        "operators": sorted(OPS),
+        "prompt_cache_layout":
+            "system[instructions] + system[schema + cache_control] + user[request]",
+    }
+
+
+@app.get("/debug/schema")
+def debug_schema(settings: Settings = Depends(get_settings),
+                 connector=Depends(get_connector)):
+    """The introspected backend schema as the resolver sees it — the 'schema prompt'.
+    DISCLOSES column names, descriptions, and sample values."""
+    if not settings.enable_debug_endpoints:
+        return _DISABLED
+    try:
+        schema = connector.describe()
+    except Exception as e:  # noqa: BLE001
+        return JSONResponse(status_code=502,
+                            content={"error": "backend_error", "message": str(e)})
+    return {
+        "backend_id": connector.backend_id,
+        "schema_version": schema_version(schema),
+        "as_prompt": schema.as_prompt(),
+        "fields": [{"path": f.path, "type": f.type, "description": f.description,
+                    "samples": f.samples} for f in schema.fields],
+    }
+
+
+@app.get("/debug/cache")
+def debug_cache(settings: Settings = Depends(get_settings),
+                cache: ResolutionCache = Depends(get_cache)):
+    """Current resolution-cache contents — the cached `want`-field and `where`-phrase
+    resolutions (raw field/ast + confidence, before the gate)."""
+    if not settings.enable_debug_endpoints:
+        return _DISABLED
+    snap = cache.snapshot()
+    return {
+        "field": snap["field"],
+        "where": snap["where"],
+        "field_count": len(snap["field"]) if snap["field"] is not None else None,
+        "where_count": len(snap["where"]) if snap["where"] is not None else None,
+    }

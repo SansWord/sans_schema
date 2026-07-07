@@ -35,6 +35,12 @@ class DictCache:
     def set(self, key: Tuple, value: Dict[str, Any]) -> None:
         self._d[key] = value
 
+    def items(self):
+        """Enumerate (key, value) pairs — used by the debug snapshot. Enumeration
+        is not part of the CacheStore contract, so a non-enumerable store (Redis)
+        simply won't provide it and the snapshot reports it as unavailable."""
+        return list(self._d.items())
+
 
 class ResolutionCache:
     """The field cache + the where cache, together."""
@@ -58,3 +64,20 @@ class ResolutionCache:
     def set_where(self, backend: str, sv: str, phrase: str, today: str,
                   value: Dict[str, Any]) -> None:
         self._where.set((backend, sv, normalize_phrase(phrase), today), value)
+
+    def snapshot(self) -> Dict[str, Any]:
+        """A serializable view of both caches (raw {field/ast, confidence}), for the
+        debug endpoint. Returns None for a store that can't enumerate (e.g. Redis)."""
+        def dump(store, keynames):
+            if not hasattr(store, "items"):
+                return None
+            out = []
+            for key, value in store.items():
+                entry = dict(zip(keynames, key))
+                entry["value"] = value
+                out.append(entry)
+            return out
+        return {
+            "field": dump(self._field, ("backend", "schema_version", "key")),
+            "where": dump(self._where, ("backend", "schema_version", "phrase", "today")),
+        }

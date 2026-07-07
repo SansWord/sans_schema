@@ -1,12 +1,19 @@
 from fastapi.testclient import TestClient
-from gateway.app import app, get_llm, get_connector, get_settings
+from gateway.app import app, get_llm, get_connector, get_settings, get_cache
+from gateway.cache import ResolutionCache
 from gateway.config import Settings
 from gateway.connectors.fake import FakeConnector
 from tests.fakes import FakeLLM
 
-def _tiny_limits():
-    return Settings(database_url="", llm_model="fake", gate_threshold=0.7, result_limit=100,
-                    max_want_fields=3, max_field_len=20, max_where_len=15)
+def _settings(**kw):
+    base = dict(database_url="", llm_model="fake", gate_threshold=0.7, result_limit=100,
+                max_want_fields=50, max_field_len=200, max_where_len=2000,
+                enable_debug_endpoints=False)
+    base.update(kw)
+    return lambda: Settings(**base)
+
+_tiny_limits = _settings(max_want_fields=3, max_field_len=20, max_where_len=15)
+_debug_on = _settings(enable_debug_endpoints=True)
 
 WANT_OK = {"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95},
                        "genre": {"field": "books_view.category", "confidence": 0.92}}}
@@ -63,3 +70,38 @@ def test_long_field_name_is_422():
     c = _client(FakeLLM(want=WANT_OK))
     r = c.post("/query", json={"want": {"x" * 100: None}})
     assert r.status_code == 422 and r.json()["error"] == "field_name_too_long"
+
+def test_debug_endpoints_404_when_disabled():
+    c = _client(FakeLLM())          # default settings → debug off
+    assert c.get("/debug/prompts").status_code == 404
+    assert c.get("/debug/schema").status_code == 404
+    assert c.get("/debug/cache").status_code == 404
+
+def test_debug_prompts_when_enabled():
+    app.dependency_overrides[get_settings] = _debug_on
+    c = _client(FakeLLM())
+    body = c.get("/debug/prompts").json()
+    assert "want" in body["system"] and "where" in body["system"]
+    assert "eq" in body["operators"]
+    assert "cache_control" in body["prompt_cache_layout"]
+
+def test_debug_schema_when_enabled_discloses_fields():
+    app.dependency_overrides[get_settings] = _debug_on
+    c = _client(FakeLLM())
+    body = c.get("/debug/schema").json()
+    paths = {f["path"] for f in body["fields"]}
+    assert "books_view.title" in paths
+    assert body["as_prompt"].startswith("Backend schema:")
+    assert body["schema_version"]
+
+def test_debug_cache_when_enabled_lists_entries():
+    app.dependency_overrides[get_settings] = _debug_on
+    fresh = ResolutionCache()
+    fresh.set_field("fake", "v1", "writer", {"field": "author_name", "confidence": 0.9})
+    fresh.set_where("fake", "v1", "sci-fi", "2026-07-07", {"ast": {"op": "eq"}, "confidence": 0.8})
+    app.dependency_overrides[get_cache] = lambda: fresh
+    c = _client(FakeLLM())
+    body = c.get("/debug/cache").json()
+    assert body["field_count"] == 1 and body["where_count"] == 1
+    assert body["field"][0]["key"] == "writer"
+    assert body["where"][0]["today"] == "2026-07-07"

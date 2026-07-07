@@ -156,6 +156,9 @@ Still 📐 (deferred to the security milestone, tracked in `todo.md`):
 - **Field-level authz / field allowlist** — today any *real* schema field resolves for any
   client (fine for a single curated view; required before multi-tenant / column-restricted use).
 - **Endpoint authentication** — `POST /query` is unauthenticated; add before any exposure.
+  The `/debug/*` introspection endpoints (`prompts`/`schema`/`cache`, v0.2.3) are **off by
+  default** (`ENABLE_DEBUG_ENDPOINTS`); `schema`/`cache` disclose schema + samples + query
+  history, so they're a local/dev aid — never expose a debug-enabled gateway publicly.
 - **Data-borne prompt injection** — `describe()` folds backend column comments + sample
   values into the prompt unsanitized; low blast radius today (still bounded by `validate_ast`),
   higher if a view ever exposes untrusted user-generated content. Treat schema text as data.

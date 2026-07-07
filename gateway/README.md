@@ -47,6 +47,7 @@ cp .env.example .env
 | `MAX_WANT_FIELDS`| `50`                             | Max fields one request may ask for        |
 | `MAX_FIELD_LEN`  | `200`                            | Max length of a single `want` field name  |
 | `MAX_WHERE_LEN`  | `2000`                           | Max length of the NL `where` string       |
+| `ENABLE_DEBUG_ENDPOINTS` | `0`                      | Expose `/debug/*` introspection (dev only — see below) |
 
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
 `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**
@@ -111,3 +112,25 @@ Expected response shape:
 Rows come back in **your** keys. A field the gateway can't confidently resolve
 comes back as a `null` column (not an error); a low-confidence or off-contract
 filter returns `422` with the `interpreted` echo so you can see what it understood.
+
+## 5. Debug endpoints (dev only)
+
+To see what the gateway actually sends the model and what it has cached, set
+`ENABLE_DEBUG_ENDPOINTS=1` and hit:
+
+| Endpoint | Shows | Discloses |
+|---|---|---|
+| `GET /debug/prompts` | the static resolver **system** prompts + operator whitelist + prompt-cache layout | nothing (no backend data) |
+| `GET /debug/schema` | the introspected **schema prompt** (what the resolver sees) + fields | column names, descriptions, **sample values** |
+| `GET /debug/cache` | the resolution cache — cached `want`-field and `where`-phrase resolutions | resolved paths/ASTs + what has been queried |
+
+```bash
+curl localhost:8000/debug/prompts     # safe — instructions only
+curl localhost:8000/debug/schema      # discloses schema + samples
+curl localhost:8000/debug/cache
+```
+
+> **Off by default; keep them off in production.** When disabled they return `404`
+> (not advertised). `/debug/schema` and `/debug/cache` disclose your schema, sample
+> data, and query history — they're a local/dev inspection aid, not a public surface.
+> There's no auth yet, so don't expose a debug-enabled gateway to untrusted callers.
