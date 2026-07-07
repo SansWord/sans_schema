@@ -19,6 +19,12 @@ from .resolver import parse_where, resolve_want
 from .schemas import ALL_SCHEMAS
 
 # Adjust to whatever your keys support. LiteLLM model identifiers.
+# Cross-vendor examples (pass via --models, or edit this list):
+#   Anthropic (ANTHROPIC_API_KEY): anthropic/claude-haiku-4-5 | -sonnet-4-6 | -opus-4-8
+#   OpenAI    (OPENAI_API_KEY):    openai/gpt-4o | openai/gpt-4o-mini
+#   Google    (GEMINI_API_KEY):    gemini/gemini-2.5-flash | gemini/gemini-2.5-pro
+#     (use whatever Gemini model id your key has access to; that's the
+#      Google AI Studio provider — Vertex is vertex_ai/gemini-... instead)
 DEFAULT_MODELS = [
     "anthropic/claude-haiku-4-5",
     "anthropic/claude-sonnet-4-6",

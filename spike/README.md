@@ -40,20 +40,33 @@ so you can benchmark the SAME test set across models/vendors. Default impl uses
 pip install -r requirements.txt
 
 # set whichever provider key(s) you want to benchmark
-export ANTHROPIC_API_KEY=...        # for claude-* models
-export OPENAI_API_KEY=...           # for gpt-* models
+export ANTHROPIC_API_KEY=...        # for anthropic/claude-* models
+export OPENAI_API_KEY=...           # for openai/gpt-* models
+export GEMINI_API_KEY=...           # for gemini/* models (Google AI Studio)
 
-# benchmark the default model set
+# benchmark the default model set (Anthropic tiers)
 python -m spike.score
 
-# or a specific model
+# a specific model
 python -m spike.score --models anthropic/claude-haiku-4-5
+
+# cross-vendor comparison in one run
+python -m spike.score --models \
+  anthropic/claude-sonnet-4-6 \
+  openai/gpt-4o \
+  gemini/gemini-2.5-pro
 ```
 
-Model strings are LiteLLM identifiers. Current Anthropic IDs:
-`anthropic/claude-opus-4-8`, `anthropic/claude-sonnet-4-6`,
-`anthropic/claude-haiku-4-5`. Adjust `DEFAULT_MODELS` in `score.py` to whatever
-your keys support.
+Model strings are LiteLLM identifiers — any provider LiteLLM supports works:
+- **Anthropic**: `anthropic/claude-opus-4-8`, `-sonnet-4-6`, `-haiku-4-5`
+- **OpenAI**: `openai/gpt-4o`, `openai/gpt-4o-mini`
+- **Google Gemini**: `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
+  (Google AI Studio, `GEMINI_API_KEY`; for Vertex use `vertex_ai/gemini-...`)
+
+Use whatever model ids your keys have access to. Edit `DEFAULT_MODELS` in
+`score.py` or pass `--models`. The `LiteLLM` wrapper requests JSON output and
+falls back gracefully for providers that reject `response_format`, so Gemini /
+OpenAI / Anthropic all work through the same code path.
 
 ## Files
 

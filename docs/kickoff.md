@@ -253,12 +253,48 @@ Run: `pip install -r spike/requirements.txt && python -m spike.score`
   ASTs select the same sample rows?) removed the false failures; verified
   against the actual recorded model outputs.
 
-**Read:** strong green light on the core value. Two caveats before treating the
-number as certified: (1) that run used ~7 cases — the set has since been
-**expanded to 52 across 4 domains** (library, shop, hr, streaming; 40
-where-scored + 12 want-only, 125 want-key mappings), validated offline, and is
-awaiting a re-run to produce the certified number; (2) ambiguous filter
-*values* ("fiction" → SF? Fantasy?)
+### Expanded-set result (52 cases, subagent simulation)
+
+Ran the full 52-case set (125 want-mappings + 40 where-predicates, 4 domains)
+against three Claude tiers, executed as **subagents** (no API key available), and
+scored with the deterministic code the models never saw:
+
+| Model | WANT | WHERE → AST |
+|---|---|---|
+| Haiku 4.5 | 98% (123/125) | 100% (40/40) |
+| Sonnet 4.6 | 100% (125/125) | 98% (39/40) |
+| Opus 4.8 | 100% (125/125) | 100% (40/40) |
+
+Aggregate ~99.5% / 99.2%. Every miss was a prompt gap or genuine ambiguity, not
+a capability failure:
+- Sonnet's 1 WHERE miss exposed an **underspecified `between` value shape** in the
+  prompt (it emitted `low`/`high` instead of `value:[lo,hi]`) — since fixed in
+  `prompts.py`. Exactly the kind of contract gap the spike is meant to catch.
+- Haiku's 2 WANT misses were borderline synonyms (`penName→author.name`, declined
+  at 0 confidence; `launchedIn`, genuinely ambiguous between release year and
+  catalog-add date).
+
+**Fidelity caveat:** this is a subagent simulation (agent-wrapped Claude tiers,
+multiple prompts per turn), not bare per-request API calls — directionally
+strong and consistent with the earlier run, but not a certified production
+number. A real per-request run (any provider key via LiteLLM — Anthropic /
+OpenAI / Gemini) remains the certified version.
+
+### First-run result (Haiku 4.5 / Sonnet 4.6 / Opus 4.8)
+
+- **WANT resolution: 100%** across all three models — including the cheapest
+  (Haiku). Synonyms, paraphrases, `state→status`, cross-entity fields, and
+  correctly *declining* the unresolvable `vibes` field all worked.
+- **WHERE → AST: ~100% semantically.** The first run reported 57%, but the raw
+  output showed all three models produced *correct* predicates — in two cases
+  **more** correct than the hand-written ground truth ("this year" as a bounded
+  range; "last 30 days" bounded on both ends). The 57% was an over-strict
+  exact-match oracle. Switching the scorer to **execution equivalence** (do both
+  ASTs select the same sample rows?) removed the false failures; verified
+  against the actual recorded model outputs.
+
+**Read:** strong green light on the core value. Remaining caveat: ambiguous
+filter *values* ("fiction" → SF? Fantasy?)
 are a real product gap, not a model failure — they need the value-resolution
 step plus a clarify path. Even the cheap model was accurate, so the cost model
 holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
@@ -270,8 +306,11 @@ holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
 - [x] Expand the case set — now **52 cases across 4 domains** (library, shop,
       hr, streaming), validated offline (every scored predicate selects a proper
       non-empty subset). Awaiting a re-run for the certified accuracy number.
-- [ ] Re-run the expanded set across Haiku/Sonnet/Opus + a non-Anthropic model
-      (GPT/Llama) for the certified, cross-vendor number.
+- [x] Run the expanded set across Haiku/Sonnet/Opus via subagent simulation —
+      ~99.5% WANT / 99.2% WHERE; found + fixed the `between` prompt gap. See §8.
+- [ ] Certified per-request run via LiteLLM (needs a provider key) across
+      Anthropic + a non-Anthropic model — **Gemini** (`gemini/*`, `GEMINI_API_KEY`)
+      and/or OpenAI — for the official cross-vendor number.
 - [ ] Lock the `RawQuery` and `CanonicalQueryIR` type definitions (the public
       contracts everything hangs off).
 - [ ] Decide gateway language (TS vs Python) using the spike's federation-vs-
