@@ -124,7 +124,11 @@ def where_system(hints: DomainHints = NO_HINTS) -> str:
         "{\"op\": \"eq\", \"field\": \"users.status\", \"value\": \"active\"}, "
         "{\"op\": \"eq\", \"field\": \"users.plan\", \"value\": \"premium\"}, "
         "{\"op\": \"gt\", \"field\": \"users.joined_at\", \"value\": \"2024-12-31\"}]}}\n"
-        "Respond as JSON with the AST under key \"where\": {\"where\": { ... }}"
+        "Also return a confidence 0.0-1.0 that the compiled AST faithfully "
+        "captures the filter's intent against THIS schema (lower it when a value, "
+        "field, or relative date is uncertain).\n"
+        "Respond as JSON with the AST under key \"where\" and the score under key "
+        "\"confidence\": {\"where\": { ... }, \"confidence\": 0.0}"
         + hints.block("where")
     )
 

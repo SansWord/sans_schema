@@ -16,6 +16,7 @@ touching the contract.
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from .llm import LLM
@@ -30,12 +31,30 @@ def resolve_want(llm: LLM, schema: Schema, client_keys: List[str],
     return out.get("mapping", {})
 
 
+@dataclass
+class WhereResult:
+    ast: Optional[Dict[str, Any]]          # raw, UNVALIDATED predicate AST (or None)
+    confidence: Optional[float]            # None when the model omitted it
+
+
+def _where_call(llm: LLM, schema: Schema, nl: str, today: str,
+                hints: DomainHints = NO_HINTS) -> Dict[str, Any]:
+    return llm.json(where_system(hints), where_user(schema.as_prompt(), nl, today))
+
+
 def where_ast(llm: LLM, schema: Schema, nl: str, today: str,
               hints: DomainHints = NO_HINTS) -> Optional[Dict[str, Any]]:
-    """LLM call + extract the raw predicate AST (UNVALIDATED). Callers that want
-    the raw output for debugging validate separately (see score.run_case)."""
-    out = llm.json(where_system(hints), where_user(schema.as_prompt(), nl, today))
-    return out.get("where")
+    """Raw predicate AST only (UNVALIDATED). Used by the frozen spike eval."""
+    return _where_call(llm, schema, nl, today, hints).get("where")
+
+
+def where_resolve(llm: LLM, schema: Schema, nl: str, today: str,
+                  hints: DomainHints = NO_HINTS) -> WhereResult:
+    """AST + filter confidence. The gateway's entry point (spec §7)."""
+    out = _where_call(llm, schema, nl, today, hints)
+    conf = out.get("confidence")
+    return WhereResult(ast=out.get("where"),
+                       confidence=float(conf) if isinstance(conf, (int, float)) else None)
 
 
 def parse_where(llm: LLM, schema: Schema, nl: str, today: str,
