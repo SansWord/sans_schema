@@ -16,6 +16,7 @@ from .cases import CASES, TODAY, Case
 from core.llm import LiteLLM, LLM
 from core.prompts import want_system, want_user, where_system, where_user
 from core.resolver import resolve_want, validate_ast, where_ast
+from core.predicate import select_indices as _selected, score_where
 from .schemas import ALL_SCHEMAS
 
 # Adjust to whatever your keys support. LiteLLM model identifiers.
@@ -90,108 +91,6 @@ def score_want(expected: Dict[str, Optional[str]], got: Dict[str, Any]):
             if got_field == exp_field:
                 correct += 1
     return correct, len(expected), gate_ok
-
-
-# --- execution equivalence -------------------------------------------------
-# Two predicate ASTs are semantically equal iff they select the same rows from
-# the schema's sample dataset. This is robust to clause order, gt-vs-gte at a
-# non-boundary, open-range-vs-bounded, and date-vs-datetime formatting — the
-# exact things that made an AST-shape comparison give false failures.
-from datetime import datetime  # noqa: E402
-
-
-def _parse_dt(s: str):
-    for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
-        try:
-            return datetime.strptime(s.strip(), fmt)
-        except ValueError:
-            continue
-    return None
-
-
-def _norm(v: Any) -> Any:
-    """Normalize a value so equal-meaning values compare equal regardless of how
-    the model chose to represent them (int vs "2026", bool vs "true", date vs
-    datetime). Order matters: bool before number (bool is an int subclass)."""
-    if isinstance(v, bool):
-        return v
-    if isinstance(v, (int, float)):
-        return float(v)
-    if isinstance(v, str):
-        s = v.strip()
-        dt = _parse_dt(s)
-        if dt is not None:
-            return dt
-        low = s.lower()
-        if low in ("true", "false"):
-            return low == "true"
-        try:
-            return float(s)          # numeric string -> number ("2026" == 2026)
-        except ValueError:
-            return low
-    return v
-
-
-def _match(node: Dict[str, Any], row: Dict[str, Any]) -> bool:
-    op = node.get("op")
-    if op == "and":
-        return all(_match(c, row) for c in node.get("clauses", []))
-    if op == "or":
-        return any(_match(c, row) for c in node.get("clauses", []))
-    if op == "not":
-        return not _match(node["clause"], row)
-
-    raw = row.get(node.get("field"))
-    val = node.get("value")
-    lv = _norm(raw)
-    rv = [_norm(x) for x in val] if isinstance(val, list) else _norm(val)
-
-    if op == "eq":
-        return lv == rv
-    if op == "ne":
-        return lv != rv
-    if op == "in":
-        return lv in rv
-    if op == "nin":
-        return lv not in rv
-    if op == "is_null":
-        return raw is None
-    if op == "contains":
-        return isinstance(lv, str) and isinstance(rv, str) and rv in lv
-    if op == "between":
-        lo, hi = rv[0], rv[1]
-        try:
-            return lo <= lv <= hi
-        except TypeError:
-            return False
-    try:
-        if op == "gt":
-            return lv > rv
-        if op == "gte":
-            return lv >= rv
-        if op == "lt":
-            return lv < rv
-        if op == "lte":
-            return lv <= rv
-    except TypeError:
-        return False
-    return False
-
-
-def _selected(ast: Dict[str, Any], rows: List[Dict[str, Any]]) -> frozenset:
-    return frozenset(i for i, r in enumerate(rows) if _match(ast, r))
-
-
-def score_where(expected: Optional[Dict[str, Any]], got: Optional[Dict[str, Any]],
-                rows: List[Dict[str, Any]]) -> bool:
-    if expected is None:
-        return got is None
-    if got is None:
-        return False
-    try:
-        return _selected(expected, rows) == _selected(got, rows)
-    except Exception:  # noqa: BLE001
-        return False
 
 
 # --- run -------------------------------------------------------------------
