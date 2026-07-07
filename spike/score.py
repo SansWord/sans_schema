@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 from .cases import CASES, TODAY, Case
 from .llm import LiteLLM, LLM
 from .prompts import want_system, want_user, where_system, where_user
-from .resolver import parse_where, resolve_want
+from .resolver import resolve_want, validate_ast, where_ast
 from .schemas import ALL_SCHEMAS
 
 # Adjust to whatever your keys support. LiteLLM model identifiers.
@@ -208,11 +208,19 @@ def run_case(llm: LLM, case: Case) -> Dict[str, Any]:
 
     if case.where is not None or case.expect_where is not None:
         try:
-            got_where = parse_where(llm, schema, case.where or "", TODAY) if case.where else None
-            result["where"] = {"pass": score_where(case.expect_where, got_where, schema.rows),
-                               "raw": got_where}
-        except Exception as e:  # noqa: BLE001
-            result["where"] = {"error": str(e)}
+            got_where = where_ast(llm, schema, case.where or "", TODAY) if case.where else None
+        except Exception as e:  # noqa: BLE001 — LLM/JSON failure, no raw available
+            result["where"] = {"error": f"llm/parse: {e}"}
+        else:
+            # validate separately so the raw output is captured even on a
+            # contract violation (e.g. a where node with no "op").
+            try:
+                if got_where is not None:
+                    validate_ast(got_where, schema)
+                result["where"] = {"pass": score_where(case.expect_where, got_where, schema.rows),
+                                   "raw": got_where}
+            except Exception as e:  # noqa: BLE001
+                result["where"] = {"error": str(e), "raw": got_where}
     return result
 
 
@@ -304,6 +312,9 @@ def main(argv: Optional[List[str]] = None) -> int:
                 where_total += 1
                 if "error" in wh:
                     print(f"     where ERROR: {wh['error']}")
+                    print(f"       nl:       {case.where!r}")
+                    if "raw" in wh:
+                        print(f"       got raw:  {json.dumps(wh['raw'])}")
                     print(f"       expected: {json.dumps(case.expect_where)}")
                 else:
                     passed = wh["pass"]

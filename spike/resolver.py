@@ -30,13 +30,20 @@ def resolve_want(llm: LLM, schema: Schema, client_keys: List[str],
     return out.get("mapping", {})
 
 
+def where_ast(llm: LLM, schema: Schema, nl: str, today: str,
+              hints: DomainHints = NO_HINTS) -> Optional[Dict[str, Any]]:
+    """LLM call + extract the raw predicate AST (UNVALIDATED). Callers that want
+    the raw output for debugging validate separately (see score.run_case)."""
+    out = llm.json(where_system(hints), where_user(schema.as_prompt(), nl, today))
+    return out.get("where")
+
+
 def parse_where(llm: LLM, schema: Schema, nl: str, today: str,
                 hints: DomainHints = NO_HINTS) -> Optional[Dict[str, Any]]:
-    out = llm.json(where_system(hints), where_user(schema.as_prompt(), nl, today))
-    ast = out.get("where")
+    ast = where_ast(llm, schema, nl, today, hints)
     if ast is None:
         return None
-    validate_ast(ast, schema)
+    validate_ast(ast, schema)  # the injection boundary — reject off-contract ASTs
     return ast
 
 
