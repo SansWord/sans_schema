@@ -43,15 +43,31 @@ an LLM key, and starts receiving `{want, where}` requests. Settled decisions:
       still deferred.
 - [x] **Onboarding flow:** copy-paste quickstart shipped at
       [`gateway/README.md`](gateway/README.md) (Postgres + seed → env → `docker run` → `curl`).
-- [ ] **Public demo site / playground** — a hosted page where anyone pastes weird
-      field names + an NL filter against a demo backend and watches it resolve
-      (the enthusiast reviewer's top ask; great for adoption). **Cost is the catch
-      (worry about later, but noted):** a public endpoint invites arbitrary LLM
-      calls → uncapped spend. Guardrails to design when we build it — a **fixed
-      demo dataset** (so schema/prompt caches hit hard), the **cheapest model**
-      (flash-lite), **cache common queries**, per-IP/session **rate limits** + a
-      **global daily spend cap**, and bot/abuse protection. Keep it a bounded
-      sandbox, never an open gateway to a real DB.
+- [ ] **Demo site / playground — a web frontend over `POST /query`.** A page to
+      *interactively* test the gateway: a **textarea for `where`** (plain-language filter)
+      and a **per-field input row for `want`** (add/remove client field names), a **Run**
+      button, and the response rendered as a **table** (rows in the client's own keys). Show
+      the **`interpreted` echo** alongside (what each field/filter resolved to + confidence)
+      so the resolution is visible, and let the user **edit `where`/`want` and re-run** to see
+      how results change. `/debug/schema` can populate a "known fields" hint for the demo
+      backend. Doubles as (a) a dev/testing tool and (b) the public adoption playground (the
+      enthusiast reviewer's top ask). Stack likely Vercel (Next.js) → the container API.
+  - **Public-exposure guardrails (only when hosted for anyone):** a **fixed demo dataset** (so
+    schema/prompt caches hit hard), the **cheapest model** (flash-lite), **cached common
+    queries**, per-IP/session **rate limits** + a **global daily spend cap**, and bot/abuse
+    protection. Keep it a bounded sandbox, never an open gateway to a real DB. (Cost is the
+    catch — a public endpoint invites arbitrary LLM calls → uncapped spend.)
+- [ ] **Richer demo dataset from open data** — expand `gateway/demo/seed.sql` (+ its
+      `gateway/demo/rows.py` mirror) beyond the 6 hand-written books to a larger set of *real*
+      books/authors, so the demo/playground feels substantial. Free sources: **Open Library**
+      dumps / REST API (CC0 — works, editions, authors w/ birth years, subjects→category,
+      languages, page counts) is the richest; **Gutendex / Project Gutenberg** is cleaner and
+      carries author birth/death years but is public-domain-only; **Wikidata** (SPARQL, CC0) for
+      author country. Caveats: **`price` is in no bibliographic open dataset** (commercial) →
+      synthesize it; `page_count`/`country` coverage varies. Its own scoped task — it changes the
+      demo data, so `rows.py`, the seam-parity test, and the row-specific unit tests (hardcoded
+      titles/counts) move with it; keep the set small + deterministic (or a fixed snapshot) so
+      tests stay stable.
 
 **Ambition — the open question:** keep the MVP **dev / prototype grade**, *not* a
 production system serving 100+ QPS at a high cache rate? **Lean: yes, keep it
