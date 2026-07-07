@@ -14,6 +14,30 @@ restating it. Keep current as part of the end-of-session checklist.
   - When that spec lands, close the loop and `git rm docs/HANDOFF.md` — it's a
     one-time bridge primer, superseded by `CLAUDE.md` + the tree + the new spec.
 
+## MVP shape & setup — decide in the first spec
+
+Goal: a **light, easy on-ramp** — a user points the gateway at their DB, gives it
+an LLM key, and starts receiving `{want, where}` requests. Decisions to settle:
+
+- [ ] **How to serve / package** (undecided): a **Docker image** (point at a DB +
+      set env → running gateway), a runnable process/CLI, a library/framework
+      plugin, or serverless. Lean: Docker for the simplest on-ramp — revisit.
+- [ ] **Which DB first:** Postgres (matches the connector seam plan); config via a
+      standard DSN / env var.
+- [ ] **How to talk to the LLM:** LiteLLM (already), key + model via env; default
+      `gemini-3.1-flash-lite` (see [`docs/architecture.md`](docs/architecture.md) §5).
+- [ ] **Config surface:** how the user declares backend + credentials (env vars vs
+      a small config file), and later per-tenant domain hints / field allowlist.
+- [ ] **Onboarding flow:** fewest steps from "install" to "first successful query"
+      — target a copy-paste quickstart in the README.
+
+**Ambition — the open question:** keep the MVP **dev / prototype grade**, *not* a
+production system serving 100+ QPS at a high cache rate? **Lean: yes, keep it
+light and defer production scale.** Production scale depends on the unresolved
+de-risking items (cache-hit on real traffic, confident-wrong rate, authz) + the
+resolution cache — so don't let "could be production" bloat the light MVP; revisit
+only after the *Validation & de-risking* section clears.
+
 ## Later
 
 - [ ] Connector interface (`describe`/`capabilities`/`execute`) + the seam test.
