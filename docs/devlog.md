@@ -17,7 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
-| [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 63 tests green. |
+| [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 64 tests green (with Postgres). |
 | [v0.2.2](#v022--static-type-check-of-the-ast-2026-07-07-0212) | Static pre-execute type check: leaf values validated against each field's declared type → a type-mismatched filter (e.g. the case-35 string-on-int) is a deterministic 422 instead of a backend 502. Conservative (unknown types skipped, coercible values pass); no eval re-measure needed. 60 tests green. |
 | [v0.2.1](#v021--security-review--hardening-2026-07-07-0201) | Adversarial security review (SQLi + prompt injection): no injection found, core claim holds. Hardened anyway — `want`-path schema validation, backend-error→502 containment, empty/malformed-AST→422, configurable ingress limits (`want`/`where` size). 50 tests green. |
 | [v0.2.0](#v020--first-gateway-slice-2026-07-07-0031) | Built the first end-to-end gateway slice — `core/` (resolver + predicate) lifted from the spike, `gateway/` (contracts, gate, two-part cache, 10-step pipeline, Postgres + fake connectors, FastAPI `POST /query`). Seam parity verified against real Postgres 16; 35 tests green. Docker + quickstart. |
@@ -39,7 +39,7 @@ holds forever. Each entry links the spec/plan it came from.
   resolutions, raw field/ast + confidence). Added `ResolutionCache.snapshot()` + `DictCache.items()`
   (enumeration is best-effort — a non-enumerable store like Redis reports `null`).
 - **Gated + off by default** — `ENABLE_DEBUG_ENDPOINTS` (`gateway/config.py`); when disabled the
-  routes return **404** (not advertised). Tests: +4 (63 green).
+  routes return **404** (not advertised). Tests: +4 (59 LLM-free, 64 with Postgres).
 
 **Key technical learnings:**
 - `[insight]` **The "system prompt" is safe to expose; the "schema prompt" is not.** The static
