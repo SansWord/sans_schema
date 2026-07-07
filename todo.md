@@ -11,6 +11,8 @@ restating it. Keep current as part of the end-of-session checklist.
       minimal `RawQuery`/`CanonicalQueryIR` → a Postgres connector with a
       fake-connector seam test → response in the client's own keys.
       **Start by pinning the `RawQuery` and `CanonicalQueryIR` shapes.**
+  - When that spec lands, close the loop and `git rm docs/HANDOFF.md` — it's a
+    one-time bridge primer, superseded by `CLAUDE.md` + the tree + the new spec.
 
 ## Later
 
