@@ -54,14 +54,20 @@ python -m spike.score --models anthropic/claude-haiku-4-5
 python -m spike.score --models \
   anthropic/claude-sonnet-4-6 \
   openai/gpt-4o \
-  gemini/gemini-2.5-pro
+  gemini/gemini-pro-latest
 ```
 
 Model strings are LiteLLM identifiers — any provider LiteLLM supports works:
 - **Anthropic**: `anthropic/claude-opus-4-8`, `-sonnet-4-6`, `-haiku-4-5`
 - **OpenAI**: `openai/gpt-4o`, `openai/gpt-4o-mini`
-- **Google Gemini**: `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
-  (Google AI Studio, `GEMINI_API_KEY`; for Vertex use `vertex_ai/gemini-...`)
+- **Google Gemini** (`GEMINI_API_KEY`, Google AI Studio) — current as of Jul 2026:
+  - `gemini/gemini-pro-latest` / `gemini/gemini-flash-latest` — auto-track the newest Pro / Flash
+  - stable ids: `gemini/gemini-3.5-flash`, `gemini/gemini-3.1-flash-lite`,
+    `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
+  - Gemini 2.0 and 1.x are **shut down** (404). For Vertex use `vertex_ai/gemini-...`.
+
+To mirror the three Claude tiers (cheap → strong):
+`gemini/gemini-3.1-flash-lite`, `gemini/gemini-3.5-flash`, `gemini/gemini-pro-latest`.
 
 Use whatever model ids your keys have access to. Edit `DEFAULT_MODELS` in
 `score.py` or pass `--models`. The `LiteLLM` wrapper requests JSON output and
