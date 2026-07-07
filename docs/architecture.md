@@ -9,7 +9,7 @@ behind these (prior art, spike results, root-cause analyses) lives in
 **same** change, and log the change in [`devlog.md`](devlog.md).
 
 **Status legend:** ✅ implemented (in `core/` + `gateway/`, or the frozen `spike/`
-eval) · 📐 design only (not built yet). The first gateway slice (v0.1.0) is built.
+eval) · 📐 design only (not built yet). The first gateway slice (v0.2.0) is built.
 
 ---
 

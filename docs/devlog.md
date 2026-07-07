@@ -25,7 +25,13 @@ holds forever. Each entry links the spec/plan it came from.
 
 ## v0.2.0 — First gateway slice (2026-07-07 00:31)
 
-**Review:** not yet
+**Review:** complete — fresh-context `superpowers:code-reviewer` subagent vs the plan +
+spec. Verdict: complete and faithful; injection boundary genuinely enforced. Applied its
+fixes: a version leak in `architecture.md` (said v0.1.0), **hardened `validate_ast`** to
+reject malformed shapes as a 422 (see learnings), and **deepened the seam parity test** to
+assert `schema_version` equality (not just column-name sets). Open follow-ups it flagged:
+the spike re-measure (needs a key) and a `contains` ILIKE-vs-substring divergence (noted in
+`postgres.py`, harmless on the demo data).
 **Design docs:**
 - First Gateway Slice: [Spec](specs/2026-07-first-gateway-slice.md) [Plan](plans/2026-07-first-gateway-slice.md)
 
@@ -72,6 +78,12 @@ holds forever. Each entry links the spec/plan it came from.
   `{field/ast, confidence}`; changing `GATE_THRESHOLD` never invalidates a cache entry.
 - `[note]` **Old pip (21.2.4) can't do PEP 660 editable installs** from a pyproject-only
   setuptools project — upgraded pip+setuptools (user) first.
+- `[insight]` **`validate_ast` is the right place to reject malformed shape, not just
+  off-contract ops/fields** (post-review hardening). A `not` with no `clause`, or a
+  `between`/`in` with a scalar value, previously passed validation and then blew up as a
+  KeyError/TypeError in the connector → an unhandled 500. Validating shape at the injection
+  boundary turns those into the 422 §12 already promises. Strengthens the boundary in
+  `core/` (surfaced per the locked-decisions rule); the frozen spike eval still assembles.
 
 **Process learnings:**
 - `[gotcha]` **Version collision the plan didn't catch:** the plan's Task 13 labelled this

@@ -1,3 +1,4 @@
+from gateway.connectors.base import schema_version
 from gateway.connectors.fake import FakeConnector
 from gateway.contracts import CanonicalQueryIR, ResolvedField
 
@@ -8,13 +9,14 @@ IR = CanonicalQueryIR(
         {"op": "gte", "field": "price", "value": 20}]},
     where_confidence=0.9, where_raw="expensive sci-fi")
 
-def _rowset(rows):
-    return frozenset((r["t"] if "t" in r else r["title"],) for r in rows)  # keyed by field_path
-
 def test_introspected_schema_matches_the_fake_mirror(pg_connector):
-    pg_paths = {f.path for f in pg_connector.describe().fields}
-    fake_paths = {f.path for f in FakeConnector().describe().fields}
-    assert pg_paths == fake_paths
+    pg = pg_connector.describe()
+    fake = FakeConnector().describe()
+    assert {f.path for f in pg.fields} == {f.path for f in fake.fields}
+    # spec §11 tier-2: the introspected schema must *equal* the fake mirror, not
+    # merely share column names. schema_version folds path|type|description, so an
+    # equal hash proves seed.sql and rows.py have not drifted on type or description.
+    assert schema_version(pg) == schema_version(fake)
 
 def test_same_ir_selects_the_same_rows(pg_connector):
     pg_rows = pg_connector.execute(IR, limit=100)

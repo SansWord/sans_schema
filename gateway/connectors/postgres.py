@@ -92,6 +92,10 @@ class PostgresConnector:
         if op == "nin":
             return sql.SQL("{} <> ALL(%s)").format(col), [list(val)]
         if op == "contains":                       # ILIKE → case-insensitive, matches core.predicate
+            # NOTE: ILIKE treats % and _ in `val` as wildcards, whereas core.predicate
+            # does a plain substring test — so the two connectors diverge for values
+            # containing % or _. The v1 demo data has none; revisit (escape the value)
+            # before allowing arbitrary `contains` values through the seam.
             return sql.SQL("{} ILIKE %s").format(col), [f"%{val}%"]
         if op == "between":
             return sql.SQL("{} BETWEEN %s AND %s").format(col), [val[0], val[1]]

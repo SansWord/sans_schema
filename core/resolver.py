@@ -67,7 +67,14 @@ def parse_where(llm: LLM, schema: Schema, nl: str, today: str,
 
 
 def validate_ast(node: Any, schema: Schema) -> None:
-    """Reject anything outside the whitelist. This is the injection boundary."""
+    """Reject anything outside the whitelist. This is the injection boundary.
+
+    Also validates node SHAPE (a `not` has a `clause`; a `between` value is a
+    two-element list; `in`/`nin` values are lists) so a malformed model output is
+    rejected here as a ValueError — which the gateway turns into a 422 — rather
+    than surfacing later as a KeyError/TypeError (an unhandled 500) when compiled
+    or matched.
+    """
     valid_fields = {f.path for f in schema.fields}
     if not isinstance(node, dict):
         raise ValueError(f"AST node is not an object: {node!r}")
@@ -75,11 +82,22 @@ def validate_ast(node: Any, schema: Schema) -> None:
     if op not in OPS:
         raise ValueError(f"illegal operator: {op!r}")
     if op in ("and", "or"):
-        for c in node.get("clauses", []):
+        clauses = node.get("clauses")
+        if not isinstance(clauses, list):
+            raise ValueError(f"{op!r} node needs a 'clauses' list")
+        for c in clauses:
             validate_ast(c, schema)
     elif op == "not":
-        validate_ast(node["clause"], schema)
+        clause = node.get("clause")
+        if clause is None:
+            raise ValueError("'not' node needs a 'clause'")
+        validate_ast(clause, schema)
     else:
         fld = node.get("field")
         if fld not in valid_fields:
             raise ValueError(f"unknown field: {fld!r}")
+        value = node.get("value")
+        if op == "between" and not (isinstance(value, list) and len(value) == 2):
+            raise ValueError(f"'between' value must be a two-element list, got {value!r}")
+        if op in ("in", "nin") and not isinstance(value, list):
+            raise ValueError(f"{op!r} value must be a list, got {value!r}")

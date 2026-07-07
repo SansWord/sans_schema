@@ -52,6 +52,19 @@ def test_invalid_ast_field_is_422():
         _run(raw, llm)
     assert e.value.status == 422 and e.value.code == "invalid_ast"
 
+def test_malformed_ast_is_422_not_500():
+    # a `not` node with no `clause` and a `between` with a scalar value are
+    # malformed model outputs; validate_ast must reject them as 422 invalid_ast
+    # rather than letting a KeyError/TypeError escape as a 500.
+    for bad in ({"op": "not"},
+                {"op": "between", "field": "category", "value": "oops"}):
+        raw = RawQuery(["book_title"], "bad filter", "2026-07-06")
+        llm = FakeLLM(want={"mapping": {"book_title": {"field": "title", "confidence": 0.95}}},
+                      where={"where": bad, "confidence": 0.9})
+        with pytest.raises(GatewayError) as e:
+            _run(raw, llm)
+        assert e.value.status == 422 and e.value.code == "invalid_ast"
+
 def test_field_cache_prevents_second_llm_call():
     cache = ResolutionCache()
     raw = RawQuery(["book_title"], None, "2026-07-06")
