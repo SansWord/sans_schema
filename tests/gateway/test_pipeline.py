@@ -80,3 +80,33 @@ def test_llm_failure_retries_once_then_502():
     with pytest.raises(GatewayError) as e:
         _run(raw, llm)
     assert e.value.status == 502
+
+def test_want_resolved_to_unknown_path_is_declined_not_500():
+    # a confident resolution to a non-schema column must become a null column, not a
+    # bogus SELECT identifier (which the real backend would reject → 500).
+    raw = RawQuery(["book_title", "genre"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {
+        "book_title": {"field": "books_view.title", "confidence": 0.99},
+        "genre":      {"field": "books_view.ghost", "confidence": 0.99}}})  # not a real path
+    resp = _run(raw, llm)
+    assert resp["rows"] and all(set(r) == {"book_title", "genre"} for r in resp["rows"])
+    assert all(r["genre"] is None for r in resp["rows"])          # declined → null column
+
+def test_backend_execute_error_is_502():
+    class BoomConnector(FakeConnector):
+        def execute(self, ir):
+            raise RuntimeError("db exploded")
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    with pytest.raises(GatewayError) as e:
+        run_query(raw, BoomConnector(), llm, ResolutionCache(), GateConfig(0.7), 100)
+    assert e.value.status == 502 and e.value.code == "backend_error"
+
+def test_backend_describe_error_is_502():
+    class NoDescribe(FakeConnector):
+        def describe(self):
+            raise RuntimeError("introspection failed")
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    with pytest.raises(GatewayError) as e:
+        run_query(raw, NoDescribe(), FakeLLM(), ResolutionCache(), GateConfig(0.7), 100)
+    assert e.value.status == 502 and e.value.code == "backend_error"

@@ -44,6 +44,9 @@ cp .env.example .env
 | `LLM_MODEL`      | `gemini/gemini-3.1-flash-lite`   | LiteLLM model id for resolution           |
 | `GATE_THRESHOLD` | `0.7`                            | Confidence gate (want-decline / where-422)|
 | `RESULT_LIMIT`   | `100`                            | Max rows returned per query               |
+| `MAX_WANT_FIELDS`| `50`                             | Max fields one request may ask for        |
+| `MAX_FIELD_LEN`  | `200`                            | Max length of a single `want` field name  |
+| `MAX_WHERE_LEN`  | `2000`                           | Max length of the NL `where` string       |
 
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
 `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**

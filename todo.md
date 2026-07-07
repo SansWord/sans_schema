@@ -94,9 +94,13 @@ Each needs its own brainstorm → spec before building; both sharpen the de-risk
 - [ ] Raise the **confidence gate** to ~0.7 + add the low-confidence
       **clarify / escalate-to-stronger-model** path.
 - [ ] **Value resolution** step (enum fuzzing) as its own stage.
-- [ ] **Security:** field allowlist / field-level authz. *(When this gets designed,
-      consolidate the scattered security notes — architecture §6, the injection
-      boundary, the schema-probing surface — into a maintained `docs/security.md`.)*
+- [ ] **Security:** field allowlist / field-level authz + **endpoint authentication**
+      (`POST /query` is currently unauthenticated) + **data-borne prompt injection**
+      (schema comments/samples reach the prompt unsanitized — delimit/label as data).
+      *(v0.2.1 security review confirmed no SQLi / no prompt-injection→SQL and hardened the
+      robustness gaps — `want`-path validation, 502 containment, ingress size limits. These
+      three items are what's left; when designed, consolidate the scattered security notes —
+      architecture §6, the injection boundary, the schema-probing surface — into `docs/security.md`.)*
 - [ ] Decide the **gateway language** (TS vs Python + Ibis) at build time.
 - [ ] Freedom-to-operate check on patent **US 12045656** if commercializing.
 

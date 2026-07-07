@@ -125,11 +125,36 @@ user:       just the {want}/{where} request      ← tiny, volatile, full price
 - **JSON extraction** must tolerate reasoning models that wrap JSON in prose:
   decode the first JSON object, ignore trailing data (`core/llm.py::_extract_json`). ✅
 
-## 6. Security 📐
+## 6. Security ✅ (injection boundary + hardening) / 📐 (authz + auth)
 
-Dynamic field access needs a **field allowlist / field-level authz** and value
-sanitization at the boundary. The `validate_ast` whitelist is the first layer;
-authz is TBD in the gateway.
+**Reviewed (v0.2.1, adversarial subagent pass).** Verdict: **no SQL injection, no
+prompt-injection path to arbitrary SQL.** The core claim holds in code — every value
+reaching SQL is a psycopg parameter; every identifier is `sql.Identifier`; `validate_ast`
+whitelists ops + real fields before compile. A hijacked model can at worst mis-resolve
+within the allowed schema, never emit SQL.
+
+Boundaries and hardening in place:
+- **`validate_ast`** — the `where`-side injection boundary (operator whitelist + real
+  fields + node shape; rejects empty `and/or`, bad `between`/`in` shapes).
+- **`gate_want` schema check** — the **SELECT-side mirror**: a resolved `want` path is
+  trusted only if it exists in the schema, else declined to a null column (stops a
+  hijacked/mis-resolved `want` from injecting a bogus column identifier).
+- **Error containment** — `connector.describe()`/`execute()` failures (unreachable DB,
+  a compiled query the backend rejects — e.g. a type-mismatched value) return a clean
+  **502 `backend_error`**, never an unhandled 500 / stack trace.
+- **Ingress limits** — configurable caps on `want` field count, field-name length, and
+  `where` length (`MAX_WANT_FIELDS` / `MAX_FIELD_LEN` / `MAX_WHERE_LEN`) bound the
+  untrusted request before it reaches the LLM (cost/DoS).
+
+Still 📐 (deferred to the security milestone, tracked in `todo.md`):
+- **Field-level authz / field allowlist** — today any *real* schema field resolves for any
+  client (fine for a single curated view; required before multi-tenant / column-restricted use).
+- **Endpoint authentication** — `POST /query` is unauthenticated; add before any exposure.
+- **Data-borne prompt injection** — `describe()` folds backend column comments + sample
+  values into the prompt unsanitized; low blast radius today (still bounded by `validate_ast`),
+  higher if a view ever exposes untrusted user-generated content. Treat schema text as data.
+- The `interpreted` echo is a per-request schema-probing oracle — see
+  [`notes/query-api-open-questions.md`](notes/query-api-open-questions.md) Q2.
 
 ## 7. Stack (gateway) ✅ — built
 

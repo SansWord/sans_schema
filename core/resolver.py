@@ -83,8 +83,8 @@ def validate_ast(node: Any, schema: Schema) -> None:
         raise ValueError(f"illegal operator: {op!r}")
     if op in ("and", "or"):
         clauses = node.get("clauses")
-        if not isinstance(clauses, list):
-            raise ValueError(f"{op!r} node needs a 'clauses' list")
+        if not isinstance(clauses, list) or not clauses:
+            raise ValueError(f"{op!r} node needs a non-empty 'clauses' list")
         for c in clauses:
             validate_ast(c, schema)
     elif op == "not":

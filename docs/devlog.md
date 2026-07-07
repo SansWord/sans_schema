@@ -17,11 +17,49 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.1](#v021--security-review--hardening-2026-07-07-0201) | Adversarial security review (SQLi + prompt injection): no injection found, core claim holds. Hardened anyway — `want`-path schema validation, backend-error→502 containment, empty/malformed-AST→422, configurable ingress limits (`want`/`where` size). 50 tests green. |
 | [v0.2.0](#v020--first-gateway-slice-2026-07-07-0031) | Built the first end-to-end gateway slice — `core/` (resolver + predicate) lifted from the spike, `gateway/` (contracts, gate, two-part cache, 10-step pipeline, Postgres + fake connectors, FastAPI `POST /query`). Seam parity verified against real Postgres 16; 35 tests green. Docker + quickstart. |
 | [v0.2.0-design](#v020-design--first-gateway-slice-design-2026-07-06) | Designed the first gateway slice — locked Python/FastAPI, `RawQuery`/`CanonicalQueryIR` contracts, denorm-view connector + fake seam, two-part cache, want+where gates. Added maintained `system-design.md`. No code. |
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.1 — Security review + hardening (2026-07-07 02:01)
+
+**Review:** complete — adversarial security subagent (fresh context) focused on SQL injection
++ prompt injection, findings then verified empirically against real Postgres.
+
+**Verdict:** **No SQL injection, no prompt-injection path to arbitrary SQL.** The core claim
+(*NL → validated AST → parameterized SQL, never NL → SQL*) holds in code — proved by a
+`'; DROP TABLE books;--` value that was parameterized and left the table intact. Findings were
+robustness + a known authz gap, not injection.
+
+**What was hardened:**
+- **`gate_want` schema check** — the SELECT-side mirror of `validate_ast`: a resolved `want`
+  path is trusted only if it's a real schema field, else declined to a null column. Closes the
+  asymmetry where only `where` was validated.
+- **Backend-error containment** — `connector.describe()`/`execute()` failures now raise a clean
+  **502 `backend_error`** instead of an unhandled 500 (this also fixes the DB-unreachable stack
+  trace hit earlier in the quickstart).
+- **`validate_ast`** now rejects empty `and`/`or` clauses (would have compiled to `WHERE ()`).
+- **Configurable ingress limits** — `MAX_WANT_FIELDS` (50) / `MAX_FIELD_LEN` (200) /
+  `MAX_WHERE_LEN` (2000) cap the untrusted request before it inflates the LLM prompt (cost/DoS),
+  enforced at the HTTP boundary → 422.
+- Tests: +8 (45 LLM-free, 50 with Postgres). Verified against real Postgres that the three former
+  500 vectors now return 502/422/422.
+
+**Key technical learnings:**
+- `[insight]` **`sql.Identifier` prevents injection but not a 500.** A model-invented column name
+  is safely *quoted* (no breakout), but a non-existent column still errors at the backend. So the
+  SELECT path needs a schema-membership check for *robustness*, even though it was never an
+  injection hole. Injection-safety and error-safety are separate properties.
+- `[gotcha]` **In-memory oracle ≠ Postgres on a bad value.** A string value on an integer column
+  (the case-35 "managers" output) *matched nothing* in `core.predicate` but raises
+  `InvalidTextRepresentation` on real Postgres → an uncaught 500. The equivalence oracle can hide
+  a class of runtime error the real backend surfaces; verify adversarial inputs against the DB.
+- `[note]` **Data-borne prompt injection is real but bounded.** Column comments + sample values
+  flow into the prompt unsanitized; still gated by `validate_ast`, so worst case is steering
+  SELECT to another real column or a 502 — logged for the security milestone, not fixed here.
 
 ## v0.2.0 — First gateway slice (2026-07-07 00:31)
 
@@ -106,11 +144,13 @@ friction points (missing `.env` template, container→DB host routing), all fixe
 - `[note]` **Spike re-measure done — no regression from the where-confidence change.**
   `spike.score --models gemini/gemini-3.1-flash-lite` (2026-07-07): **WANT 125/125 = 100%,
   WHERE→AST 39/40 = 98%** — identical to the v0.1.0 certified baseline (100/98). The single
-  WHERE miss is the known "managers" ambiguity (case 35: the model emitted a subquery-as-value
-  instead of `contains(title, "Manager")`), not caused by the confidence line. Nice side-proof of
-  the injection boundary: that subquery text was treated as a parameterized *value* (matched
-  nothing → 0 rows), never executed as SQL. The opt-in `RUN_LIVE_LLM=1` end-to-end test remains
-  optional (the live `curl` in this session already exercised the real path).
+  WHERE miss is the known "managers" ambiguity (case 35: the model emitted a subquery-string as
+  the `value` instead of `contains(title, "Manager")`), not caused by the confidence line.
+  Injection-wise the boundary holds — that text is passed as a parameterized *value*, never
+  executed as SQL. But note (from the later security review): against the spike's in-memory oracle
+  it merely matched nothing, whereas against **real Postgres** a string value on an integer column
+  raises a type-cast error → an **uncaught 500** (no data leak; a robustness gap now tracked). The
+  opt-in `RUN_LIVE_LLM=1` test remains optional (the live `curl` already exercised the real path).
 
 ## v0.2.0-design — First gateway slice design (2026-07-06)
 

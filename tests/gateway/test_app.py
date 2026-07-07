@@ -1,7 +1,12 @@
 from fastapi.testclient import TestClient
-from gateway.app import app, get_llm, get_connector
+from gateway.app import app, get_llm, get_connector, get_settings
+from gateway.config import Settings
 from gateway.connectors.fake import FakeConnector
 from tests.fakes import FakeLLM
+
+def _tiny_limits():
+    return Settings(database_url="", llm_model="fake", gate_threshold=0.7, result_limit=100,
+                    max_want_fields=3, max_field_len=20, max_where_len=15)
 
 WANT_OK = {"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95},
                        "genre": {"field": "books_view.category", "confidence": 0.92}}}
@@ -40,3 +45,21 @@ def test_want_as_list_is_accepted():
     c = _client(FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}}))
     r = c.post("/query", json={"want": ["book_title"]})
     assert r.status_code == 200
+
+def test_too_many_want_fields_is_422():
+    app.dependency_overrides[get_settings] = _tiny_limits
+    c = _client(FakeLLM(want=WANT_OK))
+    r = c.post("/query", json={"want": {"a": None, "b": None, "c": None, "d": None}})
+    assert r.status_code == 422 and r.json()["error"] == "too_many_want_fields"
+
+def test_where_too_long_is_422():
+    app.dependency_overrides[get_settings] = _tiny_limits
+    c = _client(FakeLLM(want=WANT_OK))
+    r = c.post("/query", json={"want": {"book_title": None}, "where": "x" * 100})
+    assert r.status_code == 422 and r.json()["error"] == "where_too_long"
+
+def test_long_field_name_is_422():
+    app.dependency_overrides[get_settings] = _tiny_limits
+    c = _client(FakeLLM(want=WANT_OK))
+    r = c.post("/query", json={"want": {"x" * 100: None}})
+    assert r.status_code == 422 and r.json()["error"] == "field_name_too_long"

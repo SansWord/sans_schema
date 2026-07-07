@@ -30,6 +30,13 @@ def test_and_needs_a_clauses_list():
     with pytest.raises(ValueError):
         validate_ast({"op": "and", "clauses": {"op": "eq"}}, SCHEMA)
 
+def test_empty_clauses_rejected():
+    # an empty and/or would compile to `WHERE ()` — a SQL syntax error → 500; reject it here.
+    with pytest.raises(ValueError):
+        validate_ast({"op": "and", "clauses": []}, SCHEMA)
+    with pytest.raises(ValueError):
+        validate_ast({"op": "or", "clauses": []}, SCHEMA)
+
 def test_unknown_field_and_op_still_rejected():
     with pytest.raises(ValueError):
         validate_ast({"op": "eq", "field": "nope", "value": 1}, SCHEMA)

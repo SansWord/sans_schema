@@ -94,7 +94,11 @@ value; the surrounding layers are commodity plumbing chosen for reuse.
 - **Resolution cost:** the Cache layer is the primary lever; the LLM is the cost
   source. See the current spec §6 and `todo.md` de-risking for the economics.
 - **Config:** ✅ env-driven `Settings` (`gateway/config.py`) — `DATABASE_URL`,
-  `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`; the process stays container-portable
+  `LLM_MODEL`, `GATE_THRESHOLD`, `RESULT_LIMIT`, and ingress caps `MAX_WANT_FIELDS` /
+  `MAX_FIELD_LEN` / `MAX_WHERE_LEN`; the process stays container-portable
   (one `Dockerfile`; quickstart in `gateway/README.md`).
+- **Injection boundary + hardening (v0.2.1):** `validate_ast` (where) + `gate_want`
+  schema check (select) + backend-error → 502 containment + ingress limits. Reviewed:
+  no SQLi / no prompt-injection path to SQL. Authz/auth still deferred — architecture §6.
 - **Execution equivalence:** the shared oracle is `core/predicate.py` — used by the
   fake connector and the spike scorer, which is what makes the seam parity test meaningful.

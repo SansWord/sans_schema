@@ -53,9 +53,14 @@ def _interpreted(select: List[ResolvedField], raw: RawQuery,
 
 def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
               gate: GateConfig, limit: int) -> Dict[str, Any]:
-    schema: Schema = connector.describe()                       # step 2 (memoized in-connector)
+    try:
+        schema: Schema = connector.describe()                   # step 2 (memoized in-connector)
+    except Exception as e:  # noqa: BLE001 — backend unreachable / introspection failed
+        raise GatewayError(502, "backend_error",
+                           f"backend schema introspection failed: {e}")
     sv = schema_version(schema)
     backend = connector.backend_id
+    valid_fields = {f.path for f in schema.fields}
 
     # step 3 — resolve want, field cache + miss-path batching (spec §6)
     cells: Dict[str, Any] = {}
@@ -71,8 +76,8 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
             cache.set_field(backend, sv, key, cell)
             cells[key] = cell
 
-    # step 4 — gate want
-    select = gate_want(raw.want, cells, gate)
+    # step 4 — gate want (valid_fields = the SELECT-side injection/robustness check)
+    select = gate_want(raw.want, cells, gate, valid_fields)
     if all(f.field_path is None for f in select):               # spec §12
         raise GatewayError(422, "all_want_declined", "no requested field resolved",
                            _interpreted(select, raw, None, None))
@@ -103,8 +108,15 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
     # steps 8–10 — assemble, execute, remap
     ir = CanonicalQueryIR(select=select, predicate=predicate,
                           where_confidence=where_conf, where_raw=raw.where)
-    rows = connector.execute(ir, limit=limit) if _accepts_limit(connector) \
-        else connector.execute(ir)
+    try:
+        rows = connector.execute(ir, limit=limit) if _accepts_limit(connector) \
+            else connector.execute(ir)
+    except GatewayError:
+        raise
+    except Exception as e:  # noqa: BLE001 — a compiled query the backend rejected (bad
+        # value type, empty clause, unreachable DB): a clean 502, never an unhandled 500.
+        raise GatewayError(502, "backend_error", f"query execution failed: {e}",
+                           _interpreted(select, raw, predicate, where_conf))
     out_rows = [remap_row(r, select) for r in rows]
     resp: Dict[str, Any] = {"rows": out_rows}
     if raw.verbose:

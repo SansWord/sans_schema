@@ -56,6 +56,22 @@ def to_raw_query(body: Dict[str, Any]) -> RawQuery:
                     verbose=bool(body.get("isVerbose", False)))
 
 
+def check_input_limits(raw: RawQuery, settings: Settings):
+    """Ingress size caps (config-driven). Returns (code, message) on violation, else
+    None. Bounds the untrusted request before it reaches the LLM (cost/DoS)."""
+    if len(raw.want) > settings.max_want_fields:
+        return ("too_many_want_fields",
+                f"`want` has {len(raw.want)} fields (max {settings.max_want_fields})")
+    over = next((k for k in raw.want if len(k) > settings.max_field_len), None)
+    if over is not None:
+        return ("field_name_too_long",
+                f"a `want` field name exceeds {settings.max_field_len} chars")
+    if raw.where is not None and len(raw.where) > settings.max_where_len:
+        return ("where_too_long",
+                f"`where` exceeds {settings.max_where_len} chars")
+    return None
+
+
 @app.post("/query")
 def query(body: Dict[str, Any] = Body(...),
           settings: Settings = Depends(get_settings),
@@ -67,6 +83,11 @@ def query(body: Dict[str, Any] = Body(...),
         return JSONResponse(status_code=422,
                             content={"error": "empty_want",
                                      "message": "`want` must name at least one field",
+                                     "interpreted": {"want": {}}})
+    violation = check_input_limits(raw, settings)
+    if violation is not None:
+        return JSONResponse(status_code=422,
+                            content={"error": violation[0], "message": violation[1],
                                      "interpreted": {"want": {}}})
     try:
         return run_query(raw, connector, llm, cache,
