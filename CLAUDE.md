@@ -21,7 +21,8 @@ assumed**. _(Edit freely.)_
 > [`docs/devlog.md`](docs/devlog.md); **what's next** → [`todo.md`](todo.md).
 
 Stable facts:
-- **Repo:** local git (no remote yet). Installable package (`pyproject.toml`,
+- **Repo:** git, remote `origin` on GitHub (`SansWord/sans_schema`, public — run the
+  secret scan below before every push). Installable package (`pyproject.toml`,
   `pip install -e ".[dev]"`) — ships `core/` + `gateway/`; `spike/` is eval-only.
 - **Stack:** Python 3.9 (spike) / 3.11 (container); `core/` (shared resolver +
   predicate) · `gateway/` (FastAPI `POST /query`, connectors, cache, pipeline) ·
@@ -46,6 +47,7 @@ Stable facts:
 - **Historical (allowed to go stale, kept forever — how we got here):**
   - [`docs/specs/`](docs/specs/) — per-milestone specs (the concept + spike write-up).
   - [`docs/plans/`](docs/plans/) — per-milestone implementation plans.
+  - [`docs/notes/`](docs/notes/) — pre-spec design notes / open questions (not law).
   - [`docs/devlog.md`](docs/devlog.md) — milestone log, newest-on-top.
   - [`docs/HANDOFF.md`](docs/HANDOFF.md) — one-time primer for the first-build session
     (superseded by this file + devlog + todo once the gateway is underway).
