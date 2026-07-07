@@ -27,11 +27,44 @@ from .schemas import ALL_SCHEMAS
 #       gemini-2.5-pro, gemini-2.5-flash. The *-latest aliases auto-track the
 #       newest Pro/Flash. Gemini 2.0 and 1.x are shut down (404). Google AI
 #       Studio provider — Vertex is vertex_ai/gemini-... instead.
-DEFAULT_MODELS = [
-    "anthropic/claude-haiku-4-5",
-    "anthropic/claude-sonnet-4-6",
-    "anthropic/claude-opus-4-8",
-]
+# Curated chat/reasoning tiers per provider (cheap -> strong). Pass a provider
+# keyword to --models to run its whole set, e.g. `--models gemini`. "all" runs
+# every provider. ("All models" literally would include image/embedding models
+# that aren't chat models, so these are the resolver-relevant tiers.)
+PROVIDER_SETS = {
+    "anthropic": [
+        "anthropic/claude-haiku-4-5",
+        "anthropic/claude-sonnet-4-6",
+        "anthropic/claude-opus-4-8",
+    ],
+    "gemini": [
+        "gemini/gemini-3.1-flash-lite",
+        "gemini/gemini-3.5-flash",
+        "gemini/gemini-pro-latest",
+    ],
+    "openai": [
+        "openai/gpt-4o-mini",
+        "openai/gpt-4o",
+    ],
+}
+
+DEFAULT_MODELS = PROVIDER_SETS["anthropic"]
+
+
+def expand_models(tokens: List[str]) -> List[str]:
+    """Expand provider keywords ('gemini', 'all') to model lists; pass other
+    tokens (explicit LiteLLM ids) through. De-dupes, preserving order."""
+    out: List[str] = []
+    for t in tokens:
+        if t == "all":
+            for v in PROVIDER_SETS.values():
+                out += v
+        elif t in PROVIDER_SETS:
+            out += PROVIDER_SETS[t]
+        else:
+            out.append(t)
+    seen = set()
+    return [m for m in out if not (m in seen or seen.add(m))]
 
 
 # --- scoring ---------------------------------------------------------------
@@ -202,7 +235,10 @@ def show_prompts() -> int:
 
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--models", nargs="+", default=DEFAULT_MODELS)
+    ap.add_argument("--models", nargs="+", default=DEFAULT_MODELS,
+                    help="LiteLLM model ids, and/or a provider keyword "
+                         "(anthropic | gemini | openai | all) to run that "
+                         "provider's whole tier set. e.g. --models gemini")
     ap.add_argument("--verbose", action="store_true", help="print raw resolver output")
     ap.add_argument("--show-prompts", action="store_true",
                     help="print the exact assembled prompts and exit (no API calls)")
@@ -211,7 +247,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.show_prompts:
         return show_prompts()
 
-    for model in args.models:
+    models = expand_models(args.models)
+
+    for model in models:
         print(f"\n{'='*70}\nMODEL: {model}\n{'='*70}")
         llm = LiteLLM(model)
         want_correct = want_total = 0

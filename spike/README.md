@@ -50,12 +50,23 @@ python -m spike.score
 # a specific model
 python -m spike.score --models anthropic/claude-haiku-4-5
 
-# cross-vendor comparison in one run
+# a whole provider's tier set (provider keyword expands to its chat tiers)
+python -m spike.score --models gemini          # all Gemini tiers
+python -m spike.score --models anthropic        # all Anthropic tiers
+python -m spike.score --models all              # every provider
+
+# mix keywords and explicit ids freely (de-duped)
 python -m spike.score --models \
-  anthropic/claude-sonnet-4-6 \
+  anthropic \
   openai/gpt-4o \
   gemini/gemini-pro-latest
 ```
+
+Provider keywords (`anthropic` | `gemini` | `openai` | `all`) expand to the
+curated chat/reasoning tiers in `PROVIDER_SETS` (in `score.py`) — edit that dict
+to change which models a keyword runs. "All models" literally would include a
+provider's image/embedding/video models, which aren't chat models; the keyword
+runs the resolver-relevant tiers instead.
 
 Model strings are LiteLLM identifiers — any provider LiteLLM supports works:
 - **Anthropic**: `anthropic/claude-opus-4-8`, `-sonnet-4-6`, `-haiku-4-5`
