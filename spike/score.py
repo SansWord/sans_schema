@@ -21,7 +21,8 @@ from .schemas import ALL_SCHEMAS
 # Adjust to whatever your keys support. LiteLLM model identifiers.
 # Cross-vendor examples (pass via --models, or edit this list):
 #   Anthropic (ANTHROPIC_API_KEY): anthropic/claude-haiku-4-5 | -sonnet-4-6 | -opus-4-8
-#   OpenAI    (OPENAI_API_KEY):    openai/gpt-4o | openai/gpt-4o-mini
+#   OpenAI    (OPENAI_API_KEY):    openai/gpt-5.5 | openai/gpt-5.4 | openai/gpt-5.4-mini
+#     current line is GPT-5.x (Jul 2026); gpt-4o / gpt-4.1 / o3 are legacy/deprecated
 #   Google    (GEMINI_API_KEY):    gemini/gemini-pro-latest | gemini/gemini-flash-latest
 #     current stable ids (Jul 2026): gemini-3.5-flash, gemini-3.1-flash-lite,
 #       gemini-2.5-pro, gemini-2.5-flash. The *-latest aliases auto-track the
@@ -43,8 +44,9 @@ PROVIDER_SETS = {
         "gemini/gemini-pro-latest",
     ],
     "openai": [
-        "openai/gpt-4o-mini",
-        "openai/gpt-4o",
+        "openai/gpt-5.4-mini",
+        "openai/gpt-5.4",
+        "openai/gpt-5.5",
     ],
 }
 

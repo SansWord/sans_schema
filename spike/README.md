@@ -58,7 +58,7 @@ python -m spike.score --models all              # every provider
 # mix keywords and explicit ids freely (de-duped)
 python -m spike.score --models \
   anthropic \
-  openai/gpt-4o \
+  openai/gpt-5.5 \
   gemini/gemini-pro-latest
 ```
 
@@ -70,7 +70,9 @@ runs the resolver-relevant tiers instead.
 
 Model strings are LiteLLM identifiers — any provider LiteLLM supports works:
 - **Anthropic**: `anthropic/claude-opus-4-8`, `-sonnet-4-6`, `-haiku-4-5`
-- **OpenAI**: `openai/gpt-4o`, `openai/gpt-4o-mini`
+- **OpenAI** (`OPENAI_API_KEY`) — current line is GPT-5.x (Jul 2026):
+  `openai/gpt-5.5` (flagship), `openai/gpt-5.4`, `openai/gpt-5.4-mini`.
+  `gpt-4o` / `gpt-4.1` / `o3` are legacy/deprecated.
 - **Google Gemini** (`GEMINI_API_KEY`, Google AI Studio) — current as of Jul 2026:
   - `gemini/gemini-pro-latest` / `gemini/gemini-flash-latest` — auto-track the newest Pro / Flash
   - stable ids: `gemini/gemini-3.5-flash`, `gemini/gemini-3.1-flash-lite`,
