@@ -1,7 +1,7 @@
 # sans_schema — Handoff
 
 Context primer for starting a **new session to brainstorm the first
-implementation**. Read this first; `docs/kickoff.md` is the deep reference
+implementation**. Read this first; `docs/specs/2026-07-concept-and-spike.md` is the deep reference
 (design, prior art, results, decisions — section numbers cited below).
 
 ---
@@ -12,14 +12,15 @@ implementation**. Read this first; `docs/kickoff.md` is the deep reference
   its *own* field names + a plain-language filter, against a backend whose schema
   it doesn't know. The gateway semantically resolves fields, compiles the NL
   filter to a **validated predicate AST**, executes, and returns the response in
-  the client's *own* keys. (kickoff §1, §4)
+  the client's *own* keys. (spec §1, §4)
 - **Status:** the de-risking **spike is done and green-lit.** The one novel,
   risky layer — semantic resolution — was measured across **9 models / 3 vendors**
   (real per-request API). Top-tier models scored **100% / 100%**; even cheap
-  models were ~100% on field resolution. (kickoff §8)
+  models were ~100% on field resolution. (spec §8)
 - **Next:** brainstorm + build the **first gateway implementation** (a thin
   end-to-end vertical slice that reuses the spike's resolver).
-- **Repo:** 15 commits; `docs/kickoff.md` + a working Python `spike/`.
+- **Repo:** doc tree (root `CLAUDE.md`, `docs/`, `todo.md`) + a working Python
+  `spike/`. Current state = top row of [`docs/devlog.md`](devlog.md).
 
 ---
 
@@ -33,11 +34,11 @@ POST /query
 → resolve `writer→author`, `releaseDate→published_at`; compile `where` to a
 validated AST; run it; return `{ "title": ..., "writer": ..., "releaseDate": ... }`
 plus an `interpreted` echo. Client learns **neither** the schema **nor** a filter
-DSL. (kickoff §4)
+DSL. (spec §4)
 
 Why it's worth building: the pieces (text-to-SQL, semantic layers, federation)
 are commodity; the **unoccupied niche** is *runtime, client-driven resolution
-over an unknown backend behind a plain REST contract*. (kickoff §2, §3)
+over an unknown backend behind a plain REST contract*. (spec §2, §3)
 
 ---
 
@@ -101,7 +102,7 @@ broad federation pushdown, the prompt-cache markers (cost, not correctness).
 
 ## Key files
 
-- **`docs/kickoff.md`** — full design, prior art, certified results, all decisions.
+- **`docs/specs/2026-07-concept-and-spike.md`** — full design, prior art, certified results, all decisions.
   The deep reference.
 - **`spike/`** — a *working* resolver to lift from:
   - `prompts.py` — the layered LLM prompts (contract / schema / domain hints / request)
@@ -116,7 +117,7 @@ broad federation pushdown, the prompt-cache markers (cost, not correctness).
 
 ## Suggested prompt to open the next session
 
-> Read `docs/HANDOFF.md` and `docs/kickoff.md`. I want to brainstorm the **first
+> Read `docs/HANDOFF.md` and `docs/specs/2026-07-concept-and-spike.md`. I want to brainstorm the **first
 > implementation** of the sans_schema gateway — the thin end-to-end vertical
 > slice described in the handoff (one JSON `{want, where}` adapter → resolver
 > lifted from the spike → minimal `RawQuery`/`CanonicalQueryIR` → a Postgres

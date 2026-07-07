@@ -1,4 +1,10 @@
-# sans_schema — Project Kickoff
+# sans_schema — Concept & Spike (2026-07)
+
+> **Historical tier — spec snapshot.** How we got here: the concept, prior art,
+> spike design, and certified results. **Allowed to go stale, kept forever.** The
+> *current* rules live in [`docs/architecture.md`](../architecture.md) and the
+> root `CLAUDE.md` Locked decisions; the milestone log is [`docs/devlog.md`](../devlog.md).
+> Don't cite this file where it conflicts with those.
 
 > A **Semantic Query Gateway**: clients request data using their *own* field
 > names and a plain-language filter, without knowing the backend schema. The
@@ -268,7 +274,7 @@ mappings make steady-state per-request LLM cost ≈ zero._
 ## 8. The de-risking spike (do this before building)
 
 All value rides on resolution accuracy, so measure it before building the
-gateway. See [`/spike`](../spike/README.md). It measures, across models:
+gateway. See [`/spike`](../../spike/README.md). It measures, across models:
 
 1. **`want`-resolution** — top-1 field mapping + confidence-gate correctness.
 2. **NL-`where` → AST** — does the compiled predicate match the expected
