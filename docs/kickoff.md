@@ -280,6 +280,24 @@ strong and consistent with the earlier run, but not a certified production
 number. A real per-request run (any provider key via LiteLLM — Anthropic /
 OpenAI / Gemini) remains the certified version.
 
+### Certified per-request run — Gemini 3.x (real API, Jul 2026)
+
+First **certified** run (real LiteLLM per-request calls, not a simulation),
+cross-vendor validation on Google Gemini:
+
+| Model | WANT | WHERE → AST |
+|---|---|---|
+| gemini-3.1-flash-lite | 100% (125/125) | 98% (39/40) |
+| gemini-3.5-flash | 100% (125/125) | 100% (40/40) |
+| gemini-pro-latest | 100% (125/125) | 100% (40/40) |
+
+The single flash-lite miss was the ambiguous `"managers"` case (read as "has a
+manager" — over-broad). gemini-pro-latest is a reasoning model that wraps its
+JSON in prose/trailing content; a first pass scored it at a bogus 48% until
+`_extract_json` was hardened to decode the first JSON object and ignore trailing
+data (an issue the production gateway will face too). **Takeaway: the approach
+is not vendor-specific** — Gemini matches Claude at ~100%.
+
 ### First-run result (Haiku 4.5 / Sonnet 4.6 / Opus 4.8)
 
 - **WANT resolution: 100%** across all three models — including the cheapest
@@ -308,9 +326,10 @@ holds (cache resolved mappings → steady-state per-request LLM cost ≈ 0).
       non-empty subset). Awaiting a re-run for the certified accuracy number.
 - [x] Run the expanded set across Haiku/Sonnet/Opus via subagent simulation —
       ~99.5% WANT / 99.2% WHERE; found + fixed the `between` prompt gap. See §8.
-- [ ] Certified per-request run via LiteLLM (needs a provider key) across
-      Anthropic + a non-Anthropic model — **Gemini** (`gemini/*`, `GEMINI_API_KEY`)
-      and/or OpenAI — for the official cross-vendor number.
+- [x] Certified per-request run on **Gemini 3.x** (real API): flash-lite 100/98,
+      flash 100/100, pro-latest 100/100. Cross-vendor validation — see §8.
+- [ ] Certified per-request runs on **Anthropic** and **OpenAI** (need those
+      keys) to complete the cross-vendor table.
 - [ ] Lock the `RawQuery` and `CanonicalQueryIR` type definitions (the public
       contracts everything hangs off).
 - [ ] Decide gateway language (TS vs Python) using the spike's federation-vs-
