@@ -125,7 +125,9 @@ Close these before believing the "go build" signal or quoting an accuracy number
 - [ ] **Measure cache-hit rate on realistic agent traffic.** The cost model (→ ~0
       per request) assumes a high hit rate, but agents — the wedge — invent novel
       keys/phrasings and have the *lowest* hit rate. Resolve the tension or re-frame
-      the economics.
+      the economics. *(Instrumentation shipped v0.2.4: field/where/combined hit-miss
+      counters + hit_rate, observable at `/debug/cache`. Open work is running realistic
+      agent traffic through it — the counters are cumulative-since-start, no windowing yet.)*
 - [ ] **Default confirm-before-execute ON for agents** until the confident-wrong
       rate is measured and bounded.
 - [ ] **Drift / canary harness:** pin model versions; re-score on model / schema /

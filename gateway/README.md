@@ -122,7 +122,7 @@ To see what the gateway actually sends the model and what it has cached, set
 |---|---|---|
 | `GET /debug/prompts` | the static resolver **system** prompts + operator whitelist + prompt-cache layout | nothing (no backend data) |
 | `GET /debug/schema` | the introspected **schema prompt** (what the resolver sees) + fields | column names, descriptions, **sample values** |
-| `GET /debug/cache` | the resolution cache — cached `want`-field and `where`-phrase resolutions | resolved paths/ASTs + what has been queried |
+| `GET /debug/cache` | the resolution cache — **hit/miss rate** + cached `want`-field and `where`-phrase resolutions | resolved paths/ASTs + what has been queried |
 
 ```bash
 curl localhost:8000/debug/prompts     # safe — instructions only

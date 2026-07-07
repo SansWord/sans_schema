@@ -105,3 +105,15 @@ def test_debug_cache_when_enabled_lists_entries():
     assert body["field_count"] == 1 and body["where_count"] == 1
     assert body["field"][0]["key"] == "writer"
     assert body["where"][0]["today"] == "2026-07-07"
+
+def test_debug_cache_reports_hit_rate():
+    app.dependency_overrides[get_settings] = _debug_on
+    fresh = ResolutionCache()
+    fresh.get_field("fake", "v1", "x")                                 # miss
+    fresh.set_field("fake", "v1", "x", {"field": "c", "confidence": 0.9})
+    fresh.get_field("fake", "v1", "x")                                 # hit
+    app.dependency_overrides[get_cache] = lambda: fresh
+    c = _client(FakeLLM())
+    stats = c.get("/debug/cache").json()["stats"]
+    assert stats["field"]["hits"] == 1 and stats["field"]["misses"] == 1
+    assert stats["combined"]["hit_rate"] == 0.5

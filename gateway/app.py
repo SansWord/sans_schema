@@ -151,6 +151,7 @@ def debug_cache(settings: Settings = Depends(get_settings),
         return _DISABLED
     snap = cache.snapshot()
     return {
+        "stats": cache.stats(),                 # hit/miss counters + hit_rate since start
         "field": snap["field"],
         "where": snap["where"],
         "field_count": len(snap["field"]) if snap["field"] is not None else None,

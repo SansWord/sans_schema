@@ -24,13 +24,20 @@ class CacheStore(Protocol):
 
 
 class DictCache:
-    """In-memory CacheStore. Swap for Redis behind this same interface."""
+    """In-memory CacheStore. Swap for Redis behind this same interface.
+    Counts hits/misses so the resolution-cache hit rate is observable."""
 
     def __init__(self) -> None:
         self._d: Dict[Tuple, Dict[str, Any]] = {}
+        self.hits = 0
+        self.misses = 0
 
     def get(self, key: Tuple) -> Optional[Dict[str, Any]]:
-        return self._d.get(key)
+        if key in self._d:
+            self.hits += 1
+            return self._d[key]
+        self.misses += 1
+        return None
 
     def set(self, key: Tuple, value: Dict[str, Any]) -> None:
         self._d[key] = value
@@ -81,3 +88,28 @@ class ResolutionCache:
             "field": dump(self._field, ("backend", "schema_version", "key")),
             "where": dump(self._where, ("backend", "schema_version", "phrase", "today")),
         }
+
+    def stats(self) -> Dict[str, Any]:
+        """Hit/miss counters since process start — field, where, and combined — for
+        observing the resolution-cache hit rate (the primary cost lever). A store
+        reports None only if it doesn't expose `hits`/`misses`; a Redis-backed store
+        can count these in-process the same way (though the counters would be
+        per-replica — aggregate across replicas for a fleet-wide rate)."""
+        def one(store):
+            h = getattr(store, "hits", None)
+            m = getattr(store, "misses", None)
+            if h is None or m is None:
+                return None
+            total = h + m
+            return {"hits": h, "misses": m, "lookups": total,
+                    "hit_rate": (h / total) if total else None}
+        field, where = one(self._field), one(self._where)
+        parts = [p for p in (field, where) if p is not None]
+        combined = None
+        if parts:
+            h = sum(p["hits"] for p in parts)
+            m = sum(p["misses"] for p in parts)
+            total = h + m
+            combined = {"hits": h, "misses": m, "lookups": total,
+                        "hit_rate": (h / total) if total else None}
+        return {"field": field, "where": where, "combined": combined}

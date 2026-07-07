@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.2.4](#v024--cache-hit-rate-observability-2026-07-07-0231) | Cache-hit-rate observability — `DictCache` counts hits/misses; `ResolutionCache.stats()` reports field/where/combined `hit_rate`, surfaced at `/debug/cache`. Building block for the "measure cache-hit on agent traffic" de-risking item. Counters port to a Redis store (per-replica); entry enumeration does not. 65 tests green. |
 | [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 64 tests green (with Postgres). |
 | [v0.2.2](#v022--static-type-check-of-the-ast-2026-07-07-0212) | Static pre-execute type check: leaf values validated against each field's declared type → a type-mismatched filter (e.g. the case-35 string-on-int) is a deterministic 422 instead of a backend 502. Conservative (unknown types skipped, coercible values pass); no eval re-measure needed. 60 tests green. |
 | [v0.2.1](#v021--security-review--hardening-2026-07-07-0201) | Adversarial security review (SQLi + prompt injection): no injection found, core claim holds. Hardened anyway — `want`-path schema validation, backend-error→502 containment, empty/malformed-AST→422, configurable ingress limits (`want`/`where` size). 50 tests green. |
@@ -25,6 +26,28 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.2.4 — Cache-hit-rate observability (2026-07-07 02:31)
+
+**Review:** not yet
+
+**What was built:**
+- **`DictCache` counts hits/misses** (a `get` that finds the key is a hit, else a miss) and
+  **`ResolutionCache.stats()`** reports `{hits, misses, lookups, hit_rate}` for the field cache,
+  the where cache, and combined. Surfaced under `stats` in `GET /debug/cache`.
+- The resolution cache is the primary cost lever (skip the LLM on a repeat), so its hit rate is
+  the number the cost model rests on — this is the instrumentation for the "measure cache-hit on
+  realistic agent traffic" de-risking item. Counters are cumulative-since-start (no windowing yet).
+- Tests: +3 (62 LLM-free / 65 with Postgres).
+
+**Key technical learnings:**
+- `[note]` **The `CacheStore` seam makes this backend-portable.** Counters live in the store's
+  `get()`, so a future Redis-backed store counts hits/misses in-process the same way — `stats()`
+  reads them by duck-typing (`getattr(store, "hits", …)`). Two Redis caveats: the counters are
+  **per-replica** (aggregate across processes for a fleet-wide rate, or read Redis' own
+  `INFO stats` keyspace_hits/misses for a coarse instance-wide number), and **entry enumeration**
+  (`snapshot`) doesn't port cleanly (needs `SCAN` / a tracked index) — `snapshot` already returns
+  `null` for a non-enumerable store, so the hit-rate stats keep working even where the entry dump can't.
 
 ## v0.2.3 — Debug introspection endpoints (2026-07-07 02:23)
 
