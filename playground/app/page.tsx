@@ -23,14 +23,18 @@ export default function Home() {
       const res = await runQuery(fields, wh.trim() || null);
       if (res.ok) setOk(res.data);
       else setErr({ status: res.status, data: res.data });
-    } catch {
-      setErr({ status: 0, data: { error: "network", message: "Could not reach the gateway." } });
+    } catch (e) {
+      if (e instanceof DOMException && (e.name === "TimeoutError" || e.name === "AbortError")) {
+        setErr({ status: 0, data: { error: "timeout", message: "The gateway took too long to respond — try again." } });
+      } else {
+        setErr({ status: 0, data: { error: "network", message: "Could not reach the gateway." } });
+      }
     } finally {
       setBusy(false);
     }
   }
 
-  function useExample(ex: Example) {
+  function applyExample(ex: Example) {
     setWant([...ex.want]);
     setWhere(ex.where ?? "");
     void run(ex.want, ex.where ?? "");
@@ -44,7 +48,7 @@ export default function Home() {
       </header>
       <RequestBuilder want={want} where={where} busy={busy}
                       onWantChange={setWant} onWhereChange={setWhere}
-                      onRun={() => void run()} onExample={useExample} />
+                      onRun={() => void run()} onExample={applyExample} />
       {err && (
         <>
           <StatusPanel status={err.status} error={err.data} />

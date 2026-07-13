@@ -11,7 +11,13 @@ export default function ResultsTable({ rows }: { rows: Record<string, unknown>[]
           {rows.map((row, i) => (
             <tr key={i}>
               {cols.map((c) => (
-                <td key={c}>{row[c] === null ? "—" : String(row[c])}</td>
+                <td key={c}>
+                  {row[c] === null
+                    ? "—"
+                    : typeof row[c] === "object"
+                      ? JSON.stringify(row[c])
+                      : String(row[c])}
+                </td>
               ))}
             </tr>
           ))}

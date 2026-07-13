@@ -25,7 +25,14 @@ export async function runQuery(want: string[], where: string | null): Promise<Qu
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ want, where, isVerbose: true }),
+    signal: AbortSignal.timeout(30_000),
   });
-  const data = await res.json();
-  return res.ok ? { ok: true, data } : { ok: false, status: res.status, data };
+  if (res.ok) return { ok: true, data: await res.json() };
+  let data: QueryError;
+  try {
+    data = await res.json();
+  } catch {
+    data = { error: "http_error", message: `${res.status} ${res.statusText}` };
+  }
+  return { ok: false, status: res.status, data };
 }

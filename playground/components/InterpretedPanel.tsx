@@ -28,7 +28,9 @@ export default function InterpretedPanel({ interpreted }: { interpreted: Interpr
             <strong>filter:</strong> “{interpreted.where.raw}”
             <Confidence value={interpreted.where.confidence} />
           </p>
-          <pre>{JSON.stringify(interpreted.where.ast, null, 2)}</pre>
+          {interpreted.where.ast == null
+            ? <em>(no filter compiled)</em>
+            : <pre>{JSON.stringify(interpreted.where.ast, null, 2)}</pre>}
         </div>
       )}
     </section>
