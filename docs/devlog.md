@@ -45,10 +45,18 @@ holds forever. Each entry links the spec/plan it came from.
   `--value`-flag commands + a bundle-grep verification step.
 - Deck: all URLs are now clickable links (new tab, so mid-talk clicks never lose the
   deck); thanks slide gained portfolio + LinkedIn links.
+- Playground request panel — after each Run, shows the exact copy-able `curl` that was
+  sent ("this is the whole API"), pinned to the results it produced. The client-side
+  third of the transparency idea; zero gateway/contract changes.
+- New extra chip "中文也通 (Mandarin filter)" — `where: "價格低於 $20, 作者 35 歲以上"`.
+  Verified against production: resolves + compiles to `price < 20 AND birth_year < 1991`
+  at 0.95 (the model does the age→birth-year math; the `<` vs `<=` boundary fuzziness is
+  the `bind_today` problem — noted in the demo script as a limits talking point).
 - `todo.md`: queued two demo improvements — richer real dataset (elevates the existing
   open-data item; deployed Postgres needs re-seeding when it lands) and a playground
   request-transparency panel (compiled SQL + cache hit/miss per request; design
-  tensions captured, needs brainstorm → spec).
+  tensions captured, needs brainstorm → spec). The request-side display shipped above;
+  the todo item's remainder is the server-side (SQL + cache-hit) half.
 
 ## v0.3.0 — Demo session: guardrails, playground, deploy, deck (2026-07-12 23:55)
 
