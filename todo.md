@@ -29,9 +29,9 @@ restating it. Keep current as part of the end-of-session checklist.
   - [x] **Deploy the gateway on Fly.io** — live at `https://sans-schema-demo.fly.dev`
         (`nrt`, single machine — `fly deploy` adds an HA second machine by default,
         scaled back to 1; seeded Postgres attached; verify block passed 2026-07-13).
-  - [ ] **Gemini quota cap** (the money backstop — part of done, not optional):
-        Generative Language API → "Request limit per model per day for a project"
-        (the Tier-1 daily row) → 2000.
+  - [x] **Gemini quota cap** — set 2026-07-13: Generative Language API →
+        "Request limit per model per day for a project" (the Tier-1 daily row)
+        capped at 2000 (≈ $1.40/day worst case at flash-lite prices).
   - [x] **Deploy the playground on Vercel** — live at
         `https://sans-schema-playground.vercel.app` (gateway URL verified baked into
         the bundle; CORS verified allow+deny).
