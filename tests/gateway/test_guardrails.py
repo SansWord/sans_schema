@@ -98,9 +98,11 @@ def test_global_daily_cap_throttles_across_ips():
 
 
 def test_both_limits_on_per_ip_then_global_cap():
-    # The production config: per-IP limit AND global daily cap together. Note that
-    # every /query hit — including one rejected 429 by the per-IP limit — consumes
-    # the global budget (slowapi evaluates all route limits in one pass).
+    # The production config: per-IP limit AND global daily cap together. The per-IP
+    # limit is evaluated FIRST (slowapi runs limits in registration order and stops
+    # at the first failure), so a request 429'd by the per-IP limit does NOT drain
+    # the global budget — one hammering IP can't grief the whole demo. This test
+    # pins that order: IP2's second 200 below fails if the cap is evaluated first.
     c = _client(_settings(rate_limit_per_ip="3/minute", daily_request_cap="5/day",
                           client_ip_header="Fly-Client-IP"))
     ip1 = {"Fly-Client-IP": "1.1.1.1"}
@@ -109,9 +111,10 @@ def test_both_limits_on_per_ip_then_global_cap():
     r = c.post("/query", json=BODY, headers=ip1)
     assert r.status_code == 429
     assert r.json()["error"] == "rate_limited"          # per-IP trips first for IP1
-    # global budget so far: 3 OK + 1 rate-limited = 4 of 5
+    # global budget so far: 3 of 5 — IP1's rejected 4th request consumed NO slot
     ip2 = {"Fly-Client-IP": "2.2.2.2"}
-    assert c.post("/query", json=BODY, headers=ip2).status_code == 200   # 5th hit
+    assert c.post("/query", json=BODY, headers=ip2).status_code == 200   # 4th slot
+    assert c.post("/query", json=BODY, headers=ip2).status_code == 200   # 5th slot
     r = c.post("/query", json=BODY, headers=ip2)
     assert r.status_code == 429
     assert r.json()["error"] == "demo_budget_exhausted"  # cap, not IP2's own limit

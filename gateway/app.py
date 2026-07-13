@@ -116,12 +116,17 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     # slowapi decorators wrap the endpoint fn; applied only when configured so the
     # default (local dev / tests) request path contains no limiter at all. slowapi
     # requires the `request: Request` parameter above.
+    # Registration order is load-bearing: slowapi evaluates limits in registration
+    # order and stops at the first failure, so the per-IP limit MUST be registered
+    # before the global cap — otherwise requests already rejected per-IP would
+    # still drain the shared daily budget (one hammering IP griefs the whole demo).
+    if cfg.rate_limit_per_ip:
+        query = limiter.limit(cfg.rate_limit_per_ip, error_message=PER_IP_CODE)(query)
     if cfg.daily_request_cap:
+        # param name `request` is load-bearing — slowapi passes the request by param name
         query = limiter.limit(cfg.daily_request_cap,
                               key_func=lambda request: "global",
                               error_message=GLOBAL_CODE)(query)
-    if cfg.rate_limit_per_ip:
-        query = limiter.limit(cfg.rate_limit_per_ip, error_message=PER_IP_CODE)(query)
     app.post("/query")(query)
 
     # --- debug introspection (dev only; OFF unless ENABLE_DEBUG_ENDPOINTS is set) --
