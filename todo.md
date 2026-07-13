@@ -39,10 +39,31 @@ restating it. Keep current as part of the end-of-session checklist.
         [`docs/demo/script.md`](docs/demo/script.md) the day before the session (and
         re-click the chips ~10 min before stage — in-process cache empties on restart).
 
-**Next milestone after the demo session: undecided.** Strong candidates — `bind_today`
-(below), the security milestone (field-level authz + endpoint auth + data-borne prompt
-injection), and the richer open-data demo dataset (below — the stretch goal that didn't
-ship with v0.3.0). Pick one to start the next session.
+**Demo improvements (wanted for this demo, post-v0.3.0):**
+
+- [ ] **Extend the demo data — more books, real data.** The deployed `books_view` has the
+      6 hand-written seed rows; make the playground feel substantial with a larger set of
+      *real* books/authors. The scoped write-up (sources: Open Library / Gutendex /
+      Wikidata; caveats: `price` must be synthesized; tests move with the data) already
+      exists under *MVP shape & setup* → "Richer demo dataset from open data" — that item
+      is the spec seed; this elevates it to demo-wanted. Remember the deployed Fly
+      Postgres needs re-seeding when it lands.
+- [ ] **Playground request-transparency panel ("what did the gateway actually do?").**
+      Expose per-request debug info in the playground so the demo shows the machinery:
+      the compiled SQL (parameterized text) the connector executed, per-`want`-field and
+      `where` cache hit/miss, maybe gate threshold + timing. Needs its own brainstorm →
+      spec first; known tensions to design around: (a) the existing `/debug/*` endpoints
+      are dev-only because they disclose schema/samples — a per-request `debug` block in
+      the `/query` response (opt-in flag, e.g. extend `isVerbose` or add `isDebug`) is a
+      different, narrower disclosure (the SQL for *your own* query over a public demo
+      dataset — fine here, but should be a config gate for own-data deploys); (b) cache
+      hit/miss is known in `pipeline.py` at resolve time, SQL text in the connector —
+      both would need to flow into the response contract, which touches
+      `docs/architecture.md` §1 (request contract) and the `interpreted` echo shape.
+
+**Next milestone after the demo session: undecided.** Strong candidates — the two demo
+improvements above, `bind_today` (below), and the security milestone (field-level authz +
+endpoint auth + data-borne prompt injection). Pick one to start the next session.
 
 - [ ] **Symbolic / relative dates (`bind_today`)** — a leading fast-follow candidate (detail
       under *Later*). Compile `where` to a date-independent AST → date-independent where cache
