@@ -94,3 +94,11 @@ def test_global_daily_cap_throttles_across_ips():
     r = c.post("/query", json=BODY, headers={"Fly-Client-IP": "3.3.3.3"})
     assert r.status_code == 429
     assert r.json()["error"] == "demo_budget_exhausted"
+
+
+def test_defaults_off_no_limits_no_cors():
+    c = _client(_settings())
+    for _ in range(30):                       # far past any accidental default limit
+        assert c.post("/query", json=BODY).status_code == 200
+    r = c.post("/query", json=BODY, headers={"Origin": "https://anywhere.example"})
+    assert "access-control-allow-origin" not in r.headers

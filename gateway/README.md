@@ -48,6 +48,11 @@ cp .env.example .env
 | `MAX_FIELD_LEN`  | `200`                            | Max length of a single `want` field name  |
 | `MAX_WHERE_LEN`  | `2000`                           | Max length of the NL `where` string       |
 | `ENABLE_DEBUG_ENDPOINTS` | `0`                      | Expose `/debug/*` introspection (dev only — see below) |
+| `DB_VIEW`        | `books_view`                     | Flat view the connector introspects        |
+| `RATE_LIMIT_PER_IP` | *(empty = off)*               | Per-visitor-IP rate limit, e.g. `10/minute`|
+| `DAILY_REQUEST_CAP` | *(empty = off)*               | Global daily request cap, e.g. `1000/day`  |
+| `CORS_ORIGINS`   | *(empty = off)*                  | Comma-separated browser origins allowed    |
+| `CLIENT_IP_HEADER` | *(empty = off)*                | Proxy header with the real visitor IP      |
 
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
 `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**
