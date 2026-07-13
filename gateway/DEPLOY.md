@@ -89,6 +89,14 @@ Never enable `ENABLE_DEBUG_ENDPOINTS` on the public deploy (`/debug/schema` and
 `/debug/cache` disclose data). Inspect via `fly ssh console -a sans-schema-demo`
 or a local deploy instead.
 
+**Metrics (built-in, no setup):** Fly dashboard → app → Metrics — HTTP requests
+by status code on the gateway (200 vs 422 refusals vs 429 guardrail trips),
+connections/disk on the Postgres; deeper dashboards at fly-metrics.net (hosted
+Grafana); live tail via `fly logs -a sans-schema-demo`. Fly sees HTTP traffic
+only — LLM-call counts live on Google's side (AI Studio usage page / the quota
+row's chart). Fly requests high + Gemini calls low = the resolution cache
+working.
+
 ## Pause vs teardown
 
 **Pause (keep everything, ~$0.30/mo holding cost — volume + stopped rootfs):**
