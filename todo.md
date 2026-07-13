@@ -26,13 +26,18 @@ restating it. Keep current as part of the end-of-session checklist.
 - [x] **Demo session (v0.3.0)** — guardrails + playground + deploy config + deck/script
       built and reviewed (see the devlog top row). Remaining **operator steps** before the
       session:
-  - [ ] **Deploy the gateway on Fly.io** — run `gateway/DEPLOY.md` "One-time setup"
-        (needs `fly` CLI + auth), **including the Gemini quota cap** (the money backstop —
-        part of done, not optional).
-  - [ ] **Deploy the playground on Vercel** — `gateway/DEPLOY.md` "Playground (Vercel)"
-        (needs `vercel` auth); then the production browser pass.
-  - [ ] **Dry run the day before** — checklist at the bottom of
-        [`docs/demo/script.md`](docs/demo/script.md).
+  - [x] **Deploy the gateway on Fly.io** — live at `https://sans-schema-demo.fly.dev`
+        (`nrt`, single machine — `fly deploy` adds an HA second machine by default,
+        scaled back to 1; seeded Postgres attached; verify block passed 2026-07-13).
+  - [ ] **Gemini quota cap** (the money backstop — part of done, not optional):
+        Generative Language API → "Request limit per model per day for a project"
+        (the Tier-1 daily row) → 2000.
+  - [x] **Deploy the playground on Vercel** — live at
+        `https://sans-schema-playground.vercel.app` (gateway URL verified baked into
+        the bundle; CORS verified allow+deny).
+  - [x] **Dry run** — production pass 2026-07-13; re-run the checklist at the bottom of
+        [`docs/demo/script.md`](docs/demo/script.md) the day before the session (and
+        re-click the chips ~10 min before stage — in-process cache empties on restart).
 
 **Next milestone after the demo session: undecided.** Strong candidates — `bind_today`
 (below), the security milestone (field-level authz + endpoint auth + data-borne prompt

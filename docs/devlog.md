@@ -44,9 +44,12 @@ holds forever. Each entry links the spec/plan it came from.
   example chips, results in the client's own keys, the `interpreted` echo as the
   centerpiece, error states rendered as features, own-data quickstart page. Review
   fixes: 30 s fetch timeout, non-JSON error-body handling.
-- Deployment **config**: `fly.toml` + `gateway/DEPLOY.md` (incl. the vendor quota
-  backstop). The actual Fly/Vercel deploys + production dry run are operator steps —
-  tracked in `todo.md`, not yet run.
+- Deployment: `fly.toml` + `gateway/DEPLOY.md` (incl. the vendor quota backstop), then
+  **deployed and verified in production** — gateway at `https://sans-schema-demo.fly.dev`
+  (Fly.io `nrt`, single machine, seeded Postgres) and playground at
+  `https://sans-schema-playground.vercel.app` (gateway URL verified baked into the JS
+  bundle, CORS verified allow+deny, per-IP 429 drill trips at the limit, `/debug/*`
+  dark). Production dry run passed 2026-07-13.
 - 9-slide self-contained HTML deck (`playground/public/slides.html` + QR) + demo script
   (`docs/demo/script.md`). Slide 5 rewritten during review to attribute 100%/98% to the
   production model with honest multi-model ranges (99–100% want / 80–100% where).
@@ -73,6 +76,16 @@ holds forever. Each entry links the spec/plan it came from.
   introspects names). Inline comments mark both sites.
 - `[note]` Limiter state is in-memory and per-process: restarts reset it, multiple
   workers/machines multiply the budget (fine for single-process uvicorn; noted in the README).
+- `[gotcha]` **`fly deploy` creates a second machine for HA by default** — which would have
+  doubled the in-memory daily budget and split the per-IP limits across machines (the exact
+  multi-machine caveat in the README). `min_machines_running = 0` does NOT prevent it; scale
+  back with `fly scale count 1` (or deploy with `--ha=false`).
+- `[gotcha]` **Vercel CLI v55 auto-detects agents and runs non-interactively** — a piped
+  `echo value | vercel env add` silently stores an EMPTY value (stdin ignored), and
+  `vercel env pull` shows `""` for sensitive values either way, so the two failures look
+  identical. Use `--value "<v>" --force`, then verify by grepping the deployed JS bundle
+  for the baked URL (search `_next/static/chunks/**/*.js` — page chunks live in an `app/`
+  subdirectory).
 - `[note]` Browser client hardening that a live demo actually needs: `AbortSignal.timeout`
   on fetch (a hung gateway otherwise freezes the UI with everything disabled) and a
   try/catch around `res.json()` on error responses (a proxy 502 with an HTML body otherwise
