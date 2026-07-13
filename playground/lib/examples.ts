@@ -15,4 +15,7 @@ export const EXAMPLES: Example[] = [
   { label: "Young authors",
     want: ["book name", "author", "author's birth year"],
     where: "author born after 1980" },
+  { label: "中文也通 (Mandarin filter)",
+    want: ["book name", "writer", "cost", "author_birth_year"],
+    where: "價格低於 $20, 作者 35 歲以上" },
 ];

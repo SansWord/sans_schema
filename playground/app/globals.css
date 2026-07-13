@@ -105,3 +105,16 @@ pre.block {
   font-size: 0.85rem;
 }
 .steps li { margin-bottom: 1.25rem; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.copy {
+  border: 1px solid var(--accent);
+  background: none;
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.copy:hover { background: var(--accent-soft); }

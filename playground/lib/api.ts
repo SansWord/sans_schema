@@ -18,7 +18,15 @@ export type QueryResult =
   | { ok: true; data: QueryResponse }
   | { ok: false; status: number; data: QueryError };
 
-const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL ?? "http://localhost:8000";
+export const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL ?? "http://localhost:8000";
+
+/** The exact curl equivalent of what runQuery sends — shown in the UI so the
+ * playground is visibly nothing more than this one HTTP request. */
+export function asCurl(want: string[], where: string | null): string {
+  const body = JSON.stringify({ want, where, isVerbose: true }, null, 2)
+    .replace(/'/g, "'\\''");
+  return `curl -s ${GATEWAY}/query \\\n  -H 'Content-Type: application/json' \\\n  -d '${body}'`;
+}
 
 export async function runQuery(want: string[], where: string | null): Promise<QueryResult> {
   const res = await fetch(`${GATEWAY}/query`, {

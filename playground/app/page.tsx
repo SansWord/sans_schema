@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import RequestBuilder from "@/components/RequestBuilder";
+import RequestPanel from "@/components/RequestPanel";
 import ResultsTable from "@/components/ResultsTable";
 import InterpretedPanel from "@/components/InterpretedPanel";
 import StatusPanel from "@/components/StatusPanel";
@@ -13,6 +14,8 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [ok, setOk] = useState<QueryResponse | null>(null);
   const [err, setErr] = useState<{ status: number; data: QueryError } | null>(null);
+  // the request actually sent, kept alongside its results so the panel never drifts
+  const [sent, setSent] = useState<{ want: string[]; where: string | null } | null>(null);
 
   async function run(w: string[] = want, wh: string = where) {
     setBusy(true);
@@ -20,6 +23,7 @@ export default function Home() {
     setErr(null);
     try {
       const fields = w.map((f) => f.trim()).filter(Boolean);
+      setSent({ want: fields, where: wh.trim() || null });
       const res = await runQuery(fields, wh.trim() || null);
       if (res.ok) setOk(res.data);
       else setErr({ status: res.status, data: res.data });
@@ -49,6 +53,7 @@ export default function Home() {
       <RequestBuilder want={want} where={where} busy={busy}
                       onWantChange={setWant} onWhereChange={setWhere}
                       onRun={() => void run()} onExample={applyExample} />
+      {sent && !busy && <RequestPanel want={sent.want} where={sent.where} />}
       {err && (
         <>
           <StatusPanel status={err.status} error={err.data} />

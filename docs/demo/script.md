@@ -42,8 +42,12 @@ Back to slide 6/7: "the URL is on screen — try your own words while I take
 questions. If it says the demo budget ran out, that's a guardrail, not a crash —
 the own-data page shows how to run it yourself in three steps."
 
-Extra chips ("Written in French", "Young authors") are ammunition for audience
-suggestions, not scripted.
+Extra chips ("Written in French", "Young authors", "中文也通") are ammunition for
+audience suggestions, not scripted. The Mandarin chip ("價格低於 $20, 作者 35 歲以上")
+is a double demo: the filter language doesn't have to be English, AND the model does
+the age→birth-year math itself (verified: compiles to `price < 20 AND birth_year <
+1991` at 0.95). If asked about limits: strictly "35 歲以上" is `<= 1991`, the model
+chose `<` — that boundary fuzziness is the `bind_today` milestone in todo.md.
 
 ## Dry run — the day before (spec: one full pass on the real deployment)
 
