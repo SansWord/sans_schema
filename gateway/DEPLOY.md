@@ -59,12 +59,25 @@ The 429 drill consumes the daily budget — do it before the session day, or bum
 
 ## Playground (Vercel)
 
+Playground doc (local dev, config, layout): [`../playground/README.md`](../playground/README.md).
+
 ```bash
 cd playground
-vercel link                       # project name: sans-schema-playground
-vercel env add NEXT_PUBLIC_GATEWAY_URL production
-#   value: https://sans-schema-demo.fly.dev
+vercel link --yes --project sans-schema-playground
+# --value is required under tooling: recent CLIs run non-interactively and a
+# piped/prompted value silently stores an EMPTY string (see playground/README.md §2)
+vercel env add NEXT_PUBLIC_GATEWAY_URL production \
+  --value "https://sans-schema-demo.fly.dev" --force
 vercel --prod
+```
+
+Verify the build actually baked the URL in (an empty env var fails silently —
+the browser then calls the playground's own origin):
+
+```bash
+curl -s https://sans-schema-playground.vercel.app | grep -oE '/_next/static/chunks/[A-Za-z0-9./_-]+\.js' \
+  | while read -r c; do curl -s "https://sans-schema-playground.vercel.app$c"; done \
+  | grep -c "sans-schema-demo.fly.dev"   # must be ≥ 1
 ```
 
 If the production URL differs from `https://sans-schema-playground.vercel.app`,
