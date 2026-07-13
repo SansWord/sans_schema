@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from limits import parse_many
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -25,10 +26,23 @@ _MESSAGES = {
 }
 
 
+def validate_limits(settings: Settings) -> None:
+    """Fail fast on malformed limit strings. slowapi catches parse errors at
+    decoration time and only LOGS them — a typo'd limit would silently register
+    NO limit at all (fail-open). Parsing eagerly here makes a bad deploy die at
+    startup instead of running unprotected."""
+    for value in (settings.rate_limit_per_ip, settings.daily_request_cap):
+        if value:
+            parse_many(value)   # raises ValueError on a malformed rate string
+
+
 def client_ip(request: Request, settings: Settings) -> str:
     """Rate-limit key. Behind a PaaS proxy `request.client` is the proxy, so read
     the platform's client-IP header when configured (first hop of a comma list) —
-    otherwise every visitor would share one bucket."""
+    otherwise every visitor would share one bucket. Trust model: the header must
+    be one the platform itself sets/overwrites — a client-appendable header (e.g.
+    bare X-Forwarded-For) lets visitors mint attacker-chosen keys, defeating the
+    per-IP limit (growth stays bounded by the global daily cap)."""
     if settings.client_ip_header:
         value = request.headers.get(settings.client_ip_header)
         if value:

@@ -1,5 +1,6 @@
 """Guardrail tests (demo-session spec): proxy-header key fn, per-IP limit,
 global daily cap, CORS, friendly 429 bodies, defaults-off."""
+import pytest
 from fastapi.testclient import TestClient
 from starlette.requests import Request
 
@@ -94,6 +95,40 @@ def test_global_daily_cap_throttles_across_ips():
     r = c.post("/query", json=BODY, headers={"Fly-Client-IP": "3.3.3.3"})
     assert r.status_code == 429
     assert r.json()["error"] == "demo_budget_exhausted"
+
+
+def test_both_limits_on_per_ip_then_global_cap():
+    # The production config: per-IP limit AND global daily cap together. Note that
+    # every /query hit — including one rejected 429 by the per-IP limit — consumes
+    # the global budget (slowapi evaluates all route limits in one pass).
+    c = _client(_settings(rate_limit_per_ip="3/minute", daily_request_cap="5/day",
+                          client_ip_header="Fly-Client-IP"))
+    ip1 = {"Fly-Client-IP": "1.1.1.1"}
+    for _ in range(3):                        # IP1 uses its whole per-IP allowance
+        assert c.post("/query", json=BODY, headers=ip1).status_code == 200
+    r = c.post("/query", json=BODY, headers=ip1)
+    assert r.status_code == 429
+    assert r.json()["error"] == "rate_limited"          # per-IP trips first for IP1
+    # global budget so far: 3 OK + 1 rate-limited = 4 of 5
+    ip2 = {"Fly-Client-IP": "2.2.2.2"}
+    assert c.post("/query", json=BODY, headers=ip2).status_code == 200   # 5th hit
+    r = c.post("/query", json=BODY, headers=ip2)
+    assert r.status_code == 429
+    assert r.json()["error"] == "demo_budget_exhausted"  # cap, not IP2's own limit
+    # a completely fresh visitor is also refused — the cap is global, not per-IP
+    r = c.post("/query", json=BODY, headers={"Fly-Client-IP": "3.3.3.3"})
+    assert r.status_code == 429
+    assert r.json()["error"] == "demo_budget_exhausted"
+
+
+def test_malformed_limit_string_fails_fast_at_startup():
+    # slowapi catches limit-parse errors at decoration time and only LOGS them —
+    # a typo'd limit would silently register no limit at all (fail-open). The
+    # gateway must instead refuse to start.
+    with pytest.raises(ValueError):
+        create_app(_settings(rate_limit_per_ip="10 per minute oops"))
+    with pytest.raises(ValueError):
+        create_app(_settings(daily_request_cap="not-a-limit"))
 
 
 def test_defaults_off_no_limits_no_cors():

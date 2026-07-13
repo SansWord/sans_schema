@@ -21,7 +21,7 @@ from gateway.connectors.postgres import PostgresConnector
 from gateway.contracts import RawQuery
 from gateway.gate import GateConfig
 from gateway.guardrails import (GLOBAL_CODE, PER_IP_CODE, build_limiter,
-                                install_guardrails)
+                                install_guardrails, validate_limits)
 from gateway.pipeline import GatewayError, run_query
 
 
@@ -82,6 +82,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     """Build the app. `settings` fixes construction-time guardrails (CORS + rate
     limits); per-request config still flows through the get_settings dependency."""
     cfg = settings or get_settings()
+    validate_limits(cfg)   # fail fast — slowapi would swallow a bad limit string (fail-open)
     app = FastAPI(title="sans_schema — Semantic Query Gateway")
     limiter = build_limiter(cfg)
     install_guardrails(app, cfg, limiter)
