@@ -62,3 +62,26 @@ def test_cors_rejects_unlisted_origin():
     r = c.options("/query", headers={"Origin": "https://evil.example.com",
                                      "Access-Control-Request-Method": "POST"})
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_per_ip_limit_returns_friendly_429():
+    c = _client(_settings(rate_limit_per_ip="2/minute"))
+    assert c.post("/query", json=BODY).status_code == 200
+    assert c.post("/query", json=BODY).status_code == 200
+    r = c.post("/query", json=BODY)
+    assert r.status_code == 429
+    assert r.json() == {"error": "rate_limited",
+                        "message": r.json()["message"]}   # code exact; message non-empty
+    assert r.json()["message"]
+
+
+def test_per_ip_limit_keys_on_proxy_header():
+    c = _client(_settings(rate_limit_per_ip="1/minute", client_ip_header="Fly-Client-IP"))
+    ok = c.post("/query", json=BODY, headers={"Fly-Client-IP": "1.1.1.1"})
+    assert ok.status_code == 200
+    # a different visitor is NOT throttled by the first one's traffic
+    other = c.post("/query", json=BODY, headers={"Fly-Client-IP": "2.2.2.2"})
+    assert other.status_code == 200
+    # the first visitor again → limited
+    again = c.post("/query", json=BODY, headers={"Fly-Client-IP": "1.1.1.1"})
+    assert again.status_code == 429
