@@ -84,6 +84,8 @@ protocols ─► RequestAdapter ─► RawQuery ─► [resolver] ─► Canonic
     to the real column internally (`gateway/connectors/postgres.py::_col`) and keys
     result rows by the qualified path so the remap finds them. Bare-column paths were a
     live bug: the model qualified them anyway and `validate_ast` rejected the result.
+    The view the Postgres connector introspects is configurable (`DB_VIEW`, default
+    `books_view`) so an own-data deploy can point at its own flat view.
 - **`RawQuery`** (unresolved, client vocab) and **`CanonicalQueryIR`** (resolved)
   are the two load-bearing contracts. **Defined** in `gateway/contracts.py`
   (with `ResolvedField`). The 10-step flow lives in `gateway/pipeline.py::run_query`.
@@ -151,6 +153,18 @@ Boundaries and hardening in place:
 - **Ingress limits** — configurable caps on `want` field count, field-name length, and
   `where` length (`MAX_WANT_FIELDS` / `MAX_FIELD_LEN` / `MAX_WHERE_LEN`) bound the
   untrusted request before it reaches the LLM (cost/DoS).
+- **Public-demo guardrails** (`gateway/guardrails.py`, env-driven, all OFF by default) —
+  CORS origin allowlist (`CORS_ORIGINS`), per-visitor-IP rate limit (`RATE_LIMIT_PER_IP`,
+  slowapi, in-memory), and a global daily request cap (`DAILY_REQUEST_CAP`, constant-key
+  limit — request count, not spend; the vendor quota cap is the money backstop, see
+  `gateway/DEPLOY.md`). Both 429s return friendly bodies (`rate_limited` /
+  `demo_budget_exhausted`). Behind a PaaS proxy the limit keys on the platform's
+  client-IP header (`CLIENT_IP_HEADER`, e.g. `Fly-Client-IP`) — `request.client` is the
+  proxy and would throttle all visitors as one. Only a header the platform itself
+  sets/overwrites is trustworthy: a client-appendable `X-Forwarded-For` lets visitors
+  mint fresh buckets. Limit strings are validated at startup (`validate_limits`) so a
+  config typo fails fast instead of shipping an unlimited API, and the per-IP limit is
+  registered **before** the daily cap so throttled requests can't drain the demo budget.
 
 Still 📐 (deferred to the security milestone, tracked in `todo.md`):
 - **Field-level authz / field allowlist** — today any *real* schema field resolves for any

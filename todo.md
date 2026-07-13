@@ -23,9 +23,21 @@ restating it. Keep current as part of the end-of-session checklist.
 - [x] **Re-ran the spike eval** (`spike.score --models gemini/gemini-3.1-flash-lite`, 2026-07-07)
       to confirm the where-confidence prompt change didn't regress: **WANT 100%, WHERE 98%** —
       identical to the v0.1.0 baseline. Numbers recorded in the devlog v0.2.0 entry.
-**Next milestone: undecided.** Strong candidates — `bind_today` (below), the security
-milestone (field-level authz + endpoint auth + data-borne prompt injection), and the
-demo site (+ richer open-data dataset). Pick one to start the next session.
+- [x] **Demo session (v0.3.0)** — guardrails + playground + deploy config + deck/script
+      built and reviewed (see the devlog top row). Remaining **operator steps** before the
+      session:
+  - [ ] **Deploy the gateway on Fly.io** — run `gateway/DEPLOY.md` "One-time setup"
+        (needs `fly` CLI + auth), **including the Gemini quota cap** (the money backstop —
+        part of done, not optional).
+  - [ ] **Deploy the playground on Vercel** — `gateway/DEPLOY.md` "Playground (Vercel)"
+        (needs `vercel` auth); then the production browser pass.
+  - [ ] **Dry run the day before** — checklist at the bottom of
+        [`docs/demo/script.md`](docs/demo/script.md).
+
+**Next milestone after the demo session: undecided.** Strong candidates — `bind_today`
+(below), the security milestone (field-level authz + endpoint auth + data-borne prompt
+injection), and the richer open-data demo dataset (below — the stretch goal that didn't
+ship with v0.3.0). Pick one to start the next session.
 
 - [ ] **Symbolic / relative dates (`bind_today`)** — a leading fast-follow candidate (detail
       under *Later*). Compile `where` to a date-independent AST → date-independent where cache
@@ -47,7 +59,10 @@ an LLM key, and starts receiving `{want, where}` requests. Settled decisions:
       still deferred.
 - [x] **Onboarding flow:** copy-paste quickstart shipped at
       [`gateway/README.md`](gateway/README.md) (Postgres + seed → env → `docker run` → `curl`).
-- [ ] **Demo site / playground — a web frontend over `POST /query`.** A page to
+- [x] **Demo site / playground — built as v0.3.0** (`playground/`, Next.js; see the devlog
+      top row). Request builder + example chips, results in the client's own keys, the
+      `interpreted` echo rendered alongside, error states as features, own-data quickstart
+      page. Original shape (kept for reference): a page to
       *interactively* test the gateway: a **textarea for `where`** (plain-language filter)
       and a **per-field input row for `want`** (add/remove client field names), a **Run**
       button, and the response rendered as a **table** (rows in the client's own keys). Show
@@ -56,11 +71,11 @@ an LLM key, and starts receiving `{want, where}` requests. Settled decisions:
       how results change. `/debug/schema` can populate a "known fields" hint for the demo
       backend. Doubles as (a) a dev/testing tool and (b) the public adoption playground (the
       enthusiast reviewer's top ask). Stack likely Vercel (Next.js) → the container API.
-  - **Public-exposure guardrails (only when hosted for anyone):** a **fixed demo dataset** (so
-    schema/prompt caches hit hard), the **cheapest model** (flash-lite), **cached common
-    queries**, per-IP/session **rate limits** + a **global daily spend cap**, and bot/abuse
-    protection. Keep it a bounded sandbox, never an open gateway to a real DB. (Cost is the
-    catch — a public endpoint invites arbitrary LLM calls → uncapped spend.)
+  - **Public-exposure guardrails — shipped in v0.3.0** (`gateway/guardrails.py`: per-IP
+    rate limit, global daily request cap, CORS allowlist, all env-toggled; vendor quota cap
+    documented in `gateway/DEPLOY.md` as the money backstop). Still deferred: bot/abuse
+    detection, spend (vs request-count) accounting. Keep it a bounded sandbox, never an
+    open gateway to a real DB.
 - [ ] **Richer demo dataset from open data** — expand `gateway/demo/seed.sql` (+ its
       `gateway/demo/rows.py` mirror) beyond the 6 hand-written books to a larger set of *real*
       books/authors, so the demo/playground feels substantial. Free sources: **Open Library**
