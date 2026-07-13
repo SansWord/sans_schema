@@ -89,9 +89,29 @@ Never enable `ENABLE_DEBUG_ENDPOINTS` on the public deploy (`/debug/schema` and
 `/debug/cache` disclose data). Inspect via `fly ssh console -a sans-schema-demo`
 or a local deploy instead.
 
-## Teardown
+## Pause vs teardown
+
+**Pause (keep everything, ~$0.30/mo holding cost — volume + stopped rootfs):**
+
+```bash
+fly machine stop -a sans-schema-demo-db    # the gateway auto-stops on its own
+# resume later — seconds, no re-seeding, no secrets to re-set:
+fly machine start -a sans-schema-demo-db
+```
+
+While paused the playground degrades gracefully (friendly network/timeout panel)
+and recovers on its own once the gateway is back. After any resume the in-process
+resolution cache is empty — re-click the chips before demoing.
+
+**Teardown (cost → $0, everything gone):**
 
 ```bash
 fly apps destroy sans-schema-demo
 fly apps destroy sans-schema-demo-db
 ```
+
+Destroying releases the `sans-schema-demo` app name. The playground bundle has
+`https://sans-schema-demo.fly.dev` baked in, so a later redeploy must re-create
+the app under the **same name** — if the name is gone, pick a new one and update
+the Vercel env var (+ rebuild), `CORS_ORIGINS` in `fly.toml`, and the slide/script
+URLs together.
