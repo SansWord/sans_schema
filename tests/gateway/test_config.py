@@ -33,3 +33,16 @@ def test_guardrails_parse_from_env(monkeypatch):
     assert s.cors_origins == ["https://play.example.com", "http://localhost:3000"]
     assert s.client_ip_header == "Fly-Client-IP"
     assert s.db_view == "inventory_view"
+
+
+def test_get_connector_uses_db_view(monkeypatch):
+    monkeypatch.setenv("DB_VIEW", "inventory_view")
+    import gateway.app as ga
+    ga.get_settings.cache_clear()
+    ga.get_connector.cache_clear()
+    try:
+        assert ga.get_connector().view == "inventory_view"
+        assert ga.get_connector().backend_id == "postgres:inventory_view"
+    finally:
+        ga.get_settings.cache_clear()   # don't leak the patched settings
+        ga.get_connector.cache_clear()
