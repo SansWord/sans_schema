@@ -1,0 +1,26 @@
+# Fly.io config for the public demo gateway. Runbook: gateway/DEPLOY.md.
+app = "sans-schema-demo"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  LLM_MODEL = "gemini/gemini-3.1-flash-lite"
+  RATE_LIMIT_PER_IP = "10/minute"
+  DAILY_REQUEST_CAP = "1000/day"
+  CLIENT_IP_HEADER = "Fly-Client-IP"
+  CORS_ORIGINS = "https://sans-schema-playground.vercel.app,http://localhost:3000"
+  # ENABLE_DEBUG_ENDPOINTS deliberately unset — /debug/* must 404 on the public URL.
+  # DATABASE_URL and GEMINI_API_KEY are secrets (fly secrets set / postgres attach).
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

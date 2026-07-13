@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sans_schema — query a database you've never seen</title>
+<style>
+  :root { --bg:#14161a; --ink:#f2f0ea; --muted:#9aa3ad; --accent:#8f7aff;
+          --panel:#1e2128; --good:#4cc38a; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink);
+         font:22px/1.5 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .slide { display:none; min-height:100vh; padding:8vh 10vw;
+           flex-direction:column; justify-content:center; gap:1.2rem; }
+  .slide.active { display:flex; }
+  h1 { font-size:2.6rem; line-height:1.15; }
+  h2 { font-size:2rem; color:var(--accent); }
+  ul { padding-left:1.4rem; display:grid; gap:.6rem; }
+  .muted { color:var(--muted); }
+  .big { font-size:2rem; font-weight:700; }
+  .url { color:var(--accent); font-weight:700; }
+  pre, code { font-family:ui-monospace,Menlo,monospace; }
+  pre { background:var(--panel); border-radius:10px; padding:1.1rem;
+        font-size:.72em; overflow-x:auto; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start; }
+  .qr { width:180px; height:180px; background:#fff; padding:8px; border-radius:8px; }
+  .counter { position:fixed; bottom:1rem; right:1.2rem; color:var(--muted); font-size:.7rem; }
+  .stat { color:var(--good); font-weight:700; }
+  .hourglass { display:flex; flex-direction:column; align-items:flex-start;
+               gap:.35rem; font-size:.85em; }
+  .hg { border:2px solid var(--muted); border-radius:8px; padding:.35rem 1.1rem; }
+  .hg.waist { border-color:var(--good); font-weight:700; }
+  .arrow { color:var(--muted); padding-left:1.2rem; }
+</style>
+</head>
+<body>
+
+<section class="slide"><!-- 1 · title -->
+  <h1>Query a database you've never seen,<br>in your own words</h1>
+  <p class="muted">sans_schema — a Semantic Query Gateway</p>
+  <div class="cols">
+    <p class="big url">sans-schema-playground.vercel.app</p>
+    <img class="qr" src="qr.png" alt="QR code to the playground">
+  </div>
+  <p class="muted">Open it now — you'll use it during the talk.</p>
+</section>
+
+<section class="slide"><!-- 2 · the problem -->
+  <h2>Every client hardcodes someone else's schema</h2>
+  <ul>
+    <li>Your code says <code>author_name</code>. Theirs says <code>writer</code>.
+        The next API says <code>author.full_name</code>.</li>
+    <li>Every consumer re-learns every backend's vocabulary.</li>
+    <li>Every rename breaks every consumer.</li>
+  </ul>
+</section>
+
+<section class="slide"><!-- 3 · the idea -->
+  <h2>{want, where} — your words, their data</h2>
+  <div class="cols">
+    <pre>POST /query
+{
+  "want": ["book name", "writer", "cost"],
+  "where": "science fiction under 25 dollars"
+}</pre>
+    <pre>{
+  "rows": [
+    { "book name": "Future Shock 2026",
+      "writer": "SansWord",
+      "cost": 15.0 } ],
+  "interpreted": {
+    "want": { "writer": {
+      "field": "books_view.author_name",
+      "confidence": 0.95 } },
+    "where": { "ast": { "op": "and", … },
+               "confidence": 0.9 } }
+}</pre>
+  </div>
+  <p><code>want</code>: fields in <em>your</em> vocabulary ·
+     <code>where</code>: a plain-language filter ·
+     the answer comes back <em>in your keys</em>, with an inspectable
+     <code>interpreted</code> echo.</p>
+</section>
+
+<section class="slide"><!-- 4 · how it stays safe -->
+  <h2>How it stays safe</h2>
+  <p class="big">NL → <span class="stat">validated predicate AST</span> → execute.
+     Never NL → SQL.</p>
+  <div class="hourglass">
+    <span class="hg">RequestAdapter — your protocol, your words</span>
+    <span class="arrow">↓ RawQuery</span>
+    <span class="hg waist">resolver — AST checked against an operator whitelist
+      + the real fields (the injection boundary, in code)</span>
+    <span class="arrow">↓ CanonicalQueryIR</span>
+    <span class="hg">Connector — parameterized SQL on a real Postgres</span>
+  </div>
+  <p class="muted">A hijacked model can at worst mis-resolve inside the allowed
+     schema — it can never emit SQL.</p>
+</section>
+
+<section class="slide"><!-- 5 · does it work -->
+  <h2>Does it work?</h2>
+  <ul>
+    <li>Production model (Gemini flash-lite) — field resolution
+        (<code>want</code>): <span class="stat">100%</span> · filter compilation
+        (<code>where</code>): <span class="stat">98%</span></li>
+    <li>Across 9 models, 3 vendors: <code>want</code>
+        <span class="stat">99–100%</span> · <code>where</code>
+        <span class="stat">80–100%</span></li>
+    <li class="muted">scored by execution equivalence (same rows selected)</li>
+    <li>Below-confidence requests are <strong>refused, not guessed</strong> —
+        the gate is a feature.</li>
+  </ul>
+</section>
+
+<section class="slide"><!-- 6 · live demo -->
+  <h2>Live demo</h2>
+  <p class="big url">sans-schema-playground.vercel.app</p>
+  <p class="muted">Made-up field names → real answers. Watch the
+     <em>interpreted</em> panel.</p>
+</section>
+
+<section class="slide"><!-- 7 · your own data -->
+  <h2>Try it with your own data</h2>
+  <ol style="display:grid;gap:.6rem;padding-left:1.4rem">
+    <li><code>git clone</code> + <code>docker build</code></li>
+    <li><code>docker run</code> with your <code>DATABASE_URL</code> + your LLM key</li>
+    <li><code>curl</code> it in your own words</li>
+  </ol>
+  <div class="cols">
+    <p class="big url">sans-schema-playground.vercel.app/own-data</p>
+    <img class="qr" src="qr.png" alt="QR code to the playground">
+  </div>
+</section>
+
+<section class="slide"><!-- 8 · what's deliberately not solved -->
+  <h2>Deliberately not solved yet</h2>
+  <ul>
+    <li><strong>Authorization</strong> — the gateway is a curated single view today;
+        field-level authz is its own milestone.</li>
+    <li><strong>Messy schemas</strong> — accuracy is measured on a clean schema;
+        cryptic legacy columns are the next benchmark.</li>
+    <li><strong>Agent-traffic cache economics</strong> — the cost model leans on
+        cache hits; agents invent novel phrasings.</li>
+  </ul>
+  <p class="muted">Stated limits are how you know the numbers are honest.</p>
+</section>
+
+<section class="slide"><!-- 9 · thanks -->
+  <h2>Thanks</h2>
+  <ul>
+    <li>Repo: <span class="url">github.com/SansWord/sans_schema</span></li>
+    <li>Playground: <span class="url">sans-schema-playground.vercel.app</span></li>
+    <li>Contact: <span class="url">sansword@gmail.com</span></li>
+  </ul>
+</section>
+
+<div class="counter"><span id="n"></span> · ← →</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = Math.min(Math.max((parseInt(location.hash.slice(1)) || 1) - 1, 0),
+                   slides.length - 1);
+  function show(k) {
+    i = (k + slides.length) % slides.length;
+    slides.forEach((s, j) => s.classList.toggle('active', j === i));
+    location.hash = i + 1;
+    document.getElementById('n').textContent = (i + 1) + ' / ' + slides.length;
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+  });
+  show(i);
+</script>
+</body>
+</html>

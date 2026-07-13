@@ -48,6 +48,21 @@ cp .env.example .env
 | `MAX_FIELD_LEN`  | `200`                            | Max length of a single `want` field name  |
 | `MAX_WHERE_LEN`  | `2000`                           | Max length of the NL `where` string       |
 | `ENABLE_DEBUG_ENDPOINTS` | `0`                      | Expose `/debug/*` introspection (dev only — see below) |
+| `DB_VIEW`        | `books_view`                     | Flat view the connector introspects        |
+| `RATE_LIMIT_PER_IP` | *(empty = off)*               | Per-visitor-IP rate limit, e.g. `10/minute`|
+| `DAILY_REQUEST_CAP` | *(empty = off)*               | Global daily request cap, e.g. `1000/day`  |
+| `CORS_ORIGINS`   | *(empty = off)*                  | Comma-separated browser origins allowed    |
+| `CLIENT_IP_HEADER` | *(empty = off)*                | Platform-set proxy header with the real visitor IP (see below) |
+
+> **`CLIENT_IP_HEADER` trust model.** Use only a header your platform itself
+> sets/overwrites (`Fly-Client-IP` on Fly.io, `CF-Connecting-IP` on Cloudflare,
+> `True-Client-IP`). A client-appendable `X-Forwarded-For` lets visitors mint
+> fresh rate-limit buckets with spoofed values, defeating per-IP limiting (the
+> global daily cap still bounds total traffic).
+
+> **Rate-limit state is in-memory and per-process.** Restarts reset the counters,
+> and multiple workers/machines each get their own budget (multiplying the
+> effective limits). Fine for today's single-process uvicorn deploy.
 
 Plus the API key env var your model's provider expects (e.g. `GEMINI_API_KEY`,
 `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). **`.env` is gitignored — never commit keys.**

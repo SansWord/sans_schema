@@ -23,6 +23,7 @@ change, and log it in [`devlog.md`](devlog.md).
 ```mermaid
 flowchart LR
     client([Client — its own vocabulary])
+    play([Playground — Next.js on Vercel])
 
     subgraph ingress["Ingress · RequestAdapter — per protocol (SWAP / EXPAND)"]
         json["JSON {want, where} ✅"]
@@ -50,6 +51,7 @@ flowchart LR
     db[("Postgres<br/>denormalized view")]
 
     client -->|"{want, where}"| ingress
+    play -->|"POST /query directly over CORS (no proxy)"| ingress
     ingress -->|RawQuery| core
     core -->|CanonicalQueryIR| egress
     egress -->|rows by field_path| core
@@ -82,6 +84,7 @@ the current spec.)
 | **Cache** | `CacheStore` | in-memory field + where dicts ✅ (`gateway/cache.py`) | Redis; semantic / embedding lookup on the where cache 📐 |
 | **LLM** | `LLM` / `Embed` (LiteLLM) | `gemini-3.1-flash-lite` ✅ (iface) | escalation to a stronger model; any LiteLLM vendor 📐 |
 | **Backend** | `Connector` (`describe`/`execute`/`capabilities`) | Postgres (denorm view, `gateway/connectors/postgres.py`) ✅ + fake in-memory ✅ | other DBs; real FK joins; pushdown via `capabilities()` 📐 |
+| **Guardrails** | slowapi + `CORSMiddleware` in front of `/query` (`gateway/guardrails.py`) | env-toggled, all off by default ✅ (CORS allowlist · per-IP limit · daily cap) | Redis-backed limits for multi-replica; auth 📐 |
 
 The Semantic Core is deliberately the **one box you don't swap** — it's the novel
 value; the surrounding layers are commodity plumbing chosen for reuse.

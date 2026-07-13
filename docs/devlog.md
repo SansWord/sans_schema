@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.3.0](#v030--demo-session-guardrails-playground-deploy-deck-2026-07-12-2355) | Demo session build — env-driven public-demo guardrails (CORS + per-IP limit + daily cap, all off by default, `create_app()` factory), Next.js playground (`playground/`) with the `interpreted` echo as centerpiece, Fly.io/Vercel deploy config + runbook, 9-slide deck + demo script. Live 4-state error pass verified locally. 75 tests green. Fly/Vercel deploys + dry run = operator steps in `todo.md`. |
 | [v0.2.4](#v024--cache-hit-rate-observability-2026-07-07-0231) | Cache-hit-rate observability — `DictCache` counts hits/misses; `ResolutionCache.stats()` reports field/where/combined `hit_rate`, surfaced at `/debug/cache`. Building block for the "measure cache-hit on agent traffic" de-risking item. Counters port to a Redis store (per-replica); entry enumeration does not. 65 tests green. |
 | [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 64 tests green (with Postgres). |
 | [v0.2.2](#v022--static-type-check-of-the-ast-2026-07-07-0212) | Static pre-execute type check: leaf values validated against each field's declared type → a type-mismatched filter (e.g. the case-35 string-on-int) is a deterministic 422 instead of a backend 502. Conservative (unknown types skipped, coercible values pass); no eval re-measure needed. 60 tests green. |
@@ -26,6 +27,65 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.3.0 — Demo session: guardrails, playground, deploy, deck (2026-07-12 23:55)
+
+**Review:** not yet
+**Design docs:**
+- Demo Session: [Spec](superpowers/specs/2026-07-12-demo-session-design.md) [Plan](superpowers/plans/2026-07-12-demo-session.md)
+
+**What was built:**
+- Gateway demo-hardening: env-driven CORS + per-IP rate limit + global daily cap
+  (slowapi), friendly 429s, proxy-aware IP keying, `DB_VIEW` — all off by default;
+  `create_app()` factory for per-instance guardrail testing. Review hardening on top of
+  the plan: fail-fast limit-string validation, per-IP-before-cap evaluation order,
+  platform-set-header-only IP trust model. 75 tests green (was 62).
+- Playground (`playground/`, Next.js 15 + React 19, no Tailwind): request builder +
+  example chips, results in the client's own keys, the `interpreted` echo as the
+  centerpiece, error states rendered as features, own-data quickstart page. Review
+  fixes: 30 s fetch timeout, non-JSON error-body handling.
+- Deployment **config**: `fly.toml` + `gateway/DEPLOY.md` (incl. the vendor quota
+  backstop). The actual Fly/Vercel deploys + production dry run are operator steps —
+  tracked in `todo.md`, not yet run.
+- 9-slide self-contained HTML deck (`playground/public/slides.html` + QR) + demo script
+  (`docs/demo/script.md`). Slide 5 rewritten during review to attribute 100%/98% to the
+  production model with honest multi-model ranges (99–100% want / 80–100% where).
+- Live local error-state pass (real Postgres container + real Gemini call): happy path
+  (confidence 1.0), gate refusal on "only the good ones" (first try), per-IP 429, daily-cap
+  429, CORS preflight both ways, `/debug/schema` 404.
+
+**Key technical learnings:**
+- `[gotcha]` **slowapi fails OPEN on a malformed limit string** — the decorator catches the
+  parse `ValueError`, logs one line, and registers *no* limit; a config typo ships an
+  unlimited public API. Fixed with `validate_limits()` (`limits.parse_many`) at the top of
+  `create_app()` so a bad deploy dies at startup.
+- `[insight]` **slowapi limit registration order is a security property.** Limits evaluate
+  in registration order and stop at the first failure — registering the per-IP limit before
+  the daily cap means throttled requests never drain the global budget. With the opposite
+  order, one bot loop bricks the demo for everyone at near-zero cost (verified live both ways);
+  `test_both_limits_on_per_ip_then_global_cap` pins the order.
+- `[gotcha]` **A client-appendable `X-Forwarded-For` defeats per-IP limiting** — when the
+  platform appends rather than overwrites, the leftmost hop is client-supplied, so visitors
+  mint fresh buckets. Only key on a header the platform itself sets (`Fly-Client-IP`,
+  `CF-Connecting-IP`, `True-Client-IP`).
+- `[gotcha]` **slowapi passes the request by parameter *name*** — `key_func=lambda request: …`
+  and the endpoint's `request: Request` both break if the parameter is renamed (slowapi
+  introspects names). Inline comments mark both sites.
+- `[note]` Limiter state is in-memory and per-process: restarts reset it, multiple
+  workers/machines multiply the budget (fine for single-process uvicorn; noted in the README).
+- `[note]` Browser client hardening that a live demo actually needs: `AbortSignal.timeout`
+  on fetch (a hung gateway otherwise freezes the UI with everything disabled) and a
+  try/catch around `res.json()` on error responses (a proxy 502 with an HTML body otherwise
+  misreports as "could not reach the gateway").
+
+**Process learnings:**
+- `[insight]` **Plan-verbatim code still needs real review.** The plan's code was written and
+  self-reviewed at planning time, yet the two-stage review found four substantive issues in it
+  (fail-open limits, budget-drain order, spoofable-header advice, an overstated slide claim).
+  Treat "the plan says exactly this" as a starting point, not as pre-approved.
+- `[note]` Worktree + user-site editable install: running `python3 -m pytest` from inside the
+  worktree makes the worktree's code win over the site-packages path (cwd precedence) — no
+  need to re-point the editable install (which would break the main checkout).
 
 ## v0.2.4 — Cache-hit-rate observability (2026-07-07 02:31)
 
