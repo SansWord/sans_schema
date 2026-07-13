@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.3.1](#v031--demo-session-follow-up-deploy-executed-docs--deck-polish-2026-07-13) | Follow-up session: executed the v0.3.0 deploys (Fly gateway + seeded Postgres, Vercel playground, Gemini quota cap 2000/day) with production verification + dry run — details folded into the v0.3.0 entry; added `playground/README.md`, made deck links clickable (+ portfolio/LinkedIn), queued two demo improvements in `todo.md` (richer real dataset, request-transparency panel). |
 | [v0.3.0](#v030--demo-session-guardrails-playground-deploy-deck-2026-07-12-2355) | Demo session build — env-driven public-demo guardrails (CORS + per-IP limit + daily cap, all off by default, `create_app()` factory), Next.js playground (`playground/`) with the `interpreted` echo as centerpiece, Fly.io/Vercel deploy config + runbook, 9-slide deck + demo script. Live 4-state error pass verified locally. 75 tests green. Fly/Vercel deploys + dry run = operator steps in `todo.md`. |
 | [v0.2.4](#v024--cache-hit-rate-observability-2026-07-07-0231) | Cache-hit-rate observability — `DictCache` counts hits/misses; `ResolutionCache.stats()` reports field/where/combined `hit_rate`, surfaced at `/debug/cache`. Building block for the "measure cache-hit on agent traffic" de-risking item. Counters port to a Redis store (per-replica); entry enumeration does not. 65 tests green. |
 | [v0.2.3](#v023--debug-introspection-endpoints-2026-07-07-0223) | Dev-only `/debug/*` endpoints — `prompts` (system prompts), `schema` (the schema prompt + samples), `cache` (resolution cache contents). Off by default (`ENABLE_DEBUG_ENDPOINTS`); 404 when disabled. schema/cache disclose data → not for public exposure. 64 tests green (with Postgres). |
@@ -27,6 +28,27 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.3.1 — Demo-session follow-up: deploy executed, docs + deck polish (2026-07-13)
+
+**Review:** not yet
+
+**What was built:**
+- Executed the v0.3.0 operator steps end-to-end: Fly.io gateway + seeded Postgres,
+  Vercel playground, Gemini per-day quota cap (2000), production verification + dry run.
+  The deploy details and the two deploy `[gotcha]`s (Fly HA second machine, Vercel CLI
+  silent-empty env var) are folded into the v0.3.0 entry below, which was updated in
+  this session to match shipped reality.
+- [`playground/README.md`](../playground/README.md) — local dev, `NEXT_PUBLIC_*`
+  build-time/empty-string semantics, layout map (chip order = demo script order),
+  deploy pointer; `gateway/DEPLOY.md` Vercel block updated to the verified
+  `--value`-flag commands + a bundle-grep verification step.
+- Deck: all URLs are now clickable links (new tab, so mid-talk clicks never lose the
+  deck); thanks slide gained portfolio + LinkedIn links.
+- `todo.md`: queued two demo improvements — richer real dataset (elevates the existing
+  open-data item; deployed Postgres needs re-seeding when it lands) and a playground
+  request-transparency panel (compiled SQL + cache hit/miss per request; design
+  tensions captured, needs brainstorm → spec).
 
 ## v0.3.0 — Demo session: guardrails, playground, deploy, deck (2026-07-12 23:55)
 
