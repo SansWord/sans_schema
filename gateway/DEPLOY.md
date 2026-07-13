@@ -22,6 +22,7 @@ fly postgres attach sans-schema-demo-db -a sans-schema-demo
 
 # Seed once (proxy the DB locally; use the credentials attach printed)
 fly proxy 15432:5432 -a sans-schema-demo-db
+# in a second terminal (fly proxy blocks)
 psql "<attach-connection-string, host swapped to localhost:15432>" \
     < gateway/demo/seed.sql
 

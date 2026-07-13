@@ -58,3 +58,7 @@ suggestions, not scripted.
 - [ ] `fly.toml` caps are the session values (10/minute, 1000/day) and the
       Gemini quota cap is still set.
 - [ ] `/own-data` page: copy-paste the three blocks into a terminal — they run.
+- [ ] **Day of, ~10 min before going on stage: re-click every chip once.** The
+      day-before warm won't survive the night — `fly.toml` has
+      `auto_stop_machines` / `min_machines_running = 0` and the resolution cache
+      is in-process, so a machine restart empties it.
