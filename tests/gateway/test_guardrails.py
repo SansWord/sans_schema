@@ -85,3 +85,12 @@ def test_per_ip_limit_keys_on_proxy_header():
     # the first visitor again → limited
     again = c.post("/query", json=BODY, headers={"Fly-Client-IP": "1.1.1.1"})
     assert again.status_code == 429
+
+
+def test_global_daily_cap_throttles_across_ips():
+    c = _client(_settings(daily_request_cap="2/day", client_ip_header="Fly-Client-IP"))
+    assert c.post("/query", json=BODY, headers={"Fly-Client-IP": "1.1.1.1"}).status_code == 200
+    assert c.post("/query", json=BODY, headers={"Fly-Client-IP": "2.2.2.2"}).status_code == 200
+    r = c.post("/query", json=BODY, headers={"Fly-Client-IP": "3.3.3.3"})
+    assert r.status_code == 429
+    assert r.json()["error"] == "demo_budget_exhausted"
