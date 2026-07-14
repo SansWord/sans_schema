@@ -14,7 +14,7 @@
 
 ### Task 0: Branch
 
-- [ ] **Step 1: Create the feature branch**
+- [x] **Step 1: Create the feature branch**
 
 ```bash
 cd /Users/sansword/Source/github/sans_schema
@@ -29,7 +29,7 @@ git checkout -b feat/request-transparency-panel
 - Modify: `gateway/config.py`
 - Test: `tests/gateway/test_config.py`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Append to `tests/gateway/test_config.py`:
 
@@ -44,12 +44,12 @@ def test_query_debug_gate_parses_from_env(monkeypatch):
     assert Settings.from_env().enable_query_debug is True
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `python -m pytest tests/gateway/test_config.py -q`
 Expected: FAIL — `TypeError` / `AttributeError`: `Settings` has no field `enable_query_debug`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `gateway/config.py`, add a field right after `enable_debug_endpoints: bool` (it needs a default, so it sits at the head of the defaulted block):
 
@@ -66,12 +66,12 @@ In `from_env()`, after the `enable_debug_endpoints=` entry:
                 "ENABLE_QUERY_DEBUG", "0").strip().lower() in ("1", "true", "yes", "on"),
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_config.py -q`
 Expected: PASS (all).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/config.py tests/gateway/test_config.py
@@ -86,7 +86,7 @@ git commit -m "feat(gateway): ENABLE_QUERY_DEBUG setting, default off"
 - Modify: `gateway/contracts.py` (RawQuery), `gateway/app.py` (`to_raw_query`)
 - Test: `tests/gateway/test_app.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `tests/gateway/test_app.py`:
 
@@ -97,12 +97,12 @@ def test_to_raw_query_parses_is_debug():
     assert to_raw_query({"want": ["t"]}).debug is False
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `python -m pytest tests/gateway/test_app.py::test_to_raw_query_parses_is_debug -q`
 Expected: FAIL — `RawQuery` has no attribute `debug`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `gateway/contracts.py`, add to `RawQuery` after `verbose`:
 
@@ -119,12 +119,12 @@ Expected: FAIL — `RawQuery` has no attribute `debug`.
                     debug=bool(body.get("isDebug", False)))
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_app.py tests/gateway/test_contracts.py -q`
 Expected: PASS (all).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/contracts.py gateway/app.py tests/gateway/test_app.py
@@ -139,7 +139,7 @@ git commit -m "feat(gateway): parse isDebug into RawQuery.debug"
 - Modify: `gateway/connectors/base.py`, `gateway/connectors/fake.py`
 - Test: `tests/gateway/test_fake_connector.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `tests/gateway/test_fake_connector.py` (add any missing imports at the top of the file — `CanonicalQueryIR`/`ResolvedField` come from `gateway.contracts`, `FakeConnector` from `gateway.connectors.fake`):
 
@@ -155,12 +155,12 @@ def test_execute_fills_trace_engine():
     assert trace.sql is None and trace.params is None   # no SQL story to tell
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `python -m pytest tests/gateway/test_fake_connector.py -q`
 Expected: FAIL — `ImportError: cannot import name 'ExecutionTrace'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `gateway/connectors/base.py` — extend the `typing` import to `from typing import Any, List, Optional` and add below `Capabilities`:
 
@@ -195,12 +195,12 @@ from gateway.connectors.base import Capabilities, ExecutionTrace
         return [{p: row.get(p) for p in paths} for row in selected]
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_fake_connector.py tests/gateway/test_seam_parity.py -q`
 Expected: PASS (seam parity untouched — it calls `execute(ir)` without `trace`).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/connectors/base.py gateway/connectors/fake.py tests/gateway/test_fake_connector.py
@@ -215,7 +215,7 @@ git commit -m "feat(gateway): ExecutionTrace dataclass; fake connector reports i
 - Modify: `gateway/connectors/postgres.py`
 - Test: `tests/gateway/test_postgres_connector.py` (runs only with `TEST_DATABASE_URL` set; otherwise auto-skips — that's fine, CI/local-with-DB covers it)
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `tests/gateway/test_postgres_connector.py`:
 
@@ -233,12 +233,12 @@ def test_execute_fills_trace_with_parameterized_sql(pg_connector):
     assert trace.params == [30, 5]              # values stay bound, never inlined
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `TEST_DATABASE_URL=<your local DSN> python -m pytest tests/gateway/test_postgres_connector.py -q`
 Expected: FAIL — `execute() got an unexpected keyword argument 'trace'`. (Without a local Postgres the test skips; in that case rely on Step 4's suite run wherever `TEST_DATABASE_URL` is available, and proceed.)
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `gateway/connectors/postgres.py` — update the import and `execute`:
 
@@ -274,12 +274,12 @@ from gateway.connectors.base import Capabilities, ExecutionTrace
 
 (Only the signature and the `if trace is not None:` block are new.)
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `TEST_DATABASE_URL=<your local DSN> python -m pytest tests/gateway/test_postgres_connector.py -q`
 Expected: PASS (all 4).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/connectors/postgres.py tests/gateway/test_postgres_connector.py
@@ -294,7 +294,7 @@ git commit -m "feat(gateway): Postgres connector records executed SQL into Execu
 - Modify: `gateway/pipeline.py`
 - Test: `tests/gateway/test_pipeline.py`
 
-- [ ] **Step 1: Update the test helper and write the failing tests**
+- [x] **Step 1: Update the test helper and write the failing tests**
 
 In `tests/gateway/test_pipeline.py`, replace the `_run` helper:
 
@@ -335,12 +335,12 @@ def test_debug_off_omits_block():
     assert "debug" not in _run(raw, llm)
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `python -m pytest tests/gateway/test_pipeline.py -q`
 Expected: FAIL — `run_query() got an unexpected keyword argument 'debug'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `gateway/pipeline.py`:
 
@@ -444,12 +444,12 @@ At the end:
     return resp
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_pipeline.py tests/gateway/test_seam_parity.py -q`
 Expected: PASS (all — existing tests unaffected: `debug` defaults to False).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/pipeline.py tests/gateway/test_pipeline.py
@@ -464,7 +464,7 @@ git commit -m "feat(gateway): pipeline assembles debug block (cache status, gate
 - Modify: `gateway/pipeline.py` (`GatewayError` + the raise sites)
 - Test: `tests/gateway/test_pipeline.py`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Append to `tests/gateway/test_pipeline.py`:
 
@@ -502,12 +502,12 @@ def test_backend_error_502_carries_no_debug():
     assert e.value.status == 502 and e.value.debug is None
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `python -m pytest tests/gateway/test_pipeline.py -q`
 Expected: FAIL — `GatewayError` has no attribute `debug`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `gateway/pipeline.py`, extend `GatewayError` (docstring already says `interpreted` attaches on 4xx — extend it):
 
@@ -545,12 +545,12 @@ Attach `debug=_dbg()` at the three 4xx raise sites in `run_query` (the 502 sites
                                    _interpreted(select, raw, ast, where_conf), debug=_dbg())
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_pipeline.py -q`
 Expected: PASS (all).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add gateway/pipeline.py tests/gateway/test_pipeline.py
@@ -565,7 +565,7 @@ git commit -m "feat(gateway): debug block on 4xx errors; 502s stay bare"
 - Modify: `gateway/app.py`
 - Test: `tests/gateway/test_app.py`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 In `tests/gateway/test_app.py`, add next to `_debug_on`:
 
@@ -622,12 +622,12 @@ def test_error_body_omits_debug_key_when_not_requested():
     assert r.status_code == 422 and "debug" not in r.json()
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `python -m pytest tests/gateway/test_app.py -q`
 Expected: the two `_query_debug_on` tests and the 422-carries-debug test FAIL (no `debug` in body); the gate-off test may already pass — fine.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `gateway/app.py::create_app`, inside `query()` — after the `violation` check, replace the `run_query` call block:
 
@@ -646,17 +646,17 @@ In `gateway/app.py::create_app`, inside `query()` — after the `violation` chec
             return JSONResponse(status_code=e.status, content=content)
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/gateway/test_app.py -q`
 Expected: PASS (all).
 
-- [ ] **Step 5: Run the whole suite**
+- [x] **Step 5: Run the whole suite**
 
 Run: `python -m pytest tests/ -q`
 Expected: PASS (Postgres tests skip without `TEST_DATABASE_URL`).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add gateway/app.py tests/gateway/test_app.py
@@ -672,7 +672,7 @@ git commit -m "feat(gateway): wire isDebug through the config gate; debug in err
 
 No JS test runner in the playground — verification is the type-checking `npm run build` (matches the existing project pattern).
 
-- [ ] **Step 1: Extend `playground/lib/api.ts`**
+- [x] **Step 1: Extend `playground/lib/api.ts`**
 
 Add after the `Interpreted` type:
 
@@ -709,7 +709,7 @@ In **both** `asCurl` and `runQuery`, extend the body (keep `isVerbose` so the pa
 
 (same object in the `fetch` body — the curl echo must stay the exact request).
 
-- [ ] **Step 2: Rewrite `playground/components/InterpretedPanel.tsx`**
+- [x] **Step 2: Rewrite `playground/components/InterpretedPanel.tsx`**
 
 ```tsx
 import { Debug, Interpreted } from "@/lib/api";
@@ -774,7 +774,7 @@ export default function InterpretedPanel(
 }
 ```
 
-- [ ] **Step 3: Pass the prop in `playground/app/page.tsx`**
+- [x] **Step 3: Pass the prop in `playground/app/page.tsx`**
 
 Both `InterpretedPanel` usages gain the `debug` prop:
 
@@ -786,7 +786,7 @@ Both `InterpretedPanel` usages gain the `debug` prop:
           {ok.interpreted && <InterpretedPanel interpreted={ok.interpreted} debug={ok.debug} />}
 ```
 
-- [ ] **Step 4: Add styles to `playground/app/globals.css`**
+- [x] **Step 4: Add styles to `playground/app/globals.css`**
 
 Append after the `.conf.low` rule:
 
@@ -807,12 +807,12 @@ Append after the `.conf.low` rule:
 .sql-echo h3 { font-size: 0.85rem; margin: 1rem 0 0.4rem; }
 ```
 
-- [ ] **Step 5: Verify — type-check build**
+- [x] **Step 5: Verify — type-check build**
 
 Run: `cd playground && npm run build`
 Expected: build succeeds (this type-checks all four files; a missing `debug` prop or type mismatch fails here).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add playground/lib/api.ts playground/components/InterpretedPanel.tsx playground/app/page.tsx playground/app/globals.css
@@ -826,7 +826,7 @@ git commit -m "feat(playground): render debug block woven into the interpreted p
 **Files:**
 - Modify: `docs/architecture.md`, `gateway/README.md`, `gateway/DEPLOY.md`, `fly.toml`
 
-- [ ] **Step 1: `docs/architecture.md` §1** — after the `interpreted` echo bullet, add:
+- [x] **Step 1: `docs/architecture.md` §1** — after the `interpreted` echo bullet, add:
 
 ```markdown
 - `isDebug` (opt-in flag; implies the `interpreted` echo) adds a `debug` block:
@@ -837,7 +837,7 @@ git commit -m "feat(playground): render debug block woven into the interpreted p
   `interpreted` with `execution: null` (nothing ran); 502s stay bare.
 ```
 
-- [ ] **Step 2: `docs/architecture.md` §6** — add to the hardening list (after the public-demo guardrails bullet):
+- [x] **Step 2: `docs/architecture.md` §6** — add to the hardening list (after the public-demo guardrails bullet):
 
 ```markdown
 - **Per-request debug block** (`ENABLE_QUERY_DEBUG`, default OFF) — `POST /query`
@@ -848,13 +848,13 @@ git commit -m "feat(playground): render debug block woven into the interpreted p
   query history), but off by default so an own-data operator opts in explicitly.
 ```
 
-- [ ] **Step 3: `docs/architecture.md` §8 glossary** — the `interpreted` echo entry says "returned only when `isVerbose` is set"; update to:
+- [x] **Step 3: `docs/architecture.md` §8 glossary** — the `interpreted` echo entry says "returned only when `isVerbose` is set"; update to:
 
 ```markdown
   resolved to + confidence); returned when `isVerbose` (or `isDebug`) is set.
 ```
 
-- [ ] **Step 4: `gateway/README.md`** — env table (§2) gains a row after `ENABLE_DEBUG_ENDPOINTS`:
+- [x] **Step 4: `gateway/README.md`** — env table (§2) gains a row after `ENABLE_DEBUG_ENDPOINTS`:
 
 ```markdown
 | `ENABLE_QUERY_DEBUG`     | `0`                      | Honor `isDebug` on `POST /query` (per-request debug block: SQL + params, cache hit/miss, gate threshold) |
@@ -870,13 +870,13 @@ request's machinery; leave it off on own-data deploys unless you want callers
 to see it.
 ```
 
-- [ ] **Step 5: `fly.toml`** — in `[env]`, after `CORS_ORIGINS`:
+- [x] **Step 5: `fly.toml`** — in `[env]`, after `CORS_ORIGINS`:
 
 ```toml
   ENABLE_QUERY_DEBUG = "1"   # playground transparency panel — caller's-own-request disclosure only
 ```
 
-- [ ] **Step 6: `gateway/DEPLOY.md`** — in the "Operator introspection" section, add a paragraph:
+- [x] **Step 6: `gateway/DEPLOY.md`** — in the "Operator introspection" section, add a paragraph:
 
 ```markdown
 The demo sets `ENABLE_QUERY_DEBUG = "1"` (fly.toml) so the playground's
@@ -886,7 +886,7 @@ public demo dataset; it is a different, narrower dial than
 `ENABLE_DEBUG_ENDPOINTS`, which stays off.
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add docs/architecture.md gateway/README.md gateway/DEPLOY.md fly.toml
@@ -900,7 +900,7 @@ git commit -m "docs: request-transparency panel — contract, gating, deploy con
 **Files:**
 - Modify: `docs/devlog.md`, `todo.md`
 
-- [ ] **Step 1: Devlog entry** — add a newest-on-top `## v0.5.0 — Playground request-transparency panel (YYYY-MM-DD HH:MM)` entry (timestamp from `git log -1 --format=%ci` of the docs commit in Task 9), following the house format:
+- [x] **Step 1: Devlog entry** — add a newest-on-top `## v0.5.0 — Playground request-transparency panel (YYYY-MM-DD HH:MM)` entry (timestamp from `git log -1 --format=%ci` of the docs commit in Task 9), following the house format:
 
 ```markdown
 ## v0.5.0 — Playground request-transparency panel (YYYY-MM-DD HH:MM)
@@ -931,7 +931,7 @@ git commit -m "docs: request-transparency panel — contract, gating, deploy con
 
 Update the TL;DR table at the top of `docs/devlog.md` with a linked `v0.5.0` row (GitHub-style anchor, matching the existing rows).
 
-- [ ] **Step 2: `todo.md`** — mark the "Playground request-transparency panel" item `[x]` with a one-line "built as v0.5.0 (see the devlog top row)" summary, and add the remaining operator steps as sub-items:
+- [x] **Step 2: `todo.md`** — mark the "Playground request-transparency panel" item `[x]` with a one-line "built as v0.5.0 (see the devlog top row)" summary, and add the remaining operator steps as sub-items:
 
 ```markdown
   - [ ] **Deploy:** `fly deploy` (picks up `ENABLE_QUERY_DEBUG` from fly.toml;
@@ -940,7 +940,7 @@ Update the TL;DR table at the top of `docs/devlog.md` with a linked `v0.5.0` row
         Verify: run a chip twice — panel shows SQL + miss→hit flip.
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add docs/devlog.md todo.md
@@ -951,14 +951,14 @@ git commit -m "docs(devlog+todo): v0.5.0 request-transparency panel"
 
 ### Task 11: Final verification
 
-- [ ] **Step 1: Full suite**
+- [x] **Step 1: Full suite**
 
 Run: `python -m pytest tests/ -q` — expected: all pass (Postgres tests skip without `TEST_DATABASE_URL`; run them with a local DSN if available).
 
-- [ ] **Step 2: Playground build**
+- [x] **Step 2: Playground build**
 
 Run: `cd playground && npm run build` — expected: success.
 
-- [ ] **Step 3: Live smoke (optional, needs local Postgres + `GEMINI_API_KEY`)**
+- [x] **Step 3: Live smoke (optional, needs local Postgres + `GEMINI_API_KEY`)**
 
 Start the gateway with `ENABLE_QUERY_DEBUG=1`, POST a query with `isDebug: true` twice, and confirm: `debug.execution.sql` is parameterized (`%s`, no inlined values), and `cache` flips miss→hit on the second call.
