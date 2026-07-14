@@ -14,15 +14,19 @@ from gateway.gate import GateConfig, gate_want, where_passes
 
 
 class GatewayError(Exception):
-    """A non-200 outcome. `interpreted` is attached for every 4xx (spec §12)."""
+    """A non-200 outcome. `interpreted` (and, when requested, `debug` — without
+    `execution`, nothing ran) is attached for every 4xx; 502s stay bare (spec §12
+    + request-transparency spec)."""
 
     def __init__(self, status: int, code: str, message: str,
-                 interpreted: Optional[Dict[str, Any]] = None):
+                 interpreted: Optional[Dict[str, Any]] = None,
+                 debug: Optional[Dict[str, Any]] = None):
         super().__init__(message)
         self.status = status
         self.code = code
         self.message = message
         self.interpreted = interpreted
+        self.debug = debug
 
 
 def _retry_once(fn, *args):
@@ -74,6 +78,9 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
     valid_fields = {f.path for f in schema.fields}
     cache_status: Dict[str, Any] = {"want": {}}
 
+    def _dbg() -> Optional[Dict[str, Any]]:
+        return _debug_block(gate, cache_status, None) if debug else None
+
     # step 3 — resolve want, field cache + miss-path batching (spec §6)
     cells: Dict[str, Any] = {}
     missing: List[str] = []
@@ -96,7 +103,7 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
     select = gate_want(raw.want, cells, gate, valid_fields)
     if all(f.field_path is None for f in select):               # spec §12
         raise GatewayError(422, "all_want_declined", "no requested field resolved",
-                           _interpreted(select, raw, None, None))
+                           _interpreted(select, raw, None, None), debug=_dbg())
 
     # steps 5–7 — resolve where, gate, validate
     predicate: Optional[dict] = None
@@ -113,14 +120,14 @@ def run_query(raw: RawQuery, connector, llm, cache: ResolutionCache,
                             {"ast": ast, "confidence": where_conf})
         if not where_passes(where_conf, gate):                  # spec §7, §12
             raise GatewayError(422, "where_low_confidence", "filter confidence below threshold",
-                               _interpreted(select, raw, ast, where_conf))
+                               _interpreted(select, raw, ast, where_conf), debug=_dbg())
         if ast is not None:
             try:
                 validate_ast(ast, schema)                       # step 7 — injection boundary
                 type_check_ast(ast, schema)                     # + static type check (pre-execute)
             except ValueError as e:
                 raise GatewayError(422, "invalid_ast", str(e),
-                                   _interpreted(select, raw, ast, where_conf))
+                                   _interpreted(select, raw, ast, where_conf), debug=_dbg())
         predicate = ast
 
     # steps 8–10 — assemble, execute, remap

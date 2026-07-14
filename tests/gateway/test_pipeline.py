@@ -146,3 +146,48 @@ def test_debug_off_omits_block():
     raw = RawQuery(["book_title"], None, "2026-07-06", verbose=True)
     llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
     assert "debug" not in _run(raw, llm)
+
+def test_low_confidence_where_422_carries_debug_without_execution():
+    raw = RawQuery(["book_title"], "something vague", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.4})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm, debug=True)
+    assert e.value.debug["gate_threshold"] == 0.7
+    assert e.value.debug["cache"] == {"want": {"book_title": "miss"}, "where": "miss"}
+    assert e.value.debug["execution"] is None      # nothing ran
+
+
+def test_error_debug_is_none_when_not_requested():
+    raw = RawQuery(["book_title"], "something vague", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.4})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm)
+    assert e.value.debug is None
+
+
+def test_backend_error_502_carries_no_debug():
+    class BoomConnector(FakeConnector):
+        def execute(self, ir, trace=None):
+            raise RuntimeError("db exploded")
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    with pytest.raises(GatewayError) as e:
+        run_query(raw, BoomConnector(), llm, ResolutionCache(), GateConfig(0.7), 100, debug=True)
+    assert e.value.status == 502 and e.value.debug is None
+
+
+def test_traceless_connector_reports_null_execution():
+    # a connector predating the trace kwarg still works under debug — its
+    # `execution` degrades to null (spec §1)
+    class LegacyConnector(FakeConnector):
+        def execute(self, ir):
+            return super().execute(ir)
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    resp = run_query(raw, LegacyConnector(), llm, ResolutionCache(), GateConfig(0.7), 100, debug=True)
+    assert resp["rows"]
+    assert resp["debug"]["execution"] is None
