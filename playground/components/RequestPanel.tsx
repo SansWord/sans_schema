@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { asCurl } from "@/lib/api";
 
-export default function RequestPanel({ want, where }: { want: string[]; where: string | null }) {
+export default function RequestPanel(
+  { want, where, response }: { want: string[]; where: string | null; response?: unknown },
+) {
   const [copied, setCopied] = useState(false);
   const curl = asCurl(want, where);
   async function copy() {
@@ -19,6 +21,12 @@ export default function RequestPanel({ want, where }: { want: string[]; where: s
         </button>
       </div>
       <pre className="block">{curl}</pre>
+      {response !== undefined && (
+        <details className="response-json">
+          <summary>Response JSON</summary>
+          <pre className="block">{JSON.stringify(response, null, 2)}</pre>
+        </details>
+      )}
     </section>
   );
 }

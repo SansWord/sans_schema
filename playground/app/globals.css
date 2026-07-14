@@ -132,3 +132,11 @@ pre.block {
   white-space: nowrap;
 }
 .copy:hover { background: var(--accent-soft); }
+.response-json { margin-top: 0.75rem; }
+.response-json summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.response-json summary:hover { color: var(--accent); }
+.response-json pre.block { margin-top: 0.5rem; max-height: 24rem; overflow-y: auto; }

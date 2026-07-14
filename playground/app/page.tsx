@@ -53,21 +53,20 @@ export default function Home() {
       <RequestBuilder want={want} where={where} busy={busy}
                       onWantChange={setWant} onWhereChange={setWhere}
                       onRun={() => void run()} onExample={applyExample} />
-      {sent && !busy && <RequestPanel want={sent.want} where={sent.where} />}
       {err && (
         <>
           <StatusPanel status={err.status} error={err.data} />
           {err.data.interpreted && <InterpretedPanel interpreted={err.data.interpreted} debug={err.data.debug} />}
         </>
       )}
+      {ok?.interpreted && <InterpretedPanel interpreted={ok.interpreted} debug={ok.debug} />}
+      {sent && !busy && <RequestPanel want={sent.want} where={sent.where}
+                                      response={ok ?? err?.data} />}
       {ok && (
-        <>
-          <section className="panel">
-            <h2>Rows — in <em>your</em> column names</h2>
-            <ResultsTable rows={ok.rows} />
-          </section>
-          {ok.interpreted && <InterpretedPanel interpreted={ok.interpreted} debug={ok.debug} />}
-        </>
+        <section className="panel">
+          <h2>Rows — in <em>your</em> column names</h2>
+          <ResultsTable rows={ok.rows} />
+        </section>
       )}
       <footer>
         <a href="/own-data">Try it with your own data →</a>
