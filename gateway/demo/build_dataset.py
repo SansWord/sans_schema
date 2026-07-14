@@ -164,3 +164,122 @@ def emit_seed_sql(snapshot: Dict[str, Any]) -> str:
         lines.append("COMMENT ON COLUMN books_view.{0} IS {1};".format(
             name.ljust(width), _sql_str(desc[name])))
     return "\n".join(lines) + "\n"
+
+
+# --- fetch (deliberate use only; polite: 1 req/s, identified UA) ---
+def _get_json(url: str) -> Dict[str, Any]:
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def fetch_author_facts(name: str) -> Optional[Dict[str, Any]]:
+    """Wikidata: birth year, country, gender for a human writer with this
+    exact English label. Returns None when not found (caller logs + skips)."""
+    query = """
+    SELECT ?birth ?genderLabel ?countryLabel WHERE {{
+      ?p wdt:P31 wd:Q5; rdfs:label {name}@en; wdt:P569 ?birth; wdt:P106 ?occ.
+      VALUES ?occ {{ wd:Q36180 wd:Q482980 wd:Q49757 wd:Q6625963 wd:Q4853732 }}
+      OPTIONAL {{ ?p wdt:P21 ?gender. }}
+      OPTIONAL {{ ?p wdt:P27 ?country. }}
+      SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+    }} LIMIT 1
+    """.format(name=json.dumps(name))          # json.dumps -> quoted/escaped literal
+    url = ("https://query.wikidata.org/sparql?format=json&query="
+           + urllib.parse.quote(query))
+    rows = _get_json(url)["results"]["bindings"]
+    if not rows:
+        return None
+    row = rows[0]
+    facts = {"birth_year": int(row["birth"]["value"][:4])}
+    facts["gender"] = row.get("genderLabel", {}).get("value")
+    country = row.get("countryLabel", {}).get("value")
+    facts["country"] = normalize_country(country) if country else None
+    return facts
+
+
+def fetch_works(name: str, lang_hint: Optional[str]) -> List[Dict[str, Any]]:
+    """Open Library search: an author's most-published works with complete-enough
+    metadata. Drop policy (spec): missing year/pages/language -> drop the work."""
+    url = ("https://openlibrary.org/search.json?author=" + urllib.parse.quote(name)
+           + "&fields=title,first_publish_year,number_of_pages_median,language,subject"
+           + "&sort=editions&limit=30")
+    docs = _get_json(url).get("docs", [])
+    works, seen_titles = [], set()
+    for d in docs:
+        title = (d.get("title") or "").strip()
+        year = d.get("first_publish_year")
+        pages = d.get("number_of_pages_median")
+        marcs = d.get("language") or []
+        if not title or not year or not pages or title.lower() in seen_titles:
+            continue
+        if lang_hint:
+            lang = lang_hint if any(marc_to_iso(m) == lang_hint for m in marcs) else None
+        else:
+            lang = next((iso for m in marcs if (iso := marc_to_iso(m)) == "en"), None) \
+                or next((iso for m in marcs if (iso := marc_to_iso(m))), None)
+        if not lang:
+            continue
+        seen_titles.add(title.lower())
+        works.append({"title": title, "year": int(year), "pages": int(pages),
+                      "language": lang, "subjects": d.get("subject") or []})
+        if len(works) == MAX_WORKS_PER_AUTHOR:
+            break
+    return works
+
+
+def build_snapshot(curated: List[Dict[str, Any]]) -> Dict[str, Any]:
+    authors, books = [], []
+    for entry in curated:
+        name, lang_hint = entry["name"], entry.get("lang")
+        facts = fetch_author_facts(name)
+        time.sleep(1)
+        if facts is None:
+            print(f"  SKIP (no Wikidata match): {name}", file=sys.stderr)
+            continue
+        works = fetch_works(name, lang_hint)
+        time.sleep(1)
+        if not works:
+            print(f"  SKIP (no usable works): {name}", file=sys.stderr)
+            continue
+        author_id = len(authors) + 1
+        authors.append({"author_id": author_id, "author_name": name,
+                        "birth_year": facts["birth_year"],
+                        "country": facts["country"], "gender": facts["gender"]})
+        for w in sorted(works, key=lambda w: (w["year"], w["title"])):
+            category = map_category(w["subjects"])
+            books.append({
+                "book_id": len(books) + 1, "title": w["title"], "category": category,
+                # Open Library carries first-publish YEAR only; month/day are set
+                # to Jan 1 by convention (precedent: the old seed's 'Vieux Roman').
+                "published_at": f"{w['year']}-01-01",
+                "price": synth_price(w["title"], category, w["pages"]),
+                "page_count": w["pages"], "language": w["language"],
+                "author_id": author_id,
+            })
+        print(f"  ok: {name} — {len(works)} works", file=sys.stderr)
+    return {"authors": authors, "books": books}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--emit-only", action="store_true",
+                        help="regenerate seed.sql from the committed books.json (no network)")
+    args = parser.parse_args()
+    books_path = DEMO_DIR / "books.json"
+    if not args.emit_only:
+        curated = json.loads((DEMO_DIR / "authors.json").read_text("utf-8"))
+        snapshot = build_snapshot(curated)
+        n = len(snapshot["books"])
+        print(f"built {n} books from {len(snapshot['authors'])} authors", file=sys.stderr)
+        if not (TARGET_MIN <= n <= TARGET_MAX):
+            print(f"WARNING: outside spec range [{TARGET_MIN}, {TARGET_MAX}]", file=sys.stderr)
+        books_path.write_text(
+            json.dumps(snapshot, indent=1, ensure_ascii=False) + "\n", "utf-8")
+    snapshot = json.loads(books_path.read_text("utf-8"))
+    (DEMO_DIR / "seed.sql").write_text(emit_seed_sql(snapshot), "utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
