@@ -11,6 +11,7 @@ primary_region = "nrt"
   DAILY_REQUEST_CAP = "1000/day"
   CLIENT_IP_HEADER = "Fly-Client-IP"
   CORS_ORIGINS = "https://sans-schema-playground.vercel.app,http://localhost:3000"
+  ENABLE_QUERY_DEBUG = "1"   # playground transparency panel — caller's-own-request disclosure only
   # ENABLE_DEBUG_ENDPOINTS deliberately unset — /debug/* must 404 on the public URL.
   # DATABASE_URL and GEMINI_API_KEY are secrets (fly secrets set / postgres attach).
 

@@ -102,6 +102,12 @@ Never enable `ENABLE_DEBUG_ENDPOINTS` on the public deploy (`/debug/schema` and
 `/debug/cache` disclose data). Inspect via `fly ssh console -a sans-schema-demo`
 or a local deploy instead.
 
+The demo sets `ENABLE_QUERY_DEBUG = "1"` (fly.toml) so the playground's
+transparency panel works: `isDebug` on `POST /query` returns the caller's own
+SQL + cache + gate info. This is per-request-scoped disclosure and safe for the
+public demo dataset; it is a different, narrower dial than
+`ENABLE_DEBUG_ENDPOINTS`, which stays off.
+
 **Metrics (built-in, no setup):** Fly dashboard → app → Metrics — HTTP requests
 by status code on the gateway (200 vs 422 refusals vs 429 guardrail trips),
 connections/disk on the Postgres; deeper dashboards at fly-metrics.net (hosted

@@ -28,6 +28,12 @@ POST /query
 - Response is returned in the **client's own keys** (structured `want` fixes them
   → deterministic response shape) plus an `interpreted` echo (what each key/filter
   resolved to + a confidence), so the magic is inspectable.
+- `isDebug` (opt-in flag; implies the `interpreted` echo) adds a `debug` block:
+  gate threshold, per-`want`-key + `where` resolution-cache hit/miss, and the
+  execution trace (engine + parameterized SQL + bound params). Config-gated by
+  `ENABLE_QUERY_DEBUG` (default OFF — §6); when the gate is off the flag is
+  silently ignored, implication included. On 4xx the block rides alongside
+  `interpreted` with `execution: null` (nothing ran); 502s stay bare.
 - You don't need GraphQL — any protocol carrying the field names works; the JSON
   shape body is the default. Others become `RequestAdapter`s later.
 - **Built:** `POST /query` in `gateway/app.py`; the JSON `RequestAdapter`
@@ -165,6 +171,12 @@ Boundaries and hardening in place:
   mint fresh buckets. Limit strings are validated at startup (`validate_limits`) so a
   config typo fails fast instead of shipping an unlimited API, and the per-IP limit is
   registered **before** the daily cap so throttled requests can't drain the demo budget.
+- **Per-request debug block** (`ENABLE_QUERY_DEBUG`, default OFF) — `POST /query`
+  honors `isDebug` only when set: the response gains cache hit/miss, the gate
+  threshold, and the parameterized SQL + the caller's own bound values
+  (`ExecutionTrace`, filled by the connector during execute). A far narrower
+  disclosure than `/debug/*` (the caller's own request only — no samples, no
+  query history), but off by default so an own-data operator opts in explicitly.
 
 Still 📐 (deferred to the security milestone, tracked in `todo.md`):
 - **Field-level authz / field allowlist** — today any *real* schema field resolves for any
@@ -198,7 +210,7 @@ The project's load-bearing vocabulary, in one place. (Component topology →
 - **`want`** — the fields a client asks for, in **its own vocabulary** (structured,
   no DSL). **`where`** — the client's filter, in **natural language**.
 - **`interpreted` echo** — the inspectable response annex (what each key/filter
-  resolved to + confidence); returned only when `isVerbose` is set.
+  resolved to + confidence); returned when `isVerbose` (or `isDebug`) is set.
 - **`RawQuery`** — unresolved request in client vocab (ingress → core).
   **`CanonicalQueryIR`** — resolved, backend-agnostic query (core → egress). The two
   contracts form the hourglass's **narrow waist**.
