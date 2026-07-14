@@ -45,10 +45,11 @@ restating it. Keep current as part of the end-of-session checklist.
       devlog top row): 380 real books / 71 curated authors from Open Library + Wikidata,
       `books.json` as source of truth, `gender` column added, chip-coverage tests.
       Remaining **operator step**:
-  - [ ] **Re-seed the deployed Fly Postgres** (`gateway/DEPLOY.md` § Re-seed after a
-        dataset change): proxy + `psql < gateway/demo/seed.sql`, then
-        `fly apps restart sans-schema-demo` (memoized schema), then re-click every
-        playground chip + one live gender query ("books by female authors").
+  - [x] **Re-seed the deployed Fly Postgres** — done 2026-07-13 (381 rows verified,
+        app restarted for the memoized schema, live-verified: gender query + sci-fi
+        + Mandarin chips all return rows; Taiwan Travelogue in production).
+        Re-click the chips ~10 min before the demo session as usual (in-process
+        cache empties on restart).
 - [ ] **Playground request-transparency panel ("what did the gateway actually do?").**
       Expose per-request debug info in the playground so the demo shows the machinery:
       the compiled SQL (parameterized text) the connector executed, per-`want`-field and
