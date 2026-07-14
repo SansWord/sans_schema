@@ -34,7 +34,6 @@ holds forever. Each entry links the spec/plan it came from.
 ## v0.5.0 — Playground request-transparency panel (2026-07-13 22:11)
 
 **Review:** not yet
-
 **Design docs:**
 - Request-Transparency Panel: [Spec](superpowers/specs/2026-07-13-request-transparency-panel-design.md) [Plan](superpowers/plans/2026-07-13-request-transparency-panel.md)
 
