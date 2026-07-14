@@ -82,6 +82,7 @@ def marc_to_iso(code: str) -> Optional[str]:
 
 _COUNTRY_SHORT = {
     "United States of America": "USA",
+    "United States": "USA",
     "United Kingdom": "UK",
     "United Kingdom of Great Britain and Ireland": "UK",
     "Republic of China": "Taiwan",
@@ -173,18 +174,29 @@ def _get_json(url: str) -> Dict[str, Any]:
         return json.loads(resp.read().decode("utf-8"))
 
 
-def fetch_author_facts(name: str) -> Optional[Dict[str, Any]]:
+def fetch_author_facts(name: str, qid: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Wikidata: birth year, country, gender for a human writer with this
-    exact English label. Returns None when not found (caller logs + skips)."""
+    exact English label — or, when the curated entry pins a `wikidata` QID
+    (label differs from our display name), for that entity directly.
+    Returns None when not found (caller logs + skips)."""
+    if qid:
+        subject = "BIND(wd:{qid} AS ?p) . ?p wdt:P569 ?birth.".format(qid=qid)
+    else:
+        # Match the label in @en OR @mul: Wikidata migrates language-independent
+        # names (e.g. "Victor Hugo") to the `mul` label and drops the redundant
+        # @en one, so an @en-only match silently misses famous authors.
+        subject = """VALUES ?lbl {{ {name}@en {name}@mul }}
+      ?p wdt:P31 wd:Q5; rdfs:label ?lbl; wdt:P569 ?birth; wdt:P106 ?occ.
+      VALUES ?occ {{ wd:Q36180 wd:Q482980 wd:Q49757 wd:Q6625963 wd:Q4853732 }}""".format(
+            name=json.dumps(name))              # json.dumps -> quoted/escaped literal
     query = """
     SELECT ?birth ?genderLabel ?countryLabel WHERE {{
-      ?p wdt:P31 wd:Q5; rdfs:label {name}@en; wdt:P569 ?birth; wdt:P106 ?occ.
-      VALUES ?occ {{ wd:Q36180 wd:Q482980 wd:Q49757 wd:Q6625963 wd:Q4853732 }}
+      {subject}
       OPTIONAL {{ ?p wdt:P21 ?gender. }}
       OPTIONAL {{ ?p wdt:P27 ?country. }}
       SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
     }} LIMIT 1
-    """.format(name=json.dumps(name))          # json.dumps -> quoted/escaped literal
+    """.format(subject=subject)
     url = ("https://query.wikidata.org/sparql?format=json&query="
            + urllib.parse.quote(query))
     rows = _get_json(url)["results"]["bindings"]
@@ -198,9 +210,13 @@ def fetch_author_facts(name: str) -> Optional[Dict[str, Any]]:
     return facts
 
 
-def fetch_works(name: str, lang_hint: Optional[str]) -> List[Dict[str, Any]]:
+def fetch_works(name: str, lang_hint: Optional[str],
+                exclude_titles: Optional[List[str]] = None) -> List[Dict[str, Any]]:
     """Open Library search: an author's most-published works with complete-enough
-    metadata. Drop policy (spec): missing year/pages/language -> drop the work."""
+    metadata. Drop policy (spec): missing year/pages/language -> drop the work.
+    `exclude_titles` drops specific curator-flagged misattributions (name-search
+    collisions with a different author of the same romanized name)."""
+    excluded = {t.lower() for t in (exclude_titles or [])}
     url = ("https://openlibrary.org/search.json?author=" + urllib.parse.quote(name)
            + "&fields=title,first_publish_year,number_of_pages_median,language,subject"
            + "&sort=editions&limit=30")
@@ -211,7 +227,8 @@ def fetch_works(name: str, lang_hint: Optional[str]) -> List[Dict[str, Any]]:
         year = d.get("first_publish_year")
         pages = d.get("number_of_pages_median")
         marcs = d.get("language") or []
-        if not title or not year or not pages or title.lower() in seen_titles:
+        if not title or not year or not pages or title.lower() in seen_titles \
+                or title.lower() in excluded:
             continue
         if lang_hint:
             lang = lang_hint if any(marc_to_iso(m) == lang_hint for m in marcs) else None
@@ -232,20 +249,28 @@ def build_snapshot(curated: List[Dict[str, Any]]) -> Dict[str, Any]:
     authors, books = [], []
     for entry in curated:
         name, lang_hint = entry["name"], entry.get("lang")
-        facts = fetch_author_facts(name)
+        facts = fetch_author_facts(name, qid=entry.get("wikidata"))
         time.sleep(1)
         if facts is None:
             print(f"  SKIP (no Wikidata match): {name}", file=sys.stderr)
             continue
-        works = fetch_works(name, lang_hint)
+        # `ol_name` overrides the Open Library search name when the display name
+        # doesn't find the author's works (e.g. works catalogued under the
+        # Chinese name); `name` stays the display author_name.
+        works = fetch_works(entry.get("ol_name") or name, lang_hint,
+                            exclude_titles=entry.get("exclude_titles"))
         time.sleep(1)
         if not works:
             print(f"  SKIP (no usable works): {name}", file=sys.stderr)
             continue
         author_id = len(authors) + 1
+        # A curated `country` wins over Wikidata: P27 can list several
+        # citizenships and the query picks one arbitrarily (e.g. Sanmao ->
+        # Spain), so ambiguous cases are pinned in authors.json.
         authors.append({"author_id": author_id, "author_name": name,
                         "birth_year": facts["birth_year"],
-                        "country": facts["country"], "gender": facts["gender"]})
+                        "country": entry.get("country") or facts["country"],
+                        "gender": facts["gender"]})
         for w in sorted(works, key=lambda w: (w["year"], w["title"])):
             category = map_category(w["subjects"])
             books.append({
