@@ -7,6 +7,17 @@
 The live demo is driven by the playground's example chips, top to bottom
 (`playground/lib/examples.ts` — chip order IS the script order).
 
+## Slide beats (~8 min)
+
+Slide 5 — name the hourglass out loud (slide 10 calls back to it): "Wide at
+both ends, narrow in the middle — any client protocol in, any backend out, but
+every request squeezes through this one validated contract. That waist is where
+all the safety lives, and it's the only novel part; everything else is a
+swappable adapter."
+
+Slide 10 — open with the callback: "Remember the hourglass? The roadmap is just
+new ends."
+
 ## Live demo (~12 min)
 
 ### 1. Want-only — chip "Just the basics" (~2 min)

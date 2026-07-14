@@ -52,6 +52,11 @@ holds forever. Each entry links the spec/plan it came from.
   checklist items for the new chip and both strings.
 - New chip in `playground/lib/examples.ts`: "草莓族？(a misread, refused)" —
   `where: "作者是草莓族"`.
+- Post-merge, same session: slide 5 now *names* the hourglass (the term
+  previously first appeared on slide 10 with no introduction — it was only a
+  CSS class); script gains a "Slide beats" section with the spoken
+  philosophy line (slide 5) and the callback ("Remember the hourglass? The
+  roadmap is just new ends", slide 10).
 
 **Key technical learnings:**
 - `[insight]` The 草莓族 refusal is a stronger gate story than plain vagueness:
