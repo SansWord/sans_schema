@@ -41,13 +41,14 @@ restating it. Keep current as part of the end-of-session checklist.
 
 **Demo improvements (wanted for this demo, post-v0.3.0):**
 
-- [ ] **Extend the demo data — more books, real data.** The deployed `books_view` has the
-      6 hand-written seed rows; make the playground feel substantial with a larger set of
-      *real* books/authors. The scoped write-up (sources: Open Library / Gutendex /
-      Wikidata; caveats: `price` must be synthesized; tests move with the data) already
-      exists under *MVP shape & setup* → "Richer demo dataset from open data" — that item
-      is the spec seed; this elevates it to demo-wanted. Remember the deployed Fly
-      Postgres needs re-seeding when it lands.
+- [x] **Extend the demo data — more books, real data.** Built as **v0.4.0** (see the
+      devlog top row): 380 real books / 71 curated authors from Open Library + Wikidata,
+      `books.json` as source of truth, `gender` column added, chip-coverage tests.
+      Remaining **operator step**:
+  - [ ] **Re-seed the deployed Fly Postgres** (`gateway/DEPLOY.md` § Re-seed after a
+        dataset change): proxy + `psql < gateway/demo/seed.sql`, then
+        `fly apps restart sans-schema-demo` (memoized schema), then re-click every
+        playground chip + one live gender query ("books by female authors").
 - [ ] **Playground request-transparency panel ("what did the gateway actually do?").**
       Expose per-request debug info in the playground so the demo shows the machinery:
       the compiled SQL (parameterized text) the connector executed, per-`want`-field and
@@ -102,17 +103,13 @@ an LLM key, and starts receiving `{want, where}` requests. Settled decisions:
     documented in `gateway/DEPLOY.md` as the money backstop). Still deferred: bot/abuse
     detection, spend (vs request-count) accounting. Keep it a bounded sandbox, never an
     open gateway to a real DB.
-- [ ] **Richer demo dataset from open data** — expand `gateway/demo/seed.sql` (+ its
-      `gateway/demo/rows.py` mirror) beyond the 6 hand-written books to a larger set of *real*
-      books/authors, so the demo/playground feels substantial. Free sources: **Open Library**
-      dumps / REST API (CC0 — works, editions, authors w/ birth years, subjects→category,
-      languages, page counts) is the richest; **Gutendex / Project Gutenberg** is cleaner and
-      carries author birth/death years but is public-domain-only; **Wikidata** (SPARQL, CC0) for
-      author country. Caveats: **`price` is in no bibliographic open dataset** (commercial) →
-      synthesize it; `page_count`/`country` coverage varies. Its own scoped task — it changes the
-      demo data, so `rows.py`, the seam-parity test, and the row-specific unit tests (hardcoded
-      titles/counts) move with it; keep the set small + deterministic (or a fixed snapshot) so
-      tests stay stable.
+- [x] **Richer demo dataset from open data** — built as **v0.4.0**: 380 real books /
+      71 curated authors (Open Library + Wikidata, both CC0), frozen
+      `gateway/demo/books.json` snapshot as source of truth (generated `seed.sql`,
+      JSON-loading `rows.py`), deterministic synthesized prices, nullable `gender`
+      column, chip-coverage + seed-determinism tests. See the devlog v0.4.0 entry;
+      re-seeding the deployed Fly Postgres is the remaining operator step (tracked
+      under *Demo improvements* above).
 
 **Ambition — the open question:** keep the MVP **dev / prototype grade**, *not* a
 production system serving 100+ QPS at a high cache rate? **Lean: yes, keep it

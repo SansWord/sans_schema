@@ -32,6 +32,19 @@ fly secrets set GEMINI_API_KEY=<key> -a sans-schema-demo
 fly deploy
 ```
 
+## Re-seed after a dataset change
+
+When `gateway/demo/seed.sql` changes (e.g. a dataset rebuild), re-run the seed
+step above (proxy + `psql < gateway/demo/seed.sql` — the script drops and
+recreates the tables), then restart the app so the memoized schema refreshes:
+
+```bash
+fly apps restart sans-schema-demo
+```
+
+Re-click the playground chips afterward — the in-process resolution cache
+empties on restart.
+
 ## Vendor backstop — the money stop (operator action, load-bearing)
 
 Set a **quota limit** (requests/day) on the Gemini API key's Google Cloud

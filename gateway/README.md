@@ -24,10 +24,12 @@ docker exec -i sans-pg psql -U postgres -d postgres < gateway/demo/seed.sql
 The `DROP … IF EXISTS` at the top of the seed prints `NOTICE: … does not exist`
 on a fresh DB — that's expected (the seed is re-runnable), not an error. Verify it
 loaded: `docker exec -i sans-pg psql -U postgres -d postgres -c "SELECT count(*) FROM books_view;"`
-should return `6`.
+should return `380`.
 
-`gateway/demo/seed.sql` is the source of truth for the demo data; the gateway
-introspects `books_view` at startup — no schema is hardcoded.
+`gateway/demo/books.json` is the source of truth for the demo data (~350 real
+books from Open Library + Wikidata; `seed.sql` is generated from it by
+`python -m gateway.demo.build_dataset --emit-only`); the gateway introspects
+`books_view` at startup — no schema is hardcoded.
 
 ## 2. Configure the environment
 
@@ -107,8 +109,8 @@ Expected response shape:
 ```json
 {
   "rows": [
-    {"title": "The Long Orbit", "writer": "R. Novak"},
-    {"title": "Future Shock 2026", "writer": "SansWord"}
+    {"title": "The Dispossessed", "writer": "Ursula K. Le Guin"},
+    {"title": "三体", "writer": "Liu Cixin"}
   ],
   "interpreted": {
     "want": {
