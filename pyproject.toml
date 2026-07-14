@@ -25,6 +25,9 @@ dev = ["pytest>=8", "httpx>=0.27"]
 # a package, so the repo root lands on sys.path during test runs.
 packages = ["core", "gateway", "gateway.connectors", "gateway.demo"]
 
+[tool.setuptools.package-data]
+"gateway.demo" = ["*.json", "*.sql"]
+
 [tool.pytest.ini_options]
 addopts = "-ra"
 testpaths = ["tests"]
