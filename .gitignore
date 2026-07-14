@@ -19,3 +19,6 @@ env/
 
 # Worktrees (isolated workspaces)
 .worktrees/
+
+# setuptools wheel-build byproduct
+build/
