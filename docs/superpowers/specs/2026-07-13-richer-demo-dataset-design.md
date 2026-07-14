@@ -21,7 +21,7 @@ row-dependent tests move with the data.
 | Question | Decision |
 |---|---|
 | Size | ~300–500 books (target ~350) |
-| Schema | **Fixed** — the existing 11 `books_view` columns, same comments; rows-only change |
+| Schema | **Fixed + one addition** — the existing 11 `books_view` columns keep their names and comments; a nullable `gender` column is added to `authors` and the view (user-requested during spec review, reversing the earlier rows-only scoping) |
 | Data purity | **100% real** — no synthetic rows, no easter eggs, no future publish dates; must include Taiwanese authors/books |
 | Pipeline | **Commit build script + frozen snapshot**; tests never touch the network |
 | Sourcing | **Approach A: curated author list** → Open Library (works/editions) + Wikidata (author birth year, country); both CC0 |
@@ -34,7 +34,8 @@ go away; date filters run against real 2024–2025 releases instead.
 The curation instrument is a committed author list, `gateway/demo/authors.json`,
 each entry tagged with the coverage bucket it serves:
 
-- **Taiwanese authors (~10):** e.g. Wu Ming-yi, Qiu Miaojin, Sanmao, Kevin Chen,
+- **Taiwanese authors (~10):** **Yang Shuang-zi and Kevin Chen are required
+  inclusions** (user-specified); plus e.g. Wu Ming-yi, Qiu Miaojin, Sanmao,
   Chi Ta-wei, Li Ang, Pai Hsien-yung — gives the Mandarin chip real `zh` rows.
 - **French-language (~8):** e.g. Camus, Verne, Slimani — keeps "Written in
   French" working.
@@ -48,8 +49,10 @@ each entry tagged with the coverage bucket it serves:
 Per-author work count is capped at ~6 so nobody dominates.
 
 **Column sources:** title, publish date, page count, language from Open
-Library; author birth year + country from Wikidata (citizenship, normalized to
-the short forms already in use — "Taiwan", "USA", "UK", "France", …).
+Library; author birth year, country, and gender from Wikidata (citizenship
+normalized to the short forms already in use — "Taiwan", "USA", "UK",
+"France", … ; gender from the `sex or gender` property, values as Wikidata
+gives them, e.g. "male" / "female" / "non-binary").
 `category` maps Open Library subjects onto a small controlled vocabulary
 (~8 values; the current 3 — Science Fiction, Fantasy, Non-Fiction — are a
 subset, so existing sample values stay valid).
@@ -57,7 +60,14 @@ subset, so existing sample values stay valid).
 **Drop policy:** rows missing a critical field (publish date, language, page
 count, author birth year) are **dropped**, never patched — 100% real means no
 invented metadata. The author list carries headroom so drops don't sink bucket
-coverage.
+coverage. `gender` is nullable like `country`: a missing value stays NULL, it
+never drops a row.
+
+**Schema addition:** a nullable `gender text` column on `authors`, carried
+through `books_view`, with comment `author's gender` (mirrored in
+`VIEW_FIELDS`). All other columns, names, and comments are unchanged. The
+schema-hash parity test recomputes on both sides (seed.sql and rows.py change
+together), so it keeps guarding drift without edits.
 
 ## Build pipeline & artifacts
 
@@ -125,6 +135,9 @@ on the same inputs reproduces the same prices.
 - **Chip-coverage test** — for each playground chip, assert the frozen dataset
   contains satisfying rows (≥1 `zh` book under $20 with author aged 35+, ≥1
   French-language book, several sci-fi under $25, ≥1 author born after 1980).
+  Also asserts the required authors (Yang Shuang-zi, Kevin Chen) are present in
+  the snapshot — the drop policy must not silently remove them — and that both
+  male and female authors appear (so gender-based demo queries return results).
   Turns "chips must still return sensible results" into a pinned invariant.
 - **Determinism guard** — regenerate `seed.sql` in memory from the committed
   `books.json` and assert it equals the committed file; catches hand-edits to
@@ -138,7 +151,9 @@ on the same inputs reproduces the same prices.
 Schema is fixed, so all seven chips in `playground/lib/examples.ts` remain
 valid as written; the chip-coverage test proves they return results against the
 new data. No copy changes are required. The Mandarin chip returning actual
-Chinese-language titles is a free demo upgrade.
+Chinese-language titles is a free demo upgrade. Optional (decide at
+implementation): one new chip exercising the added `gender` field, e.g.
+"Books by female authors".
 
 ## Deploy & docs
 
@@ -155,6 +170,8 @@ Chinese-language titles is a free demo upgrade.
 
 - Schema enrichment (publisher, rating, subjects columns) — possible follow-up.
 - The playground request-transparency panel (separate todo item, own brainstorm).
-- Re-running the spike eval — the resolver-visible schema (paths, types,
-  descriptions) is unchanged, so resolution behavior is unaffected; only sample
-  values shift.
+- Re-running the spike eval — the spike's eval fixtures (`spike/` BOOKS etc.)
+  are separate from the demo data and untouched. The demo's resolver-visible
+  schema does gain one field (`gender`), so after landing, sanity-check
+  resolution live (click the chips + one gender query, e.g. "books by female
+  authors"); a full eval re-run is not warranted for one added column.
