@@ -55,6 +55,8 @@
         The next API says <code>author.full_name</code>.</li>
     <li>Every consumer re-learns every backend's vocabulary.</li>
     <li>Every rename breaks every consumer.</li>
+    <li><strong>And now AI-built clients <em>guess</em> field names</strong> —
+        the seam should absorb a good-enough guess.</li>
   </ul>
 </section>
 
@@ -83,6 +85,8 @@
      <code>where</code>: a plain-language filter ·
      the answer comes back <em>in your keys</em>, with an inspectable
      <code>interpreted</code> echo.</p>
+  <p class="muted">Natural-language easy on the outside, a deterministic contract
+     on the inside — stable enough for a traditional application to build against.</p>
 </section>
 
 <section class="slide"><!-- 4 · no schema wiring -->
@@ -113,7 +117,8 @@
     <span class="hg">Connector — parameterized SQL on a real Postgres</span>
   </div>
   <p class="muted">A hijacked model can at worst mis-resolve inside the allowed
-     schema — it can never emit SQL.</p>
+     schema — it can never emit SQL. You'll see the proof live: the playground
+     echoes the exact SQL it ran, values as bound parameters.</p>
 </section>
 
 <section class="slide"><!-- 6 · does it work -->
@@ -135,8 +140,10 @@
   <h2>Live demo</h2>
   <p class="big"><a class="url" href="https://sans-schema-playground.vercel.app"
      target="_blank" rel="noopener">sans-schema-playground.vercel.app</a></p>
-  <p class="muted">Made-up field names → real answers. Watch the
-     <em>interpreted</em> panel.</p>
+  <p class="muted">Made-up field names → real answers. Every run shows its work:
+     what the gateway understood (resolved fields, confidence, cache hits, the
+     AST), the exact SQL with bound parameters, and a copy-paste
+     <code>curl</code> of the whole request.</p>
 </section>
 
 <section class="slide"><!-- 8 · your own data -->
@@ -166,7 +173,21 @@
   <p class="muted">Stated limits are how you know the numbers are honest.</p>
 </section>
 
-<section class="slide"><!-- 10 · thanks -->
+<section class="slide"><!-- 10 · what's next -->
+  <h2>What's next — swap the hourglass ends</h2>
+  <ul>
+    <li><strong>New RequestAdapters</strong> — GraphQL / Protobuf requests in,
+        the same resolver behind them.</li>
+    <li><strong>Richer IR</strong> — joined tables at the waist.</li>
+    <li><strong>New Connectors</strong> — data catalogs and GraphQL backends
+        as sources.</li>
+  </ul>
+  <p class="muted">Plus symbolic dates (<code>bind_today</code>) — compile
+     “published over 20 years ago” date-independent, bind <code>today</code>
+     at execute time, so the cache survives midnight.</p>
+</section>
+
+<section class="slide"><!-- 11 · thanks -->
   <h2>Thanks</h2>
   <ul>
     <li>Repo: <a class="url" href="https://github.com/SansWord/sans_schema"

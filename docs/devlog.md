@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.5.1](#v051--demo-narrative-pass-deck-script-new-refusal-chip-2026-07-14-0334) | Demo narrative pass — deck gains the two motivations (AI-built clients guessing field names; NL-easy outside / deterministic contract inside) + a roadmap slide framed as hourglass swap points (11 slides now); script rewritten for the v0.5.0 panels (SQL echo, cache badges, Copy curl) + cost beat + three Chinese `where` strings as typed-live ammunition; new "草莓族？(a misread, refused)" chip. Vercel redeploy + dry-run additions = operator steps in `todo.md`. |
 | [v0.5.0](#v050--playground-request-transparency-panel-2026-07-13-2211) | Per-request `debug` block (`isDebug` + `ENABLE_QUERY_DEBUG`): executed SQL, cache hit/miss, gate threshold — rendered in the playground panel. Deployed + live-verified (Fly + Vercel, tag pushed); panel flow reordered (interpreted → request w/ collapsed response JSON → rows). |
 | [v0.4.0](#v040--richer-real-demo-dataset-2026-07-13-1807) | Richer real demo dataset — 381 real books from 71 curated authors (Open Library + Wikidata, both CC0) replace the 6 hand-written rows. `books.json` is the new source of truth (`seed.sql` generated, `rows.py` loads the JSON); nullable `gender` column added; deterministic price synthesis; chip-coverage + seed-determinism tests; new "female authors" chip. 96 tests green. Fly Postgres re-seed = operator step in `todo.md`. |
 | [v0.3.1](#v031--demo-session-follow-up-deploy-executed-docs--deck-polish-2026-07-13) | Follow-up session: executed the v0.3.0 deploys (Fly gateway + seeded Postgres, Vercel playground, Gemini quota cap 2000/day) with production verification + dry run — details folded into the v0.3.0 entry; added `playground/README.md`, made deck links clickable (+ portfolio/LinkedIn), queued two demo improvements in `todo.md` (richer real dataset, request-transparency panel). |
@@ -30,6 +31,41 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.5.1 — Demo narrative pass: deck, script, new refusal chip (2026-07-14 03:34)
+
+**Review:** not yet
+
+**What was built:**
+- Deck (`playground/public/slides.html`, now 11 slides): slide 2 gains the
+  AI-built-clients bullet (clients *guess* field names; the seam absorbs a
+  good-enough guess); slide 3 states the determinism thesis (NL-easy outside,
+  deterministic contract inside); slide 5 + slide 7 now point at the v0.5.0
+  transparency panels (SQL echo with bound parameters, cache badges, Copy
+  curl); new slide 10 "What's next — swap the hourglass ends" (GraphQL/Protobuf
+  RequestAdapters, joins in the IR, catalog/GraphQL Connectors, `bind_today`).
+- Script (`docs/demo/script.md`): steps 1/3/5 rewritten for the v0.5.0 panel
+  flow (interpreted panel first, SQL echo beat, badges flipping to CACHE HIT);
+  step 5 gains the cost beat (first LLM-in-the-request-path app — two-part
+  cache, prompt-cache layout, token caps as standard AI-app plumbing); new
+  typed-live ammunition block ("作者是 Z 世代", "出版超過 20 年") + dry-run
+  checklist items for the new chip and both strings.
+- New chip in `playground/lib/examples.ts`: "草莓族？(a misread, refused)" —
+  `where: "作者是草莓族"`.
+
+**Key technical learnings:**
+- `[insight]` The 草莓族 refusal is a stronger gate story than plain vagueness:
+  the model doesn't know the term names a generation, misreads it as an
+  author's name — but at low confidence, so the gate refuses. The gate catches
+  *semantic misreads*, not just vague phrasing.
+- `[note]` Relative-date filters ("出版超過 20 年") already compile to the
+  correct cutoff because the prompt carries today's date (the same `today`
+  stamp that keys the where cache). `bind_today` doesn't enable them — it makes
+  them cache-stable and removes LLM date math.
+- `[note]` The roadmap lands better framed as hourglass swap points (new
+  adapters / richer IR / new connectors) than as a feature list — it reuses a
+  visual the audience just learned and makes the items look architecturally
+  inevitable.
 
 ## v0.5.0 — Playground request-transparency panel (2026-07-13 22:11)
 
