@@ -68,9 +68,9 @@
 }</pre>
     <pre>{
   "rows": [
-    { "book name": "Future Shock 2026",
-      "writer": "SansWord",
-      "cost": 15.0 } ],
+    { "book name": "Vingt mille lieues sous les mers",
+      "writer": "Jules Verne",
+      "cost": 15.5 } ],
   "interpreted": {
     "want": { "writer": {
       "field": "books_view.author_name",
@@ -85,7 +85,22 @@
      <code>interpreted</code> echo.</p>
 </section>
 
-<section class="slide"><!-- 4 · how it stays safe -->
+<section class="slide"><!-- 4 · no schema wiring -->
+  <h2>The gateway never sees a schema config</h2>
+  <ul>
+    <li>At startup it <strong>asks the database</strong> — column names, types,
+        the DBA's column comments, a few sample values.</li>
+    <li>That introspected schema <strong>becomes the resolver's system prompt</strong> —
+        the vocabulary the model matches your <code>want</code> + <code>where</code>
+        against.</li>
+    <li>Point it at a different Postgres → <span class="stat">nothing to rewrite</span>.
+        New columns show up on restart.</li>
+  </ul>
+  <p class="muted">The schema block sits behind a prompt-cache boundary — after the
+     first request it costs ~0.1× tokens per query.</p>
+</section>
+
+<section class="slide"><!-- 5 · how it stays safe -->
   <h2>How it stays safe</h2>
   <p class="big">NL → <span class="stat">validated predicate AST</span> → execute.
      Never NL → SQL.</p>
@@ -101,7 +116,7 @@
      schema — it can never emit SQL.</p>
 </section>
 
-<section class="slide"><!-- 5 · does it work -->
+<section class="slide"><!-- 6 · does it work -->
   <h2>Does it work?</h2>
   <ul>
     <li>Production model (Gemini flash-lite) — field resolution
@@ -116,7 +131,7 @@
   </ul>
 </section>
 
-<section class="slide"><!-- 6 · live demo -->
+<section class="slide"><!-- 7 · live demo -->
   <h2>Live demo</h2>
   <p class="big"><a class="url" href="https://sans-schema-playground.vercel.app"
      target="_blank" rel="noopener">sans-schema-playground.vercel.app</a></p>
@@ -124,7 +139,7 @@
      <em>interpreted</em> panel.</p>
 </section>
 
-<section class="slide"><!-- 7 · your own data -->
+<section class="slide"><!-- 8 · your own data -->
   <h2>Try it with your own data</h2>
   <ol style="display:grid;gap:.6rem;padding-left:1.4rem">
     <li><code>git clone</code> + <code>docker build</code></li>
@@ -138,7 +153,7 @@
   </div>
 </section>
 
-<section class="slide"><!-- 8 · what's deliberately not solved -->
+<section class="slide"><!-- 9 · what's deliberately not solved -->
   <h2>Deliberately not solved yet</h2>
   <ul>
     <li><strong>Authorization</strong> — the gateway is a curated single view today;
@@ -151,7 +166,7 @@
   <p class="muted">Stated limits are how you know the numbers are honest.</p>
 </section>
 
-<section class="slide"><!-- 9 · thanks -->
+<section class="slide"><!-- 10 · thanks -->
   <h2>Thanks</h2>
   <ul>
     <li>Repo: <a class="url" href="https://github.com/SansWord/sans_schema"

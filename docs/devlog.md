@@ -68,6 +68,11 @@ holds forever. Each entry links the spec/plan it came from.
   author"`) exercising the gender field. All existing chips verified covered by data.
 - Docs: `gateway/README.md` (source of truth + real example rows), `gateway/DEPLOY.md`
   re-seed runbook section (psql re-seed + `fly apps restart` for the memoized schema).
+- Deck (post-merge, same session): new slide 4 "The gateway never sees a schema
+  config" — introspection → resolver system prompt → prompt-cache, the dynamic-schema
+  highlight; fixed slide 3's example response still showing pre-v0.4.0 rows
+  ("Future Shock 2026"/"SansWord" → a real Jules Verne row). Slide numbering in
+  `docs/demo/script.md` updated (10 slides now).
 
 **Key technical learnings:**
 - `[gotcha]` **Wikidata `mul` labels:** language-independent names ("Victor Hugo",

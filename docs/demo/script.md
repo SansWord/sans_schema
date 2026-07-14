@@ -38,7 +38,7 @@ Instant this time. Say: "resolution is cached per backend schema — a repeat
 question skips the LLM entirely. Repeat queries cost approximately nothing."
 
 ### 6. Invite the room (~1.5 min)
-Back to slide 6/7: "the URL is on screen — try your own words while I take
+Back to slide 7/8: "the URL is on screen — try your own words while I take
 questions. If it says the demo budget ran out, that's a guardrail, not a crash —
 the own-data page shows how to run it yourself in three steps."
 
