@@ -178,6 +178,11 @@ Boundaries and hardening in place:
   (`ExecutionTrace`, filled by the connector during execute). A far narrower
   disclosure than `/debug/*` (the caller's own request only — no samples, no
   query history), but off by default so an own-data operator opts in explicitly.
+  One caveat: cache hit/miss reflects the shared resolution cache, so a hit on a
+  client's first-ever request reveals that *some* caller resolved the same
+  normalized key/phrase before — the same one bit already observable via response
+  latency (a hit skips the LLM round-trip). Accepted for the demo; one more
+  reason the gate defaults OFF.
 
 Still 📐 (deferred to the security milestone, tracked in `todo.md`):
 - **Field-level authz / field allowlist** — today any *real* schema field resolves for any

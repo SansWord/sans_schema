@@ -57,7 +57,9 @@ restating it. Keep current as part of the end-of-session checklist.
   - [ ] **Deploy:** `fly deploy` (picks up `ENABLE_QUERY_DEBUG` from fly.toml;
         scale back to 1 machine if the deploy re-adds an HA second machine) and
         redeploy the playground on Vercel (new bundle sends `isDebug`).
-        Verify: run a chip twice — panel shows SQL + miss→hit flip.
+        Verify: run a chip twice — panel shows SQL + miss→hit flip (the `today`
+        stamp keys the where cache, so chips warmed before UTC midnight miss
+        again after it — 08:00 Taiwan time).
 
 **Next milestone after the demo session: undecided.** Strong candidates — the two demo
 improvements above, `bind_today` (below), and the security milestone (field-level authz +

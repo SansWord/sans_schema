@@ -111,7 +111,9 @@ hit/miss, and the confidence-gate threshold. It only ever echoes your own
 request's machinery; leave it off on own-data deploys unless you want callers
 to see it. (This is a different, narrower toggle than `ENABLE_DEBUG_ENDPOINTS`
 — no schema dump, no samples, no other callers' history; see §5 for those
-endpoints.)
+endpoints.) Note the cache hit/miss bit reflects the gateway's shared cache
+(equivalent to the response-latency signal), so it can reveal that another
+caller made the same query before.
 
 Expected response shape:
 
