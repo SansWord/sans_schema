@@ -53,13 +53,13 @@ restating it. Keep current as part of the end-of-session checklist.
 - [x] **Playground request-transparency panel ("what did the gateway actually do?").**
       Built as **v0.5.0** (see the devlog top row): `isDebug` + `ENABLE_QUERY_DEBUG`
       debug block (SQL, cache hit/miss, gate threshold) rendered in the playground panel.
-      Remaining **operator step**:
-  - [ ] **Deploy:** `fly deploy` (picks up `ENABLE_QUERY_DEBUG` from fly.toml;
-        scale back to 1 machine if the deploy re-adds an HA second machine) and
-        redeploy the playground on Vercel (new bundle sends `isDebug`).
-        Verify: run a chip twice — panel shows SQL + miss→hit flip (the `today`
-        stamp keys the where cache, so chips warmed before UTC midnight miss
-        again after it — 08:00 Taiwan time).
+  - [x] **Deploy** — done 2026-07-14: `fly deploy --ha=false` (1 machine,
+        `ENABLE_QUERY_DEBUG` live) + Vercel production redeploy (bundle verified
+        sending `isDebug`); tagged `v0.5.0`. Live-verified: same query twice →
+        parameterized SQL + all-miss then all-hit, `/debug/*` still 404.
+        Demo-day note: re-click chips ~10 min before stage (in-process cache
+        empties on restart), and the `today` stamp keys the where cache, so
+        chips warmed before UTC midnight miss again after it (08:00 Taiwan time).
 
 **Next milestone after the demo session: undecided.** Strong candidates — the two demo
 improvements above, `bind_today` (below), and the security milestone (field-level authz +
