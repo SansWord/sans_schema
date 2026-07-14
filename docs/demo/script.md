@@ -15,6 +15,10 @@ every request squeezes through this one validated contract. That waist is where
 all the safety lives, and it's the only novel part; everything else is a
 swappable adapter."
 
+Slide 6 — the process point, after the numbers: "The rule was: don't invest in
+the build until the risky part had a number. The same frozen harness still
+re-measures the resolver after every change."
+
 Slide 10 — open with the callback: "Remember the hourglass? The roadmap is just
 new ends."
 

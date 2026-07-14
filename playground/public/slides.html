@@ -123,19 +123,25 @@
      echoes the exact SQL it ran, values as bound parameters.</p>
 </section>
 
-<section class="slide"><!-- 6 · does it work -->
-  <h2>Does it work?</h2>
+<section class="slide"><!-- 6 · spike before build -->
+  <h2>Spike before build</h2>
+  <p>The one risky bet — can a model resolve fields + compile filters
+     reliably? — was <strong>measured before any gateway code existed</strong>.</p>
   <ul>
     <li>Production model (Gemini flash-lite) — field resolution
         (<code>want</code>): <span class="stat">100%</span> · filter compilation
         (<code>where</code>): <span class="stat">98%</span></li>
-    <li>Across 9 models, 3 vendors: <code>want</code>
+    <li>Across 9 models, 3 vendors, on the same 52-case adversarial exam
+        (4 schemas, 125 fields, 40 filters): <code>want</code>
         <span class="stat">99–100%</span> · <code>where</code>
-        <span class="stat">80–100%</span></li>
+        <span class="stat">80–100%</span> — the spread is why the model sits
+        behind a swappable interface.</li>
     <li class="muted">scored by execution equivalence (same rows selected)</li>
     <li>Below-confidence requests are <strong>refused, not guessed</strong> —
         the gate is a feature.</li>
   </ul>
+  <p class="muted">The spike harness is frozen and re-runnable — every resolver
+     change re-takes the same exam.</p>
 </section>
 
 <section class="slide"><!-- 7 · live demo -->

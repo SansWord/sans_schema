@@ -57,6 +57,12 @@ holds forever. Each entry links the spec/plan it came from.
   CSS class); script gains a "Slide beats" section with the spoken
   philosophy line (slide 5) and the callback ("Remember the hourglass? The
   roadmap is just new ends", slide 10).
+- Post-merge, same session: slide 6 reframed "Does it work?" → **"Spike before
+  build"** — the numbers now claim "the risky bet was measured before
+  investing", not "this works everywhere"; exam size stated (52 adversarial
+  cases / 4 schemas / 125 fields / 40 filters), the 9-model spread recast as
+  the justification for the swappable `LLM` interface, muted re-runnable-
+  harness line added. Slide-beats line added to the script.
 
 **Key technical learnings:**
 - `[insight]` The 草莓族 refusal is a stronger gate story than plain vagueness:
