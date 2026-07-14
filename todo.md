@@ -65,9 +65,10 @@ restating it. Keep current as part of the end-of-session checklist.
       rewritten for the v0.5.0 panels + typed-live Chinese ammunition, new
       "草莓族？(a misread, refused)" chip (see the devlog top row). Remaining
       **operator steps**:
-  - [ ] **Redeploy the playground on Vercel** (`vercel --prod` from `playground/`) —
-        the project is not git-connected, merging does **not** redeploy; the new
-        chip + deck slides stay stale until this runs.
+  - [x] **Redeploy the playground on Vercel** — done 2026-07-14 (`vercel --prod`
+        from `playground/`, commit `4a7581b`): production verified serving the
+        11-slide deck (roadmap slide live) and the 草莓族 chip in the bundle;
+        no runtime errors.
   - [ ] **Dry-run the additions** (checklist updated in
         [`docs/demo/script.md`](docs/demo/script.md)): the 草莓族 chip must refuse
         (422); type "作者是 Z 世代" and "出版超過 20 年" once each and confirm they
