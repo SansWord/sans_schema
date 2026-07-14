@@ -83,6 +83,20 @@ code.theirs { background: var(--ink); color: #fff; border-radius: 4px; padding: 
 .conf.high { color: var(--good); }
 .conf.mid { color: var(--mid); }
 .conf.low { color: var(--bad); }
+.badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  padding: 0.05rem 0.4rem;
+  margin-left: 0.5rem;
+  vertical-align: 1px;
+}
+.badge.hit { background: #d9f2e0; color: var(--good); }
+.badge.miss { background: #fdeacc; color: var(--mid); }
+.gate-note { color: var(--muted); font-size: 0.8rem; }
+.sql-echo h3 { font-size: 0.85rem; margin: 1rem 0 0.4rem; }
 .where-echo pre {
   background: #fff;
   border: 1px solid var(--border);
