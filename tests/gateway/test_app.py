@@ -14,6 +14,7 @@ def _settings(**kw):
 
 _tiny_limits = _settings(max_want_fields=3, max_field_len=20, max_where_len=15)
 _debug_on = _settings(enable_debug_endpoints=True)
+_query_debug_on = _settings(enable_query_debug=True)
 
 WANT_OK = {"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95},
                        "genre": {"field": "books_view.category", "confidence": 0.92}}}
@@ -117,3 +118,52 @@ def test_debug_cache_reports_hit_rate():
     stats = c.get("/debug/cache").json()["stats"]
     assert stats["field"]["hits"] == 1 and stats["field"]["misses"] == 1
     assert stats["combined"]["hit_rate"] == 0.5
+
+def test_to_raw_query_parses_is_debug():
+    from gateway.app import to_raw_query
+    assert to_raw_query({"want": ["t"], "isDebug": True}).debug is True
+    assert to_raw_query({"want": ["t"]}).debug is False
+
+def test_is_debug_silently_ignored_when_gate_off():
+    c = _client(FakeLLM(want=WANT_OK, where=WHERE_OK))
+    r = c.post("/query", json={"want": {"book_title": None}, "where": "sci-fi only",
+                               "isDebug": True})
+    assert r.status_code == 200
+    body = r.json()
+    assert "debug" not in body
+    assert "interpreted" not in body    # the isVerbose implication is gated too
+
+def test_is_debug_returns_block_and_implies_interpreted():
+    app.dependency_overrides[get_settings] = _query_debug_on
+    app.dependency_overrides[get_cache] = lambda: ResolutionCache()   # fresh — assert on miss below
+    c = _client(FakeLLM(want=WANT_OK, where=WHERE_OK))
+    r = c.post("/query", json={"want": {"book_title": None, "genre": None},
+                               "where": "sci-fi only", "isDebug": True})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["debug"]["gate_threshold"] == 0.7
+    assert body["debug"]["cache"]["want"] == {"book_title": "miss", "genre": "miss"}
+    assert body["debug"]["execution"]["engine"] == "core.predicate"
+    assert body["interpreted"]["want"]["book_title"]["field"] == "books_view.title"
+
+def test_low_confidence_422_body_carries_debug_when_requested():
+    app.dependency_overrides[get_settings] = _query_debug_on
+    app.dependency_overrides[get_cache] = lambda: ResolutionCache()   # fresh — assert on miss below
+    llm = FakeLLM(want=WANT_OK,
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.3})
+    c = _client(llm)
+    r = c.post("/query", json={"want": {"book_title": None}, "where": "vague",
+                               "isDebug": True})
+    assert r.status_code == 422
+    body = r.json()
+    assert body["debug"]["cache"]["where"] == "miss"
+    assert body["debug"]["execution"] is None
+
+def test_error_body_omits_debug_key_when_not_requested():
+    llm = FakeLLM(want=WANT_OK,
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.3})
+    c = _client(llm)
+    r = c.post("/query", json={"want": {"book_title": None}, "where": "vague"})
+    assert r.status_code == 422 and "debug" not in r.json()

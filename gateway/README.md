@@ -50,6 +50,7 @@ cp .env.example .env
 | `MAX_FIELD_LEN`  | `200`                            | Max length of a single `want` field name  |
 | `MAX_WHERE_LEN`  | `2000`                           | Max length of the NL `where` string       |
 | `ENABLE_DEBUG_ENDPOINTS` | `0`                      | Expose `/debug/*` introspection (dev only — see below) |
+| `ENABLE_QUERY_DEBUG`     | `0`                      | Honor `isDebug` on `POST /query` (per-request debug block: SQL + params, cache hit/miss, gate threshold) |
 | `DB_VIEW`        | `books_view`                     | Flat view the connector introspects        |
 | `RATE_LIMIT_PER_IP` | *(empty = off)*               | Per-visitor-IP rate limit, e.g. `10/minute`|
 | `DAILY_REQUEST_CAP` | *(empty = off)*               | Global daily request cap, e.g. `1000/day`  |
@@ -103,6 +104,16 @@ curl -X POST localhost:8000/query \
 
 `want` is your field names (an object `{key: null}` or a list `["key", …]`);
 `where` is a plain-language filter; `isVerbose` adds the `interpreted` echo.
+
+With `ENABLE_QUERY_DEBUG=1`, `isDebug: true` additionally returns a `debug`
+block — the parameterized SQL the connector executed, per-field cache
+hit/miss, and the confidence-gate threshold. It only ever echoes your own
+request's machinery; leave it off on own-data deploys unless you want callers
+to see it. (This is a different, narrower toggle than `ENABLE_DEBUG_ENDPOINTS`
+— no schema dump, no samples, no other callers' history; see §5 for those
+endpoints.) Note the cache hit/miss bit reflects the gateway's shared cache
+(equivalent to the response-latency signal), so it can reveal that another
+caller made the same query before.
 
 Expected response shape:
 

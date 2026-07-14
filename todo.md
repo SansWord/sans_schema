@@ -50,18 +50,16 @@ restating it. Keep current as part of the end-of-session checklist.
         + Mandarin chips all return rows; Taiwan Travelogue in production).
         Re-click the chips ~10 min before the demo session as usual (in-process
         cache empties on restart).
-- [ ] **Playground request-transparency panel ("what did the gateway actually do?").**
-      Expose per-request debug info in the playground so the demo shows the machinery:
-      the compiled SQL (parameterized text) the connector executed, per-`want`-field and
-      `where` cache hit/miss, maybe gate threshold + timing. Needs its own brainstorm →
-      spec first; known tensions to design around: (a) the existing `/debug/*` endpoints
-      are dev-only because they disclose schema/samples — a per-request `debug` block in
-      the `/query` response (opt-in flag, e.g. extend `isVerbose` or add `isDebug`) is a
-      different, narrower disclosure (the SQL for *your own* query over a public demo
-      dataset — fine here, but should be a config gate for own-data deploys); (b) cache
-      hit/miss is known in `pipeline.py` at resolve time, SQL text in the connector —
-      both would need to flow into the response contract, which touches
-      `docs/architecture.md` §1 (request contract) and the `interpreted` echo shape.
+- [x] **Playground request-transparency panel ("what did the gateway actually do?").**
+      Built as **v0.5.0** (see the devlog top row): `isDebug` + `ENABLE_QUERY_DEBUG`
+      debug block (SQL, cache hit/miss, gate threshold) rendered in the playground panel.
+      Remaining **operator step**:
+  - [ ] **Deploy:** `fly deploy` (picks up `ENABLE_QUERY_DEBUG` from fly.toml;
+        scale back to 1 machine if the deploy re-adds an HA second machine) and
+        redeploy the playground on Vercel (new bundle sends `isDebug`).
+        Verify: run a chip twice — panel shows SQL + miss→hit flip (the `today`
+        stamp keys the where cache, so chips warmed before UTC midnight miss
+        again after it — 08:00 Taiwan time).
 
 **Next milestone after the demo session: undecided.** Strong candidates — the two demo
 improvements above, `bind_today` (below), and the security milestone (field-level authz +

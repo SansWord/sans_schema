@@ -25,3 +25,13 @@ def test_execute_filters_and_keys_by_field_path():
     rows = c.execute(ir)
     assert rows and all(r["books_view.category"] == "Science Fiction" for r in rows)
     assert set(rows[0]) == {"books_view.title", "books_view.category"}   # keyed by field_path
+
+def test_execute_fills_trace_engine():
+    from gateway.connectors.base import ExecutionTrace
+    ir = CanonicalQueryIR(select=[ResolvedField("t", "books_view.title", 0.9)],
+                          predicate=None, where_confidence=None, where_raw=None)
+    trace = ExecutionTrace()
+    rows = FakeConnector().execute(ir, trace=trace)
+    assert rows                                     # execute still returns rows
+    assert trace.engine == "core.predicate"
+    assert trace.sql is None and trace.params is None   # no SQL story to tell

@@ -12,9 +12,9 @@ WANT_OK = {"mapping": {
 WHERE_OK = {"where": {"op": "eq", "field": "books_view.category", "value": "Science Fiction"},
             "confidence": 0.9}
 
-def _run(raw, llm, cache=None):
+def _run(raw, llm, cache=None, debug=False):
     return run_query(raw, FakeConnector(), llm, cache or ResolutionCache(),
-                     GateConfig(threshold=0.7), limit=100)
+                     GateConfig(threshold=0.7), limit=100, debug=debug)
 
 def test_happy_path_returns_rows_in_client_keys():
     raw = RawQuery(["book_title", "genre"], "sci-fi only", "2026-07-06", verbose=True)
@@ -121,3 +121,82 @@ def test_backend_describe_error_is_502():
     with pytest.raises(GatewayError) as e:
         run_query(raw, NoDescribe(), FakeLLM(), ResolutionCache(), GateConfig(0.7), 100)
     assert e.value.status == 502 and e.value.code == "backend_error"
+
+def test_debug_block_reports_cache_threshold_and_execution():
+    cache = ResolutionCache()
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where=WHERE_OK)
+    raw = RawQuery(["book_title"], "sci-fi only", "2026-07-06", verbose=True)
+    dbg = _run(raw, llm, cache, debug=True)["debug"]
+    assert dbg["gate_threshold"] == 0.7
+    assert dbg["cache"] == {"want": {"book_title": "miss"}, "where": "miss"}
+    assert dbg["execution"] == {"engine": "core.predicate", "sql": None, "params": None}
+    # same request again → both caches hit (the "second click is free" beat)
+    raw2 = RawQuery(["book_title"], "sci-fi only", "2026-07-06", verbose=True)
+    dbg2 = _run(raw2, llm, cache, debug=True)["debug"]
+    assert dbg2["cache"] == {"want": {"book_title": "hit"}, "where": "hit"}
+
+def test_debug_block_omits_where_status_without_a_where():
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    dbg = _run(raw, llm, debug=True)["debug"]
+    assert dbg["cache"] == {"want": {"book_title": "miss"}}
+
+def test_debug_off_omits_block():
+    raw = RawQuery(["book_title"], None, "2026-07-06", verbose=True)
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    assert "debug" not in _run(raw, llm)
+
+def test_low_confidence_where_422_carries_debug_without_execution():
+    raw = RawQuery(["book_title"], "something vague", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.4})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm, debug=True)
+    assert e.value.debug["gate_threshold"] == 0.7
+    assert e.value.debug["cache"] == {"want": {"book_title": "miss"}, "where": "miss"}
+    assert e.value.debug["execution"] is None      # nothing ran
+
+
+def test_error_debug_is_none_when_not_requested():
+    raw = RawQuery(["book_title"], "something vague", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where={"where": {"op": "eq", "field": "books_view.category", "value": "x"},
+                         "confidence": 0.4})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm)
+    assert e.value.debug is None
+
+
+def test_backend_error_502_carries_no_debug():
+    class BoomConnector(FakeConnector):
+        def execute(self, ir, trace=None):
+            raise RuntimeError("db exploded")
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    with pytest.raises(GatewayError) as e:
+        run_query(raw, BoomConnector(), llm, ResolutionCache(), GateConfig(0.7), 100, debug=True)
+    assert e.value.status == 502 and e.value.debug is None
+
+
+def test_all_want_declined_422_debug_has_no_where_status():
+    raw = RawQuery(["ghost"], "sci-fi only", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"ghost": {"field": None, "confidence": 0.0}}})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm, debug=True)
+    assert e.value.code == "all_want_declined"
+    assert e.value.debug["cache"] == {"want": {"ghost": "miss"}}   # no "where" key
+
+
+def test_traceless_connector_reports_null_execution():
+    # a connector predating the trace kwarg still works under debug — its
+    # `execution` degrades to null (spec §1)
+    class LegacyConnector(FakeConnector):
+        def execute(self, ir):
+            return super().execute(ir)
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    resp = run_query(raw, LegacyConnector(), llm, ResolutionCache(), GateConfig(0.7), 100, debug=True)
+    assert resp["rows"]
+    assert resp["debug"]["execution"] is None

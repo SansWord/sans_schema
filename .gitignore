@@ -22,3 +22,6 @@ env/
 
 # setuptools wheel-build byproduct
 build/
+
+# visual-companion brainstorm mockups
+.superpowers/

@@ -9,7 +9,7 @@ import psycopg
 from psycopg import sql
 
 from core.schemas import Field, Schema
-from gateway.connectors.base import Capabilities
+from gateway.connectors.base import Capabilities, ExecutionTrace
 from gateway.contracts import CanonicalQueryIR
 
 _BINARY_OPS = {"eq": "=", "ne": "<>", "gt": ">", "gte": ">=", "lt": "<", "lte": "<="}
@@ -61,7 +61,8 @@ class PostgresConnector:
         return [str(r[0]) for r in conn.execute(q, (k,)).fetchall()]
 
     # --- execute ------------------------------------------------------------
-    def execute(self, ir: CanonicalQueryIR, limit: int = 100) -> List[dict]:
+    def execute(self, ir: CanonicalQueryIR, limit: int = 100,
+                trace: Optional[ExecutionTrace] = None) -> List[dict]:
         fields = [f for f in ir.select if f.field_path is not None]
         select_cols = sql.SQL(", ").join(sql.Identifier(self._col(f.field_path)) for f in fields)
         query = sql.SQL("SELECT {cols} FROM {view}").format(
@@ -73,6 +74,11 @@ class PostgresConnector:
         query = query + sql.SQL(" LIMIT %s")
         params.append(limit)
         with psycopg.connect(self.dsn) as conn:
+            if trace is not None:
+                # as_string needs the connection for exact identifier quoting
+                trace.engine = "postgres"
+                trace.sql = query.as_string(conn)
+                trace.params = list(params)
             cur = conn.execute(query, params)
             # re-key each row by the qualified field path (SELECT order == fields order),
             # so remap — which looks up by field_path — finds the value.

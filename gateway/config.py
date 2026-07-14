@@ -16,6 +16,7 @@ class Settings:
     max_field_len: int        # cap on the length of a single `want` field name
     max_where_len: int        # cap on the length of the NL `where` string
     enable_debug_endpoints: bool  # expose /debug/* (discloses schema+samples) — dev only
+    enable_query_debug: bool = False  # honor isDebug on POST /query (per-request debug block)
     # Public-demo guardrails (demo-session spec). All OFF by default — an empty
     # value disables the guardrail, so local dev and the existing tests see no change.
     rate_limit_per_ip: str = ""    # slowapi limit string per visitor IP, e.g. "10/minute"
@@ -40,6 +41,10 @@ class Settings:
             # view discloses column names, descriptions, and sample values.
             enable_debug_endpoints=os.environ.get(
                 "ENABLE_DEBUG_ENDPOINTS", "0").strip().lower() in ("1", "true", "yes", "on"),
+            # Per-request debug block on POST /query (isDebug). OFF by default —
+            # disclosure posture matches ENABLE_DEBUG_ENDPOINTS; demo deploy sets it on.
+            enable_query_debug=os.environ.get(
+                "ENABLE_QUERY_DEBUG", "0").strip().lower() in ("1", "true", "yes", "on"),
             rate_limit_per_ip=os.environ.get("RATE_LIMIT_PER_IP", "").strip(),
             daily_request_cap=os.environ.get("DAILY_REQUEST_CAP", "").strip(),
             cors_origins=[o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",")

@@ -57,7 +57,7 @@ export default function Home() {
       {err && (
         <>
           <StatusPanel status={err.status} error={err.data} />
-          {err.data.interpreted && <InterpretedPanel interpreted={err.data.interpreted} />}
+          {err.data.interpreted && <InterpretedPanel interpreted={err.data.interpreted} debug={err.data.debug} />}
         </>
       )}
       {ok && (
@@ -66,7 +66,7 @@ export default function Home() {
             <h2>Rows — in <em>your</em> column names</h2>
             <ResultsTable rows={ok.rows} />
           </section>
-          {ok.interpreted && <InterpretedPanel interpreted={ok.interpreted} />}
+          {ok.interpreted && <InterpretedPanel interpreted={ok.interpreted} debug={ok.debug} />}
         </>
       )}
       <footer>
