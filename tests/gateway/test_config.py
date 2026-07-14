@@ -46,3 +46,13 @@ def test_get_connector_uses_db_view(monkeypatch):
     finally:
         ga.get_settings.cache_clear()   # don't leak the patched settings
         ga.get_connector.cache_clear()
+
+
+def test_query_debug_gate_default_off(monkeypatch):
+    monkeypatch.delenv("ENABLE_QUERY_DEBUG", raising=False)
+    assert Settings.from_env().enable_query_debug is False
+
+
+def test_query_debug_gate_parses_from_env(monkeypatch):
+    monkeypatch.setenv("ENABLE_QUERY_DEBUG", "1")
+    assert Settings.from_env().enable_query_debug is True
