@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List, Optional
 
 from core.schemas import Schema
 from gateway.contracts import CanonicalQueryIR
@@ -20,6 +20,16 @@ except ImportError:  # pragma: no cover
 class Capabilities:
     """Static declaration only — no pushdown-negotiation planner consumes it in v1."""
     pushdown_filter: bool = True
+
+
+@dataclass
+class ExecutionTrace:
+    """Per-request execution debug info (request-transparency panel spec). Created
+    by the pipeline only when debug is on; write-once by the connector, read once
+    when the response's `debug` block is assembled — never a mid-flight channel."""
+    engine: Optional[str] = None            # e.g. "postgres", "core.predicate"
+    sql: Optional[str] = None               # parameterized SQL text, if the backend runs SQL
+    params: Optional[List[Any]] = None      # bound values, in placeholder order
 
 
 @runtime_checkable

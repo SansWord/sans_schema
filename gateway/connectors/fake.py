@@ -3,11 +3,11 @@ rows with core.predicate (the same oracle the spike scorer trusts), so a Postgre
 can be asserted equal to it."""
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 from core.predicate import matches
 from core.schemas import Field, Schema
-from gateway.connectors.base import Capabilities
+from gateway.connectors.base import Capabilities, ExecutionTrace
 from gateway.contracts import CanonicalQueryIR
 from gateway.demo.rows import VIEW_FIELDS, VIEW_NAME, VIEW_ROWS
 
@@ -27,7 +27,10 @@ class FakeConnector:
         return Schema(name=VIEW_NAME, fields=fields,
                       rows=[_qualify(r) for r in VIEW_ROWS])
 
-    def execute(self, ir: CanonicalQueryIR) -> List[dict]:
+    def execute(self, ir: CanonicalQueryIR,
+                trace: Optional[ExecutionTrace] = None) -> List[dict]:
+        if trace is not None:
+            trace.engine = "core.predicate"     # in-memory oracle — no SQL to report
         paths = [f.field_path for f in ir.select if f.field_path is not None]
         rows = [_qualify(r) for r in VIEW_ROWS]
         selected = rows if ir.predicate is None else \
