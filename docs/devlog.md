@@ -17,6 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
+| [v0.5.0](#v050--playground-request-transparency-panel-2026-07-13-2211) | Per-request `debug` block (`isDebug` + `ENABLE_QUERY_DEBUG`): executed SQL, cache hit/miss, gate threshold — rendered in the playground panel. |
 | [v0.4.0](#v040--richer-real-demo-dataset-2026-07-13-1807) | Richer real demo dataset — 381 real books from 71 curated authors (Open Library + Wikidata, both CC0) replace the 6 hand-written rows. `books.json` is the new source of truth (`seed.sql` generated, `rows.py` loads the JSON); nullable `gender` column added; deterministic price synthesis; chip-coverage + seed-determinism tests; new "female authors" chip. 96 tests green. Fly Postgres re-seed = operator step in `todo.md`. |
 | [v0.3.1](#v031--demo-session-follow-up-deploy-executed-docs--deck-polish-2026-07-13) | Follow-up session: executed the v0.3.0 deploys (Fly gateway + seeded Postgres, Vercel playground, Gemini quota cap 2000/day) with production verification + dry run — details folded into the v0.3.0 entry; added `playground/README.md`, made deck links clickable (+ portfolio/LinkedIn), queued two demo improvements in `todo.md` (richer real dataset, request-transparency panel). |
 | [v0.3.0](#v030--demo-session-guardrails-playground-deploy-deck-2026-07-12-2355) | Demo session build — env-driven public-demo guardrails (CORS + per-IP limit + daily cap, all off by default, `create_app()` factory), Next.js playground (`playground/`) with the `interpreted` echo as centerpiece, Fly.io/Vercel deploy config + runbook, 9-slide deck + demo script. Live 4-state error pass verified locally. 75 tests green. Fly/Vercel deploys + dry run = operator steps in `todo.md`. |
@@ -29,6 +30,34 @@ holds forever. Each entry links the spec/plan it came from.
 | [v0.1.0](#v010--resolution-accuracy-spike-2026-07-06) | Built + ran the resolution-accuracy spike; certified ~100% across 3 vendors / 9 models. Green light. |
 
 ---
+
+## v0.5.0 — Playground request-transparency panel (2026-07-13 22:11)
+
+**Review:** not yet
+
+**Design docs:**
+- Request-Transparency Panel: [Spec](superpowers/specs/2026-07-13-request-transparency-panel-design.md) [Plan](superpowers/plans/2026-07-13-request-transparency-panel.md)
+
+**What was built:**
+- `isDebug` flag on `POST /query` → `debug` block (gate threshold, per-key +
+  where cache hit/miss, execution trace), gated by `ENABLE_QUERY_DEBUG`
+  (default OFF; demo deploy sets it on in `fly.toml`).
+- `ExecutionTrace` through the connector seam — Postgres records the
+  parameterized SQL it actually ran (`as_string(conn)`); the fake reports
+  `core.predicate`. `_accepts_limit` generalized to `_execute_kwargs`.
+- Debug block rides on 4xx alongside `interpreted` (`execution: null`); 502s bare.
+- Playground: cache badges + gate note + SQL box woven into `InterpretedPanel`;
+  graceful absence when the gate is off.
+
+**Key technical learnings:**
+- `[note]` psycopg's `Composable.as_string()` needs the live connection for
+  exact identifier quoting — recording the SQL inside `execute` (trace pattern)
+  gets it free; an `explain()`-style second compile would not.
+- `[gotcha]` `gateway/app.py`'s `get_cache()` is an `lru_cache` process
+  singleton, so test assertions about hit/miss state are order-dependent unless
+  the test overrides it with a fresh `ResolutionCache()` — the plan's literal
+  test code was flaky until the implementer applied the file's established
+  override pattern.
 
 ## v0.4.0 — Richer real demo dataset (2026-07-13 18:07)
 
