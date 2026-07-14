@@ -18,6 +18,10 @@ def test_required_taiwanese_authors_survived_the_drop_policy():
     names = {r["author_name"] for r in VIEW_ROWS}
     assert "Yang Shuang-zi" in names
     assert "Kevin Chen" in names
+    # Her award-winning piece (National Book Award 2024, English translation)
+    # is user-required in the seed data.
+    assert any(r["title"] == "Taiwan Travelogue"
+               and r["author_name"] == "Yang Shuang-zi" for r in VIEW_ROWS)
 
 
 def test_chip_scifi_under_25_returns_several_rows():

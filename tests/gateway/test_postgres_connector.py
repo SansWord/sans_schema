@@ -22,7 +22,8 @@ def test_execute_compiles_ast_and_keys_by_path(pg_connector):
             {"op": "lt", "field": "books_view.price", "value": 30}]},
         where_confidence=0.9, where_raw="cheap books by Yang Shuang-zi")
     rows = pg_connector.execute(ir, limit=100)
-    assert {r["books_view.title"] for r in rows} == {"我家住在張日興隆隔壁"}
+    assert {r["books_view.title"] for r in rows} == {"我家住在張日興隆隔壁",
+                                                     "Taiwan Travelogue"}
     assert set(rows[0]) == {"books_view.title", "books_view.category"}
 
 def test_limit_is_enforced(pg_connector):

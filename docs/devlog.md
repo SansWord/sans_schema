@@ -17,7 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
-| [v0.4.0](#v040--richer-real-demo-dataset-2026-07-13-1807) | Richer real demo dataset — 380 real books from 71 curated authors (Open Library + Wikidata, both CC0) replace the 6 hand-written rows. `books.json` is the new source of truth (`seed.sql` generated, `rows.py` loads the JSON); nullable `gender` column added; deterministic price synthesis; chip-coverage + seed-determinism tests; new "female authors" chip. 95 tests green. Fly Postgres re-seed = operator step in `todo.md`. |
+| [v0.4.0](#v040--richer-real-demo-dataset-2026-07-13-1807) | Richer real demo dataset — 381 real books from 71 curated authors (Open Library + Wikidata, both CC0) replace the 6 hand-written rows. `books.json` is the new source of truth (`seed.sql` generated, `rows.py` loads the JSON); nullable `gender` column added; deterministic price synthesis; chip-coverage + seed-determinism tests; new "female authors" chip. 96 tests green. Fly Postgres re-seed = operator step in `todo.md`. |
 | [v0.3.1](#v031--demo-session-follow-up-deploy-executed-docs--deck-polish-2026-07-13) | Follow-up session: executed the v0.3.0 deploys (Fly gateway + seeded Postgres, Vercel playground, Gemini quota cap 2000/day) with production verification + dry run — details folded into the v0.3.0 entry; added `playground/README.md`, made deck links clickable (+ portfolio/LinkedIn), queued two demo improvements in `todo.md` (richer real dataset, request-transparency panel). |
 | [v0.3.0](#v030--demo-session-guardrails-playground-deploy-deck-2026-07-12-2355) | Demo session build — env-driven public-demo guardrails (CORS + per-IP limit + daily cap, all off by default, `create_app()` factory), Next.js playground (`playground/`) with the `interpreted` echo as centerpiece, Fly.io/Vercel deploy config + runbook, 9-slide deck + demo script. Live 4-state error pass verified locally. 75 tests green. Fly/Vercel deploys + dry run = operator steps in `todo.md`. |
 | [v0.2.4](#v024--cache-hit-rate-observability-2026-07-07-0231) | Cache-hit-rate observability — `DictCache` counts hits/misses; `ResolutionCache.stats()` reports field/where/combined `hit_rate`, surfaced at `/debug/cache`. Building block for the "measure cache-hit on agent traffic" de-risking item. Counters port to a Redis store (per-replica); entry enumeration does not. 65 tests green. |
@@ -37,13 +37,16 @@ holds forever. Each entry links the spec/plan it came from.
 - Richer Demo Dataset: [Spec](superpowers/specs/2026-07-13-richer-demo-dataset-design.md) [Plan](superpowers/plans/2026-07-13-richer-demo-dataset.md)
 
 **What was built:**
-- **380 real books from 71 curated authors** replace the 6 hand-written demo rows.
+- **381 real books from 71 curated authors** replace the 6 hand-written demo rows.
   Sources: Open Library (works: title, first-publish year, median page count, edition
   languages, subjects) + Wikidata (author birth year, country, gender) — both CC0.
   Curation instrument: `gateway/demo/authors.json`, bucketed taiwan (10, incl. the
   required Yang Shuang-zi + Kevin Chen) / french (8) / young (8) / sff (15) / general
   (30), with per-entry overrides (`wikidata` QID, `ol_name`, `country`,
-  `exclude_titles`) for identity disambiguation.
+  `exclude_titles`, `also_ol`) for identity disambiguation. `also_ol` adds extra
+  Open Library searches per author — used to pick up Yang Shuang-zi's
+  award-winning *Taiwan Travelogue* (National Book Award 2024; catalogued under
+  her romanized name as the English translation, test-pinned as user-required).
 - **Source-of-truth inversion:** `gateway/demo/books.json` (frozen snapshot) is now the
   law; `seed.sql` is a generated artifact (`build_dataset.py --emit-only`), `rows.py`
   loads the JSON at import, and the new `columns.py` holds the column
@@ -53,9 +56,9 @@ holds forever. Each entry links the spec/plan it came from.
   All other columns/comments unchanged, so the resolver-visible schema is stable.
 - **Price synthesis** (no open dataset carries prices): deterministic pure function —
   category base + page_count/60 + sha256(title) jitter, `.50`/`.99` endings, clamped
-  [4.99, 49.99]; distribution straddles the $20/$25 chip thresholds (208 books under
+  [4.99, 49.99]; distribution straddles the $20/$25 chip thresholds (209 books under
   $20, 70 sci-fi under $25).
-- **Tests moved + added** (95 green, incl. Postgres-backed): seam-parity + postgres
+- **Tests moved + added** (96 green, incl. Postgres-backed): seam-parity + postgres
   row assertions re-anchored on the two required authors; new `test_demo_dataset.py`
   pins size range, required authors, per-chip coverage, both genders, and
   books.json→seed.sql determinism; new `test_demo_build.py` covers the pure build

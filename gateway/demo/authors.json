@@ -1,5 +1,5 @@
 [
- {"name": "Yang Shuang-zi", "bucket": "taiwan", "lang": "zh", "ol_name": "楊双子"},
+ {"name": "Yang Shuang-zi", "bucket": "taiwan", "lang": "zh", "ol_name": "楊双子", "also_ol": [{"ol_name": "Yang Shuang-zi", "lang": "en"}]},
  {"name": "Kevin Chen", "bucket": "taiwan", "lang": "zh", "ol_name": "陳思宏", "wikidata": "Q2278731"},
  {"name": "Wu Ming-yi", "bucket": "taiwan", "lang": "zh", "wikidata": "Q10918917", "exclude_titles": ["Min shang fa li lun zheng yi wen ti"]},
  {"name": "Qiu Miaojin", "bucket": "taiwan", "lang": "zh"},

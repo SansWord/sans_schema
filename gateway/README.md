@@ -24,9 +24,9 @@ docker exec -i sans-pg psql -U postgres -d postgres < gateway/demo/seed.sql
 The `DROP … IF EXISTS` at the top of the seed prints `NOTICE: … does not exist`
 on a fresh DB — that's expected (the seed is re-runnable), not an error. Verify it
 loaded: `docker exec -i sans-pg psql -U postgres -d postgres -c "SELECT count(*) FROM books_view;"`
-should return `380`.
+should return `381`.
 
-`gateway/demo/books.json` is the source of truth for the demo data (~350 real
+`gateway/demo/books.json` is the source of truth for the demo data (381 real
 books from Open Library + Wikidata; `seed.sql` is generated from it by
 `python -m gateway.demo.build_dataset --emit-only`); the gateway introspects
 `books_view` at startup — no schema is hardcoded.

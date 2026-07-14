@@ -21,7 +21,7 @@ import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from gateway.demo.columns import COLUMNS
 
@@ -245,6 +245,18 @@ def fetch_works(name: str, lang_hint: Optional[str],
     return works
 
 
+def author_searches(entry: Dict[str, Any]) -> List[Tuple[str, Optional[str]]]:
+    """The Open Library (search name, language hint) pairs for a curated entry:
+    the primary search plus any `also_ol` extras — an author whose works are
+    catalogued under several names/languages (e.g. Chinese originals under the
+    Chinese name, an award-winning translation under the romanized name) gets
+    one search per catalogue identity."""
+    searches = [(entry.get("ol_name") or entry["name"], entry.get("lang"))]
+    for extra in entry.get("also_ol", []):
+        searches.append((extra["ol_name"], extra.get("lang")))
+    return searches
+
+
 def build_snapshot(curated: List[Dict[str, Any]]) -> Dict[str, Any]:
     authors, books = [], []
     for entry in curated:
@@ -256,10 +268,17 @@ def build_snapshot(curated: List[Dict[str, Any]]) -> Dict[str, Any]:
             continue
         # `ol_name` overrides the Open Library search name when the display name
         # doesn't find the author's works (e.g. works catalogued under the
-        # Chinese name); `name` stays the display author_name.
-        works = fetch_works(entry.get("ol_name") or name, lang_hint,
-                            exclude_titles=entry.get("exclude_titles"))
-        time.sleep(1)
+        # Chinese name); `name` stays the display author_name. `also_ol` adds
+        # further (name, lang) searches, deduped by title, same per-author cap.
+        works, seen = [], set()
+        for search_name, search_lang in author_searches(entry):
+            for w in fetch_works(search_name, search_lang,
+                                 exclude_titles=entry.get("exclude_titles")):
+                if w["title"].lower() not in seen:
+                    seen.add(w["title"].lower())
+                    works.append(w)
+            time.sleep(1)
+        works = works[:MAX_WORKS_PER_AUTHOR]
         if not works:
             print(f"  SKIP (no usable works): {name}", file=sys.stderr)
             continue

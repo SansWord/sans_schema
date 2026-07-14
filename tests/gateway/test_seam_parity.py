@@ -28,4 +28,5 @@ def test_same_ir_selects_the_same_rows(pg_connector):
     key = lambda rows: frozenset((r["books_view.title"], r["books_view.category"]) for r in rows)
     assert key(pg_rows) == key(fake_rows)          # order not guaranteed without ORDER BY
     assert key(pg_rows) == {("我家住在張日興隆隔壁", "Non-Fiction"),
+                            ("Taiwan Travelogue", "Literary Fiction"),
                             ("鬼地方", "Literary Fiction")}

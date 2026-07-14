@@ -74,3 +74,12 @@ def test_emit_seed_sql_structure_and_escaping():
     assert all(f"books_view.{name}" in sql for (name, _t, _d) in COLUMNS)
     # deterministic: same input, same output
     assert emit_seed_sql(TINY_SNAPSHOT) == sql
+
+
+def test_author_searches_primary_plus_extras():
+    from gateway.demo.build_dataset import author_searches
+    plain = {"name": "Sally Rooney", "bucket": "young"}
+    assert author_searches(plain) == [("Sally Rooney", None)]
+    multi = {"name": "Yang Shuang-zi", "lang": "zh", "ol_name": "楊双子",
+             "also_ol": [{"ol_name": "Yang Shuang-zi", "lang": "en"}]}
+    assert author_searches(multi) == [("楊双子", "zh"), ("Yang Shuang-zi", "en")]
