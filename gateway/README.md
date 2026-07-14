@@ -109,7 +109,9 @@ With `ENABLE_QUERY_DEBUG=1`, `isDebug: true` additionally returns a `debug`
 block — the parameterized SQL the connector executed, per-field cache
 hit/miss, and the confidence-gate threshold. It only ever echoes your own
 request's machinery; leave it off on own-data deploys unless you want callers
-to see it.
+to see it. (This is a different, narrower toggle than `ENABLE_DEBUG_ENDPOINTS`
+— no schema dump, no samples, no other callers' history; see §5 for those
+endpoints.)
 
 Expected response shape:
 

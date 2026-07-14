@@ -31,9 +31,10 @@ POST /query
 - `isDebug` (opt-in flag; implies the `interpreted` echo) adds a `debug` block:
   gate threshold, per-`want`-key + `where` resolution-cache hit/miss, and the
   execution trace (engine + parameterized SQL + bound params). Config-gated by
-  `ENABLE_QUERY_DEBUG` (default OFF — §6); when the gate is off the flag is
-  silently ignored, implication included. On 4xx the block rides alongside
-  `interpreted` with `execution: null` (nothing ran); 502s stay bare.
+  `ENABLE_QUERY_DEBUG` (default OFF — §6); when the gate is off the flag (and
+  its implied `interpreted` echo) is silently ignored — no forced verbose, no
+  `debug` block. On 4xx the block rides alongside `interpreted` with
+  `execution: null` (nothing ran); 502s stay bare.
 - You don't need GraphQL — any protocol carrying the field names works; the JSON
   shape body is the default. Others become `RequestAdapter`s later.
 - **Built:** `POST /query` in `gateway/app.py`; the JSON `RequestAdapter`
