@@ -15,6 +15,7 @@ class RawQuery:
     where: Optional[str]             # NL filter, or None
     today: str                       # ISO date for relative-date resolution (per-call)
     verbose: bool = False            # include the `interpreted` echo
+    debug: bool = False              # include the `debug` block (isDebug; config-gated in app)
 
 
 @dataclass

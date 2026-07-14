@@ -117,3 +117,8 @@ def test_debug_cache_reports_hit_rate():
     stats = c.get("/debug/cache").json()["stats"]
     assert stats["field"]["hits"] == 1 and stats["field"]["misses"] == 1
     assert stats["combined"]["hit_rate"] == 0.5
+
+def test_to_raw_query_parses_is_debug():
+    from gateway.app import to_raw_query
+    assert to_raw_query({"want": ["t"], "isDebug": True}).debug is True
+    assert to_raw_query({"want": ["t"]}).debug is False

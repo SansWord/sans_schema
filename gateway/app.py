@@ -59,7 +59,8 @@ def to_raw_query(body: Dict[str, Any]) -> RawQuery:
     where = body.get("where")
     return RawQuery(want=want, where=where,
                     today=datetime.date.today().isoformat(),
-                    verbose=bool(body.get("isVerbose", False)))
+                    verbose=bool(body.get("isVerbose", False)),
+                    debug=bool(body.get("isDebug", False)))
 
 
 def check_input_limits(raw: RawQuery, settings: Settings):
