@@ -21,4 +21,6 @@ export const EXAMPLES: Example[] = [
   { label: "Books by female authors",
     want: ["book name", "writer", "writer's gender"],
     where: "written by a female author" },
+  { label: "草莓族？(a misread, refused)",
+    want: ["book name", "writer"], where: "作者是草莓族" },
 ];

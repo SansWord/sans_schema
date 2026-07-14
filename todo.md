@@ -61,6 +61,18 @@ restating it. Keep current as part of the end-of-session checklist.
         empties on restart), and the `today` stamp keys the where cache, so
         chips warmed before UTC midnight miss again after it (08:00 Taiwan time).
 
+- [x] **Demo narrative pass (v0.5.1)** — deck motivations + roadmap slide, script
+      rewritten for the v0.5.0 panels + typed-live Chinese ammunition, new
+      "草莓族？(a misread, refused)" chip (see the devlog top row). Remaining
+      **operator steps**:
+  - [ ] **Redeploy the playground on Vercel** (`vercel --prod` from `playground/`) —
+        the project is not git-connected, merging does **not** redeploy; the new
+        chip + deck slides stay stale until this runs.
+  - [ ] **Dry-run the additions** (checklist updated in
+        [`docs/demo/script.md`](docs/demo/script.md)): the 草莓族 chip must refuse
+        (422); type "作者是 Z 世代" and "出版超過 20 年" once each and confirm they
+        compile as expected.
+
 **Next milestone after the demo session: undecided.** Strong candidates — the two demo
 improvements above, `bind_today` (below), and the security milestone (field-level authz +
 endpoint auth + data-borne prompt injection). Pick one to start the next session.
