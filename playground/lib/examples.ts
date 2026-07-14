@@ -18,4 +18,7 @@ export const EXAMPLES: Example[] = [
   { label: "中文也通 (Mandarin filter)",
     want: ["book name", "writer", "cost", "author_birth_year"],
     where: "價格低於 $20, 作者 35 歲以上" },
+  { label: "Books by female authors",
+    want: ["book name", "writer", "writer's gender"],
+    where: "written by a female author" },
 ];
