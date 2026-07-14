@@ -17,7 +17,7 @@ holds forever. Each entry links the spec/plan it came from.
 
 | Version | Summary |
 |---------|---------|
-| [v0.5.0](#v050--playground-request-transparency-panel-2026-07-13-2211) | Per-request `debug` block (`isDebug` + `ENABLE_QUERY_DEBUG`): executed SQL, cache hit/miss, gate threshold — rendered in the playground panel. |
+| [v0.5.0](#v050--playground-request-transparency-panel-2026-07-13-2211) | Per-request `debug` block (`isDebug` + `ENABLE_QUERY_DEBUG`): executed SQL, cache hit/miss, gate threshold — rendered in the playground panel. Deployed + live-verified (Fly + Vercel, tag pushed); panel flow reordered (interpreted → request w/ collapsed response JSON → rows). |
 | [v0.4.0](#v040--richer-real-demo-dataset-2026-07-13-1807) | Richer real demo dataset — 381 real books from 71 curated authors (Open Library + Wikidata, both CC0) replace the 6 hand-written rows. `books.json` is the new source of truth (`seed.sql` generated, `rows.py` loads the JSON); nullable `gender` column added; deterministic price synthesis; chip-coverage + seed-determinism tests; new "female authors" chip. 96 tests green. Fly Postgres re-seed = operator step in `todo.md`. |
 | [v0.3.1](#v031--demo-session-follow-up-deploy-executed-docs--deck-polish-2026-07-13) | Follow-up session: executed the v0.3.0 deploys (Fly gateway + seeded Postgres, Vercel playground, Gemini quota cap 2000/day) with production verification + dry run — details folded into the v0.3.0 entry; added `playground/README.md`, made deck links clickable (+ portfolio/LinkedIn), queued two demo improvements in `todo.md` (richer real dataset, request-transparency panel). |
 | [v0.3.0](#v030--demo-session-guardrails-playground-deploy-deck-2026-07-12-2355) | Demo session build — env-driven public-demo guardrails (CORS + per-IP limit + daily cap, all off by default, `create_app()` factory), Next.js playground (`playground/`) with the `interpreted` echo as centerpiece, Fly.io/Vercel deploy config + runbook, 9-slide deck + demo script. Live 4-state error pass verified locally. 75 tests green. Fly/Vercel deploys + dry run = operator steps in `todo.md`. |
@@ -47,11 +47,26 @@ holds forever. Each entry links the spec/plan it came from.
 - Debug block rides on 4xx alongside `interpreted` (`execution: null`); 502s bare.
 - Playground: cache badges + gate note + SQL box woven into `InterpretedPanel`;
   graceful absence when the gate is off.
+- Deploy (post-merge, same session): tagged `v0.5.0`; `fly deploy --ha=false`
+  (1 machine, `ENABLE_QUERY_DEBUG` live) + Vercel production deploy;
+  live-verified — same query twice → parameterized SQL, all-miss then all-hit,
+  `/debug/*` still 404.
+- Panel flow (post-merge, same session, user-directed): `InterpretedPanel`
+  moved above the request panel, Rows last; the request panel gained a
+  collapsed "Response JSON" `<details>` (raw success/error body, own scroll).
+  The stage read is now badges-flip → same curl → same rows.
 
 **Key technical learnings:**
 - `[note]` psycopg's `Composable.as_string()` needs the live connection for
   exact identifier quoting — recording the SQL inside `execute` (trace pattern)
   gets it free; an `explain()`-style second compile would not.
+- `[gotcha]` The Vercel playground project is **not** git-connected — every
+  production deploy so far was CLI-made (`vercel --prod` from `playground/`),
+  so merging to `main` does **not** redeploy the site. Deploy explicitly or
+  the demo serves a stale bundle.
+- `[note]` PR #3 was squash-merged while the spec/plan commits sat unpushed on
+  local `main` → local/remote main diverged; resolved by confirming
+  `origin/main` held a strict content superset, then `reset --hard` to it.
 - `[gotcha]` `gateway/app.py`'s `get_cache()` is an `lru_cache` process
   singleton, so test assertions about hit/miss state are order-dependent unless
   the test overrides it with a fresh `ResolutionCache()` — the plan's literal
