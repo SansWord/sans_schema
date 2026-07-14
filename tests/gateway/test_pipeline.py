@@ -180,6 +180,15 @@ def test_backend_error_502_carries_no_debug():
     assert e.value.status == 502 and e.value.debug is None
 
 
+def test_all_want_declined_422_debug_has_no_where_status():
+    raw = RawQuery(["ghost"], "sci-fi only", "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"ghost": {"field": None, "confidence": 0.0}}})
+    with pytest.raises(GatewayError) as e:
+        _run(raw, llm, debug=True)
+    assert e.value.code == "all_want_declined"
+    assert e.value.debug["cache"] == {"want": {"ghost": "miss"}}   # no "where" key
+
+
 def test_traceless_connector_reports_null_execution():
     # a connector predating the trace kwarg still works under debug — its
     # `execution` degrades to null (spec §1)

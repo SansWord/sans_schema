@@ -105,14 +105,22 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
             return JSONResponse(status_code=422,
                                 content={"error": violation[0], "message": violation[1],
                                          "interpreted": {"want": {}}})
+        # isDebug is honored only when the deploy opts in (ENABLE_QUERY_DEBUG);
+        # gate off → the flag is a silent no-op, implication included. The early
+        # 422s above (empty_want, ingress limits) are deliberately debug-less:
+        # they fire before any resolution, so there is nothing to report.
+        debug = raw.debug and settings.enable_query_debug
+        if debug:
+            raw.verbose = True                  # isDebug implies the interpreted echo
         try:
             return run_query(raw, connector, llm, cache,
                              GateConfig(threshold=settings.gate_threshold),
-                             limit=settings.result_limit)
+                             limit=settings.result_limit, debug=debug)
         except GatewayError as e:
-            return JSONResponse(status_code=e.status,
-                                content={"error": e.code, "message": e.message,
-                                         "interpreted": e.interpreted})
+            content = {"error": e.code, "message": e.message, "interpreted": e.interpreted}
+            if e.debug is not None:
+                content["debug"] = e.debug
+            return JSONResponse(status_code=e.status, content=content)
 
     # slowapi decorators wrap the endpoint fn; applied only when configured so the
     # default (local dev / tests) request path contains no limiter at all. slowapi
