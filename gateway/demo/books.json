@@ -1,0 +1,4303 @@
+{
+ "authors": [
+  {
+   "author_id": 1,
+   "author_name": "Yang Shuang-zi",
+   "birth_year": 1984,
+   "country": "Taiwan",
+   "gender": "female"
+  },
+  {
+   "author_id": 2,
+   "author_name": "Kevin Chen",
+   "birth_year": 1976,
+   "country": "Taiwan",
+   "gender": "male"
+  },
+  {
+   "author_id": 3,
+   "author_name": "Wu Ming-yi",
+   "birth_year": 1971,
+   "country": "Taiwan",
+   "gender": "male"
+  },
+  {
+   "author_id": 4,
+   "author_name": "Qiu Miaojin",
+   "birth_year": 1969,
+   "country": "Taiwan",
+   "gender": "female"
+  },
+  {
+   "author_id": 5,
+   "author_name": "Sanmao",
+   "birth_year": 1943,
+   "country": "Taiwan",
+   "gender": "female"
+  },
+  {
+   "author_id": 6,
+   "author_name": "Chi Ta-wei",
+   "birth_year": 1972,
+   "country": "Taiwan",
+   "gender": "male"
+  },
+  {
+   "author_id": 7,
+   "author_name": "Li Ang",
+   "birth_year": 1952,
+   "country": "Taiwan",
+   "gender": "female"
+  },
+  {
+   "author_id": 8,
+   "author_name": "Pai Hsien-yung",
+   "birth_year": 1937,
+   "country": "Taiwan",
+   "gender": "male"
+  },
+  {
+   "author_id": 9,
+   "author_name": "Huang Chun-ming",
+   "birth_year": 1935,
+   "country": "Taiwan",
+   "gender": "male"
+  },
+  {
+   "author_id": 10,
+   "author_name": "Lung Ying-tai",
+   "birth_year": 1952,
+   "country": "Taiwan",
+   "gender": "female"
+  },
+  {
+   "author_id": 11,
+   "author_name": "Albert Camus",
+   "birth_year": 1913,
+   "country": "France",
+   "gender": "male"
+  },
+  {
+   "author_id": 12,
+   "author_name": "Jules Verne",
+   "birth_year": 1828,
+   "country": "France",
+   "gender": "male"
+  },
+  {
+   "author_id": 13,
+   "author_name": "Leïla Slimani",
+   "birth_year": 1981,
+   "country": "France",
+   "gender": "female"
+  },
+  {
+   "author_id": 14,
+   "author_name": "Amélie Nothomb",
+   "birth_year": 1966,
+   "country": "Belgium",
+   "gender": "female"
+  },
+  {
+   "author_id": 15,
+   "author_name": "Victor Hugo",
+   "birth_year": 1802,
+   "country": "France",
+   "gender": "male"
+  },
+  {
+   "author_id": 16,
+   "author_name": "Annie Ernaux",
+   "birth_year": 1940,
+   "country": "France",
+   "gender": "female"
+  },
+  {
+   "author_id": 17,
+   "author_name": "Antoine de Saint-Exupéry",
+   "birth_year": 1900,
+   "country": "France",
+   "gender": "male"
+  },
+  {
+   "author_id": 18,
+   "author_name": "Marguerite Duras",
+   "birth_year": 1914,
+   "country": "France",
+   "gender": "female"
+  },
+  {
+   "author_id": 19,
+   "author_name": "Sally Rooney",
+   "birth_year": 1991,
+   "country": "Ireland",
+   "gender": "female"
+  },
+  {
+   "author_id": 20,
+   "author_name": "R.F. Kuang",
+   "birth_year": 1996,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 21,
+   "author_name": "Ocean Vuong",
+   "birth_year": 1988,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 22,
+   "author_name": "Tomi Adeyemi",
+   "birth_year": 1993,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 23,
+   "author_name": "Angie Thomas",
+   "birth_year": 1988,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 24,
+   "author_name": "Chloe Gong",
+   "birth_year": 1998,
+   "country": "China",
+   "gender": "female"
+  },
+  {
+   "author_id": 25,
+   "author_name": "Brit Bennett",
+   "birth_year": 1990,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 26,
+   "author_name": "Raven Leilani",
+   "birth_year": 1990,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 27,
+   "author_name": "Ursula K. Le Guin",
+   "birth_year": 1929,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 28,
+   "author_name": "Liu Cixin",
+   "birth_year": 1963,
+   "country": "China",
+   "gender": "male"
+  },
+  {
+   "author_id": 29,
+   "author_name": "Ted Chiang",
+   "birth_year": 1967,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 30,
+   "author_name": "N.K. Jemisin",
+   "birth_year": 1972,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 31,
+   "author_name": "Isaac Asimov",
+   "birth_year": 1920,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 32,
+   "author_name": "Arthur C. Clarke",
+   "birth_year": 1917,
+   "country": "UK",
+   "gender": "male"
+  },
+  {
+   "author_id": 33,
+   "author_name": "Octavia E. Butler",
+   "birth_year": 1947,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 34,
+   "author_name": "Frank Herbert",
+   "birth_year": 1920,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 35,
+   "author_name": "Ken Liu",
+   "birth_year": 1976,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 36,
+   "author_name": "Andy Weir",
+   "birth_year": 1972,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 37,
+   "author_name": "Martha Wells",
+   "birth_year": 1964,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 38,
+   "author_name": "Becky Chambers",
+   "birth_year": 1985,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 39,
+   "author_name": "Ann Leckie",
+   "birth_year": 1966,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 40,
+   "author_name": "Philip K. Dick",
+   "birth_year": 1928,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 41,
+   "author_name": "William Gibson",
+   "birth_year": 1948,
+   "country": "Canada",
+   "gender": "male"
+  },
+  {
+   "author_id": 42,
+   "author_name": "Haruki Murakami",
+   "birth_year": 1949,
+   "country": "Japan",
+   "gender": "male"
+  },
+  {
+   "author_id": 43,
+   "author_name": "Banana Yoshimoto",
+   "birth_year": 1964,
+   "country": "Japan",
+   "gender": "female"
+  },
+  {
+   "author_id": 44,
+   "author_name": "Yoko Ogawa",
+   "birth_year": 1962,
+   "country": "Japan",
+   "gender": "female"
+  },
+  {
+   "author_id": 45,
+   "author_name": "Keigo Higashino",
+   "birth_year": 1958,
+   "country": "Japan",
+   "gender": "male"
+  },
+  {
+   "author_id": 46,
+   "author_name": "Han Kang",
+   "birth_year": 1970,
+   "country": "South Korea",
+   "gender": "female"
+  },
+  {
+   "author_id": 47,
+   "author_name": "Gabriel García Márquez",
+   "birth_year": 1927,
+   "country": "Colombia",
+   "gender": "male"
+  },
+  {
+   "author_id": 48,
+   "author_name": "Isabel Allende",
+   "birth_year": 1942,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 49,
+   "author_name": "Jorge Luis Borges",
+   "birth_year": 1899,
+   "country": "Argentina",
+   "gender": "male"
+  },
+  {
+   "author_id": 50,
+   "author_name": "Elena Ferrante",
+   "birth_year": 1943,
+   "country": "Italy",
+   "gender": "female"
+  },
+  {
+   "author_id": 51,
+   "author_name": "Stieg Larsson",
+   "birth_year": 1954,
+   "country": "Sweden",
+   "gender": "male"
+  },
+  {
+   "author_id": 52,
+   "author_name": "Fredrik Backman",
+   "birth_year": 1981,
+   "country": "Sweden",
+   "gender": "male"
+  },
+  {
+   "author_id": 53,
+   "author_name": "Toni Morrison",
+   "birth_year": 1931,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 54,
+   "author_name": "George Orwell",
+   "birth_year": 1903,
+   "country": "France",
+   "gender": "male"
+  },
+  {
+   "author_id": 55,
+   "author_name": "Jane Austen",
+   "birth_year": 1775,
+   "country": "UK",
+   "gender": "female"
+  },
+  {
+   "author_id": 56,
+   "author_name": "Virginia Woolf",
+   "birth_year": 1882,
+   "country": "UK",
+   "gender": "female"
+  },
+  {
+   "author_id": 57,
+   "author_name": "Ernest Hemingway",
+   "birth_year": 1899,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 58,
+   "author_name": "Kazuo Ishiguro",
+   "birth_year": 1954,
+   "country": "Japan",
+   "gender": "male"
+  },
+  {
+   "author_id": 59,
+   "author_name": "Salman Rushdie",
+   "birth_year": 1947,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 60,
+   "author_name": "Chimamanda Ngozi Adichie",
+   "birth_year": 1977,
+   "country": "Nigeria",
+   "gender": "female"
+  },
+  {
+   "author_id": 61,
+   "author_name": "Zadie Smith",
+   "birth_year": 1975,
+   "country": "UK",
+   "gender": "female"
+  },
+  {
+   "author_id": 62,
+   "author_name": "Margaret Atwood",
+   "birth_year": 1939,
+   "country": "Canada",
+   "gender": "female"
+  },
+  {
+   "author_id": 63,
+   "author_name": "Alice Munro",
+   "birth_year": 1931,
+   "country": "Canada",
+   "gender": "female"
+  },
+  {
+   "author_id": 64,
+   "author_name": "Yuval Noah Harari",
+   "birth_year": 1976,
+   "country": "Israel",
+   "gender": "male"
+  },
+  {
+   "author_id": 65,
+   "author_name": "Tara Westover",
+   "birth_year": 1986,
+   "country": "USA",
+   "gender": "female"
+  },
+  {
+   "author_id": 66,
+   "author_name": "Trevor Noah",
+   "birth_year": 1984,
+   "country": "South Africa",
+   "gender": "male"
+  },
+  {
+   "author_id": 67,
+   "author_name": "Bill Bryson",
+   "birth_year": 1951,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 68,
+   "author_name": "Mary Beard",
+   "birth_year": 1955,
+   "country": "UK",
+   "gender": "female"
+  },
+  {
+   "author_id": 69,
+   "author_name": "Agatha Christie",
+   "birth_year": 1890,
+   "country": "UK",
+   "gender": "female"
+  },
+  {
+   "author_id": 70,
+   "author_name": "Raymond Chandler",
+   "birth_year": 1888,
+   "country": "USA",
+   "gender": "male"
+  },
+  {
+   "author_id": 71,
+   "author_name": "Gillian Flynn",
+   "birth_year": 1971,
+   "country": "USA",
+   "gender": "female"
+  }
+ ],
+ "books": [
+  {
+   "book_id": 1,
+   "title": "我家住在張日興隆隔壁",
+   "category": "Non-Fiction",
+   "published_at": "2020-01-01",
+   "price": 19.5,
+   "page_count": 271,
+   "language": "zh",
+   "author_id": 1
+  },
+  {
+   "book_id": 2,
+   "title": "鬼地方",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 20.5,
+   "page_count": 404,
+   "language": "zh",
+   "author_id": 2
+  },
+  {
+   "book_id": 3,
+   "title": "Xin di de hu sheng",
+   "category": "Literary Fiction",
+   "published_at": "1985-01-01",
+   "price": 16.99,
+   "page_count": 223,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 4,
+   "title": "Da Wenxi",
+   "category": "Literary Fiction",
+   "published_at": "2000-01-01",
+   "price": 17.99,
+   "page_count": 275,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 5,
+   "title": "Taiwan zi ran xie zuo xuan",
+   "category": "Literary Fiction",
+   "published_at": "2003-01-01",
+   "price": 15.5,
+   "page_count": 322,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 6,
+   "title": "Zhi liang ji shu jian du xing zheng an jian de cha chu",
+   "category": "Literary Fiction",
+   "published_at": "2007-01-01",
+   "price": 14.99,
+   "page_count": 271,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 7,
+   "title": "Mi die zhi",
+   "category": "Literary Fiction",
+   "published_at": "2010-01-01",
+   "price": 13.5,
+   "page_count": 205,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 8,
+   "title": "Sheng dian li shi lai de wen ming",
+   "category": "Literary Fiction",
+   "published_at": "2011-01-01",
+   "price": 21.5,
+   "page_count": 177,
+   "language": "zh",
+   "author_id": 3
+  },
+  {
+   "book_id": 9,
+   "title": "Meng ma te yi shu",
+   "category": "Literary Fiction",
+   "published_at": "1996-01-01",
+   "price": 23.99,
+   "page_count": 196,
+   "language": "zh",
+   "author_id": 4
+  },
+  {
+   "book_id": 10,
+   "title": "E yu shou ji",
+   "category": "Literary Fiction",
+   "published_at": "1997-01-01",
+   "price": 23.5,
+   "page_count": 284,
+   "language": "zh",
+   "author_id": 4
+  },
+  {
+   "book_id": 11,
+   "title": "撒哈拉的故事",
+   "category": "Non-Fiction",
+   "published_at": "1976-01-01",
+   "price": 19.5,
+   "page_count": 416,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 12,
+   "title": "Qing quan gu shi",
+   "category": "Non-Fiction",
+   "published_at": "1977-01-01",
+   "price": 18.5,
+   "page_count": 206,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 13,
+   "title": "Wan shui qian shan zou bian",
+   "category": "Non-Fiction",
+   "published_at": "1982-01-01",
+   "price": 19.99,
+   "page_count": 227,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 14,
+   "title": "Qing cheng",
+   "category": "Non-Fiction",
+   "published_at": "1985-01-01",
+   "price": 27.99,
+   "page_count": 255,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 15,
+   "title": "Sui xiang",
+   "category": "Literary Fiction",
+   "published_at": "1985-01-01",
+   "price": 12.5,
+   "page_count": 121,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 16,
+   "title": "Tan xin",
+   "category": "Literary Fiction",
+   "published_at": "1985-01-01",
+   "price": 15.5,
+   "page_count": 219,
+   "language": "zh",
+   "author_id": 5
+  },
+  {
+   "book_id": 17,
+   "title": "「世界華文成長小說」徵文得奬作品集",
+   "category": "Literary Fiction",
+   "published_at": "1996-01-01",
+   "price": 25.5,
+   "page_count": 251,
+   "language": "zh",
+   "author_id": 6
+  },
+  {
+   "book_id": 18,
+   "title": "戀物癖",
+   "category": "Literary Fiction",
+   "published_at": "1998-01-01",
+   "price": 24.5,
+   "page_count": 259,
+   "language": "zh",
+   "author_id": 6
+  },
+  {
+   "book_id": 19,
+   "title": "台日韓女性文學",
+   "category": "History",
+   "published_at": "2015-01-01",
+   "price": 25.99,
+   "page_count": 192,
+   "language": "zh",
+   "author_id": 6
+  },
+  {
+   "book_id": 20,
+   "title": "Sha fu",
+   "category": "Literary Fiction",
+   "published_at": "1983-01-01",
+   "price": 17.99,
+   "page_count": 175,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 21,
+   "title": "Qing xian",
+   "category": "Literary Fiction",
+   "published_at": "1984-01-01",
+   "price": 16.5,
+   "page_count": 182,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 22,
+   "title": "Ta men di yan lei",
+   "category": "Literary Fiction",
+   "published_at": "1984-01-01",
+   "price": 19.5,
+   "page_count": 228,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 23,
+   "title": "An ye",
+   "category": "Literary Fiction",
+   "published_at": "1985-01-01",
+   "price": 15.5,
+   "page_count": 192,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 24,
+   "title": "Mi yuan",
+   "category": "Literary Fiction",
+   "published_at": "1991-01-01",
+   "price": 19.99,
+   "page_count": 296,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 25,
+   "title": "Qi shi yin yuan zhi Taiwan/Zhongguo qing ren",
+   "category": "Literary Fiction",
+   "published_at": "2009-01-01",
+   "price": 13.5,
+   "page_count": 311,
+   "language": "zh",
+   "author_id": 7
+  },
+  {
+   "book_id": 26,
+   "title": "Zhe xian ji",
+   "category": "Literary Fiction",
+   "published_at": "1967-01-01",
+   "price": 18.99,
+   "page_count": 210,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 27,
+   "title": "Mo ran hui shou",
+   "category": "Literary Fiction",
+   "published_at": "1978-01-01",
+   "price": 18.5,
+   "page_count": 184,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 28,
+   "title": "Shu you ru ci ('Even Trees Wither' in Traditional Chinese Characters)",
+   "category": "History",
+   "published_at": "2002-01-01",
+   "price": 24.99,
+   "page_count": 383,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 29,
+   "title": "Taibei ren",
+   "category": "Literary Fiction",
+   "published_at": "2002-01-01",
+   "price": 16.5,
+   "page_count": 369,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 30,
+   "title": "Bai Xianyong shu hua",
+   "category": "Non-Fiction",
+   "published_at": "2009-01-01",
+   "price": 26.99,
+   "page_count": 192,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 31,
+   "title": "Cha zi yan hong kai bian",
+   "category": "Non-Fiction",
+   "published_at": "2011-01-01",
+   "price": 16.5,
+   "page_count": 286,
+   "language": "zh",
+   "author_id": 8
+  },
+  {
+   "book_id": 32,
+   "title": "索羅門群島植物圖鑑",
+   "category": "Literary Fiction",
+   "published_at": "2016-01-01",
+   "price": 23.99,
+   "page_count": 334,
+   "language": "zh",
+   "author_id": 9
+  },
+  {
+   "book_id": 33,
+   "title": "Gan bei ba, Tuomasiman",
+   "category": "Literary Fiction",
+   "published_at": "1996-01-01",
+   "price": 23.5,
+   "page_count": 372,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 34,
+   "title": "Mian dui da hai de shi hou",
+   "category": "Non-Fiction",
+   "published_at": "2003-01-01",
+   "price": 26.5,
+   "page_count": 323,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 35,
+   "title": "Hai zi ni man man lai",
+   "category": "Literary Fiction",
+   "published_at": "2005-01-01",
+   "price": 21.5,
+   "page_count": 151,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 36,
+   "title": "Ye huo ji",
+   "category": "Literary Fiction",
+   "published_at": "2005-01-01",
+   "price": 18.5,
+   "page_count": 241,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 37,
+   "title": "Qing yong wen ming lai shuo fu wo",
+   "category": "Non-Fiction",
+   "published_at": "2006-01-01",
+   "price": 28.99,
+   "page_count": 262,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 38,
+   "title": "Qin ai de Andelie",
+   "category": "Literary Fiction",
+   "published_at": "2008-01-01",
+   "price": 25.5,
+   "page_count": 278,
+   "language": "zh",
+   "author_id": 10
+  },
+  {
+   "book_id": 39,
+   "title": "La Chute",
+   "category": "Romance",
+   "published_at": "1917-01-01",
+   "price": 9.99,
+   "page_count": 147,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 40,
+   "title": "Le mythe de Sisyphe",
+   "category": "Non-Fiction",
+   "published_at": "1941-01-01",
+   "price": 17.5,
+   "page_count": 169,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 41,
+   "title": "La Peste",
+   "category": "Romance",
+   "published_at": "1942-01-01",
+   "price": 16.99,
+   "page_count": 278,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 42,
+   "title": "L’étranger",
+   "category": "Romance",
+   "published_at": "1942-01-01",
+   "price": 17.99,
+   "page_count": 143,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 43,
+   "title": "L'Homme révolté",
+   "category": "Non-Fiction",
+   "published_at": "1951-01-01",
+   "price": 27.5,
+   "page_count": 306,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 44,
+   "title": "L'exil et le royaume",
+   "category": "Literary Fiction",
+   "published_at": "1951-01-01",
+   "price": 19.5,
+   "page_count": 213,
+   "language": "fr",
+   "author_id": 11
+  },
+  {
+   "book_id": 45,
+   "title": "The Fall of the House of Usher",
+   "category": "Fantasy",
+   "published_at": "1704-01-01",
+   "price": 16.99,
+   "page_count": 38,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 46,
+   "title": "The Narrative of Arthur Gordon Pym",
+   "category": "History",
+   "published_at": "1838-01-01",
+   "price": 20.5,
+   "page_count": 203,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 47,
+   "title": "The Murders in the Rue Morgue",
+   "category": "Mystery",
+   "published_at": "1841-01-01",
+   "price": 13.5,
+   "page_count": 42,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 48,
+   "title": "The Raven",
+   "category": "Fantasy",
+   "published_at": "1845-01-01",
+   "price": 13.99,
+   "page_count": 42,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 49,
+   "title": "Vingt mille lieues sous les mers",
+   "category": "Science Fiction",
+   "published_at": "1870-01-01",
+   "price": 15.5,
+   "page_count": 325,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 50,
+   "title": "Le Tour du Monde en Quatre-Vingts Jours",
+   "category": "Science Fiction",
+   "published_at": "1872-01-01",
+   "price": 19.5,
+   "page_count": 225,
+   "language": "fr",
+   "author_id": 12
+  },
+  {
+   "book_id": 51,
+   "title": "Chanson douce",
+   "category": "Mystery",
+   "published_at": "2016-01-01",
+   "price": 11.99,
+   "page_count": 242,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 52,
+   "title": "Sexe et mensonges - La vie sexuelle au Maroc",
+   "category": "Literary Fiction",
+   "published_at": "2017-01-01",
+   "price": 15.5,
+   "page_count": 176,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 53,
+   "title": "Le pays des autres",
+   "category": "Romance",
+   "published_at": "2020-01-01",
+   "price": 23.99,
+   "page_count": 368,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 54,
+   "title": "Le parfum des fleurs la nuit",
+   "category": "Non-Fiction",
+   "published_at": "2021-01-01",
+   "price": 14.5,
+   "page_count": 144,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 55,
+   "title": "Nos langues françaises",
+   "category": "Literary Fiction",
+   "published_at": "2022-01-01",
+   "price": 14.99,
+   "page_count": 111,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 56,
+   "title": "J'emporterai le feu",
+   "category": "Literary Fiction",
+   "published_at": "2025-01-01",
+   "price": 21.5,
+   "page_count": 374,
+   "language": "fr",
+   "author_id": 13
+  },
+  {
+   "book_id": 57,
+   "title": "In Catilinam",
+   "category": "History",
+   "published_at": "1475-01-01",
+   "price": 18.5,
+   "page_count": 162,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 58,
+   "title": "Hygiène de l'assassin",
+   "category": "Literary Fiction",
+   "published_at": "1992-01-01",
+   "price": 14.99,
+   "page_count": 180,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 59,
+   "title": "Stupeur et tremblements",
+   "category": "Romance",
+   "published_at": "1999-01-01",
+   "price": 9.99,
+   "page_count": 144,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 60,
+   "title": "Métaphysique des tubes",
+   "category": "Literary Fiction",
+   "published_at": "2000-01-01",
+   "price": 13.5,
+   "page_count": 144,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 61,
+   "title": "Robert des noms propres",
+   "category": "Romance",
+   "published_at": "2002-01-01",
+   "price": 9.99,
+   "page_count": 140,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 62,
+   "title": "Biographie De La Faim",
+   "category": "Literary Fiction",
+   "published_at": "2004-01-01",
+   "price": 24.99,
+   "page_count": 208,
+   "language": "fr",
+   "author_id": 14
+  },
+  {
+   "book_id": 63,
+   "title": "The Adventures of Tom Sawyer",
+   "category": "History",
+   "published_at": "1817-01-01",
+   "price": 26.5,
+   "page_count": 253,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 64,
+   "title": "Les Misérables",
+   "category": "Fantasy",
+   "published_at": "1862-01-01",
+   "price": 27.5,
+   "page_count": 520,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 65,
+   "title": "Roughing It",
+   "category": "Non-Fiction",
+   "published_at": "1872-01-01",
+   "price": 23.99,
+   "page_count": 558,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 66,
+   "title": "Adventures of Huckleberry Finn",
+   "category": "Non-Fiction",
+   "published_at": "1876-01-01",
+   "price": 22.5,
+   "page_count": 346,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 67,
+   "title": "The Prince and the Pauper",
+   "category": "History",
+   "published_at": "1881-01-01",
+   "price": 26.99,
+   "page_count": 256,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 68,
+   "title": "Tom Sawyer, Detective",
+   "category": "Mystery",
+   "published_at": "1897-01-01",
+   "price": 11.5,
+   "page_count": 92,
+   "language": "fr",
+   "author_id": 15
+  },
+  {
+   "book_id": 69,
+   "title": "Principles of internal medicine",
+   "category": "Non-Fiction",
+   "published_at": "1950-01-01",
+   "price": 49.99,
+   "page_count": 1947,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 70,
+   "title": "La place",
+   "category": "Romance",
+   "published_at": "1983-01-01",
+   "price": 11.5,
+   "page_count": 113,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 71,
+   "title": "Une femme",
+   "category": "Romance",
+   "published_at": "1987-01-01",
+   "price": 12.5,
+   "page_count": 105,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 72,
+   "title": "Passion simple",
+   "category": "Romance",
+   "published_at": "1991-01-01",
+   "price": 15.99,
+   "page_count": 72,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 73,
+   "title": "L'événement",
+   "category": "Non-Fiction",
+   "published_at": "2000-01-01",
+   "price": 17.5,
+   "page_count": 103,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 74,
+   "title": "Les années",
+   "category": "Romance",
+   "published_at": "2001-01-01",
+   "price": 20.99,
+   "page_count": 241,
+   "language": "fr",
+   "author_id": 16
+  },
+  {
+   "book_id": 75,
+   "title": "Courrier sud",
+   "category": "Literary Fiction",
+   "published_at": "1929-01-01",
+   "price": 19.5,
+   "page_count": 186,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 76,
+   "title": "Vol de nuit",
+   "category": "Non-Fiction",
+   "published_at": "1931-01-01",
+   "price": 19.99,
+   "page_count": 140,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 77,
+   "title": "Terre des hommes",
+   "category": "Romance",
+   "published_at": "1936-01-01",
+   "price": 15.99,
+   "page_count": 222,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 78,
+   "title": "Pilote de guerre",
+   "category": "Non-Fiction",
+   "published_at": "1942-01-01",
+   "price": 18.5,
+   "page_count": 228,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 79,
+   "title": "Le petit prince",
+   "category": "Fantasy",
+   "published_at": "1943-01-01",
+   "price": 10.5,
+   "page_count": 96,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 80,
+   "title": "Citadelle",
+   "category": "Literary Fiction",
+   "published_at": "1948-01-01",
+   "price": 22.99,
+   "page_count": 540,
+   "language": "fr",
+   "author_id": 17
+  },
+  {
+   "book_id": 81,
+   "title": "Moderato cantabile",
+   "category": "Literary Fiction",
+   "published_at": "1900-01-01",
+   "price": 23.99,
+   "page_count": 120,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 82,
+   "title": "Hiroshima mon amour",
+   "category": "History",
+   "published_at": "1960-01-01",
+   "price": 16.5,
+   "page_count": 140,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 83,
+   "title": "Le ravissement de Lol V. Stein",
+   "category": "Literary Fiction",
+   "published_at": "1964-01-01",
+   "price": 12.99,
+   "page_count": 190,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 84,
+   "title": "Amante anglaise",
+   "category": "Literary Fiction",
+   "published_at": "1967-01-01",
+   "price": 20.99,
+   "page_count": 122,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 85,
+   "title": "Détruire, dit-elle",
+   "category": "Literary Fiction",
+   "published_at": "1969-01-01",
+   "price": 15.99,
+   "page_count": 133,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 86,
+   "title": "L'Amant",
+   "category": "Romance",
+   "published_at": "1984-01-01",
+   "price": 17.99,
+   "page_count": 128,
+   "language": "fr",
+   "author_id": 18
+  },
+  {
+   "book_id": 87,
+   "title": "Conversations With Friends",
+   "category": "Romance",
+   "published_at": "2017-01-01",
+   "price": 16.5,
+   "page_count": 321,
+   "language": "en",
+   "author_id": 19
+  },
+  {
+   "book_id": 88,
+   "title": "Normal People",
+   "category": "Romance",
+   "published_at": "2018-01-01",
+   "price": 18.5,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 19
+  },
+  {
+   "book_id": 89,
+   "title": "Mr Salary",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 10.5,
+   "page_count": 48,
+   "language": "en",
+   "author_id": 19
+  },
+  {
+   "book_id": 90,
+   "title": "Beautiful World, Where Are You",
+   "category": "Literary Fiction",
+   "published_at": "2021-01-01",
+   "price": 17.5,
+   "page_count": 352,
+   "language": "en",
+   "author_id": 19
+  },
+  {
+   "book_id": 91,
+   "title": "Intermezzo",
+   "category": "Literary Fiction",
+   "published_at": "2024-01-01",
+   "price": 27.99,
+   "page_count": 454,
+   "language": "en",
+   "author_id": 19
+  },
+  {
+   "book_id": 92,
+   "title": "Intermezzo (Spanish Edition)",
+   "category": "Literary Fiction",
+   "published_at": "2024-01-01",
+   "price": 16.5,
+   "page_count": 464,
+   "language": "es",
+   "author_id": 19
+  },
+  {
+   "book_id": 93,
+   "title": "The Poppy War",
+   "category": "Fantasy",
+   "published_at": "2018-01-01",
+   "price": 27.99,
+   "page_count": 522,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 94,
+   "title": "The Dragon Republic",
+   "category": "Fantasy",
+   "published_at": "2019-01-01",
+   "price": 27.99,
+   "page_count": 512,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 95,
+   "title": "Star Wars - Empire Strikes Back - From a Certain Point of View",
+   "category": "Literary Fiction",
+   "published_at": "2020-01-01",
+   "price": 20.99,
+   "page_count": 400,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 96,
+   "title": "The Burning God",
+   "category": "Fantasy",
+   "published_at": "2020-01-01",
+   "price": 22.99,
+   "page_count": 400,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 97,
+   "title": "Babel",
+   "category": "Fantasy",
+   "published_at": "2022-01-01",
+   "price": 22.5,
+   "page_count": 569,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 98,
+   "title": "Yellowface",
+   "category": "Literary Fiction",
+   "published_at": "2023-01-01",
+   "price": 25.99,
+   "page_count": 331,
+   "language": "en",
+   "author_id": 20
+  },
+  {
+   "book_id": 99,
+   "title": "Night sky with exit wounds",
+   "category": "Literary Fiction",
+   "published_at": "2016-01-01",
+   "price": 22.5,
+   "page_count": 141,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 100,
+   "title": "Forward Book of Poetry 2018",
+   "category": "Literary Fiction",
+   "published_at": "2017-01-01",
+   "price": 17.99,
+   "page_count": 176,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 101,
+   "title": "On Earth We're Briefly Gorgeous",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 21.99,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 102,
+   "title": "Time Is a Mother",
+   "category": "Literary Fiction",
+   "published_at": "2022-01-01",
+   "price": 20.99,
+   "page_count": 88,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 103,
+   "title": "An-My lê Small Wars",
+   "category": "Literary Fiction",
+   "published_at": "2025-01-01",
+   "price": 14.5,
+   "page_count": 144,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 104,
+   "title": "The Emperor of Gladness",
+   "category": "Literary Fiction",
+   "published_at": "2025-01-01",
+   "price": 21.99,
+   "page_count": 416,
+   "language": "en",
+   "author_id": 21
+  },
+  {
+   "book_id": 105,
+   "title": "Children of Blood and Bone",
+   "category": "Science Fiction",
+   "published_at": "2017-01-01",
+   "price": 25.5,
+   "page_count": 552,
+   "language": "en",
+   "author_id": 22
+  },
+  {
+   "book_id": 106,
+   "title": "Children of Virtue and Vengeance",
+   "category": "Fantasy",
+   "published_at": "2019-01-01",
+   "price": 22.5,
+   "page_count": 432,
+   "language": "en",
+   "author_id": 22
+  },
+  {
+   "book_id": 107,
+   "title": "Awaken the Magic",
+   "category": "Literary Fiction",
+   "published_at": "2020-01-01",
+   "price": 14.5,
+   "page_count": 192,
+   "language": "en",
+   "author_id": 22
+  },
+  {
+   "book_id": 108,
+   "title": "Children of Anguish and Anarchy",
+   "category": "Literary Fiction",
+   "published_at": "2023-01-01",
+   "price": 16.99,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 22
+  },
+  {
+   "book_id": 109,
+   "title": "The Hate U Give",
+   "category": "Literary Fiction",
+   "published_at": "2017-01-01",
+   "price": 22.99,
+   "page_count": 448,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 110,
+   "title": "Blackout",
+   "category": "Romance",
+   "published_at": "2019-01-01",
+   "price": 17.5,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 111,
+   "title": "On The Come Up",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 23.5,
+   "page_count": 456,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 112,
+   "title": "Concrete Rose",
+   "category": "Mystery",
+   "published_at": "2021-01-01",
+   "price": 14.99,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 113,
+   "title": "Whiteout",
+   "category": "Romance",
+   "published_at": "2022-01-01",
+   "price": 16.5,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 114,
+   "title": "Nic Blake and the Remarkables",
+   "category": "Literary Fiction",
+   "published_at": "2023-01-01",
+   "price": 16.5,
+   "page_count": 336,
+   "language": "en",
+   "author_id": 23
+  },
+  {
+   "book_id": 115,
+   "title": "These Violent Delights",
+   "category": "Fantasy",
+   "published_at": "2020-01-01",
+   "price": 14.5,
+   "page_count": 470,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 116,
+   "title": "Our Violent Ends",
+   "category": "History",
+   "published_at": "2021-01-01",
+   "price": 30.5,
+   "page_count": 512,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 117,
+   "title": "Foul Lady Fortune",
+   "category": "Fantasy",
+   "published_at": "2022-01-01",
+   "price": 27.5,
+   "page_count": 528,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 118,
+   "title": "Immortal Longings",
+   "category": "Literary Fiction",
+   "published_at": "2023-01-01",
+   "price": 12.5,
+   "page_count": 193,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 119,
+   "title": "The White Guy Dies First",
+   "category": "Literary Fiction",
+   "published_at": "2024-01-01",
+   "price": 20.99,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 120,
+   "title": "Coldwire",
+   "category": "Literary Fiction",
+   "published_at": "2025-01-01",
+   "price": 16.99,
+   "page_count": 496,
+   "language": "en",
+   "author_id": 24
+  },
+  {
+   "book_id": 121,
+   "title": "The Mothers",
+   "category": "Literary Fiction",
+   "published_at": "2016-01-01",
+   "price": 25.5,
+   "page_count": 296,
+   "language": "en",
+   "author_id": 25
+  },
+  {
+   "book_id": 122,
+   "title": "The Vanishing Half",
+   "category": "History",
+   "published_at": "2020-01-01",
+   "price": 19.5,
+   "page_count": 376,
+   "language": "en",
+   "author_id": 25
+  },
+  {
+   "book_id": 123,
+   "title": "Luster",
+   "category": "Literary Fiction",
+   "published_at": "2020-01-01",
+   "price": 13.99,
+   "page_count": 240,
+   "language": "en",
+   "author_id": 26
+  },
+  {
+   "book_id": 124,
+   "title": "A Wizard of Earthsea",
+   "category": "Science Fiction",
+   "published_at": "1968-01-01",
+   "price": 18.99,
+   "page_count": 205,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 125,
+   "title": "The Left Hand of Darkness",
+   "category": "Science Fiction",
+   "published_at": "1969-01-01",
+   "price": 13.5,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 126,
+   "title": "The Lathe of Heaven",
+   "category": "Science Fiction",
+   "published_at": "1971-01-01",
+   "price": 11.99,
+   "page_count": 184,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 127,
+   "title": "The Tombs of Atuan",
+   "category": "Science Fiction",
+   "published_at": "1971-01-01",
+   "price": 16.5,
+   "page_count": 173,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 128,
+   "title": "The Farthest Shore",
+   "category": "Science Fiction",
+   "published_at": "1972-01-01",
+   "price": 16.5,
+   "page_count": 223,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 129,
+   "title": "The Dispossessed",
+   "category": "Science Fiction",
+   "published_at": "1974-01-01",
+   "price": 21.5,
+   "page_count": 352,
+   "language": "en",
+   "author_id": 27
+  },
+  {
+   "book_id": 130,
+   "title": "The Dark Forest (The Three-Body Problem Series Book 2)",
+   "category": "Science Fiction",
+   "published_at": "2008-01-01",
+   "price": 25.5,
+   "page_count": 574,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 131,
+   "title": "三体",
+   "category": "Science Fiction",
+   "published_at": "2008-01-01",
+   "price": 19.5,
+   "page_count": 417,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 132,
+   "title": "球状闪电",
+   "category": "Science Fiction",
+   "published_at": "2009-01-01",
+   "price": 21.99,
+   "page_count": 424,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 133,
+   "title": "Death's End (The Three-Body Problem Series Book 3)",
+   "category": "Science Fiction",
+   "published_at": "2010-01-01",
+   "price": 30.5,
+   "page_count": 724,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 134,
+   "title": "流浪地球",
+   "category": "Science Fiction",
+   "published_at": "2013-01-01",
+   "price": 19.99,
+   "page_count": 464,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 135,
+   "title": "Liu lang di qiu",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 18.99,
+   "page_count": 203,
+   "language": "zh",
+   "author_id": 28
+  },
+  {
+   "book_id": 136,
+   "title": "The Fantasy Hall of Fame [30 stories]",
+   "category": "Fantasy",
+   "published_at": "1985-01-01",
+   "price": 19.99,
+   "page_count": 562,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 137,
+   "title": "Vanishing Acts",
+   "category": "Science Fiction",
+   "published_at": "2000-01-01",
+   "price": 21.99,
+   "page_count": 380,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 138,
+   "title": "Stories of Your Life and Others",
+   "category": "Science Fiction",
+   "published_at": "2002-01-01",
+   "price": 19.99,
+   "page_count": 317,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 139,
+   "title": "Steampunk",
+   "category": "Science Fiction",
+   "published_at": "2008-01-01",
+   "price": 15.5,
+   "page_count": 387,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 140,
+   "title": "The Lifecycle of Software Objects",
+   "category": "Literary Fiction",
+   "published_at": "2010-01-01",
+   "price": 15.99,
+   "page_count": 150,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 141,
+   "title": "Exhalation",
+   "category": "Science Fiction",
+   "published_at": "2014-01-01",
+   "price": 16.99,
+   "page_count": 338,
+   "language": "en",
+   "author_id": 29
+  },
+  {
+   "book_id": 142,
+   "title": "The Broken Kingdoms",
+   "category": "Fantasy",
+   "published_at": "2010-01-01",
+   "price": 24.5,
+   "page_count": 397,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 143,
+   "title": "The Hundred Thousand Kingdoms",
+   "category": "Fantasy",
+   "published_at": "2010-01-01",
+   "price": 13.5,
+   "page_count": 397,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 144,
+   "title": "The Fifth Season",
+   "category": "Science Fiction",
+   "published_at": "2015-01-01",
+   "price": 23.99,
+   "page_count": 512,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 145,
+   "title": "The Obelisk Gate",
+   "category": "Fantasy",
+   "published_at": "2016-01-01",
+   "price": 15.5,
+   "page_count": 444,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 146,
+   "title": "The Stone Sky",
+   "category": "Science Fiction",
+   "published_at": "2017-01-01",
+   "price": 17.5,
+   "page_count": 448,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 147,
+   "title": "The City We Became",
+   "category": "Fantasy",
+   "published_at": "2020-01-01",
+   "price": 17.99,
+   "page_count": 436,
+   "language": "en",
+   "author_id": 30
+  },
+  {
+   "book_id": 148,
+   "title": "Foundation and Empire",
+   "category": "Science Fiction",
+   "published_at": "1945-01-01",
+   "price": 15.99,
+   "page_count": 253,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 149,
+   "title": "I, Robot",
+   "category": "Science Fiction",
+   "published_at": "1950-01-01",
+   "price": 16.5,
+   "page_count": 245,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 150,
+   "title": "Foundation",
+   "category": "Science Fiction",
+   "published_at": "1951-01-01",
+   "price": 23.99,
+   "page_count": 240,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 151,
+   "title": "Second Foundation",
+   "category": "Science Fiction",
+   "published_at": "1953-01-01",
+   "price": 15.5,
+   "page_count": 237,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 152,
+   "title": "The Caves of Steel",
+   "category": "Science Fiction",
+   "published_at": "1953-01-01",
+   "price": 16.99,
+   "page_count": 259,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 153,
+   "title": "The End of Eternity",
+   "category": "Science Fiction",
+   "published_at": "1955-01-01",
+   "price": 18.99,
+   "page_count": 255,
+   "language": "en",
+   "author_id": 31
+  },
+  {
+   "book_id": 154,
+   "title": "The Sands of Mars",
+   "category": "Science Fiction",
+   "published_at": "1951-01-01",
+   "price": 22.5,
+   "page_count": 216,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 155,
+   "title": "Childhood’s End",
+   "category": "Science Fiction",
+   "published_at": "1952-01-01",
+   "price": 22.5,
+   "page_count": 222,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 156,
+   "title": "A Canticle for Leibowitz",
+   "category": "Science Fiction",
+   "published_at": "1959-01-01",
+   "price": 19.5,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 157,
+   "title": "2001",
+   "category": "Science Fiction",
+   "published_at": "1968-01-01",
+   "price": 16.5,
+   "page_count": 237,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 158,
+   "title": "Rendezvous with Rama",
+   "category": "Science Fiction",
+   "published_at": "1973-01-01",
+   "price": 13.99,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 159,
+   "title": "2010, odyssey two",
+   "category": "Science Fiction",
+   "published_at": "1982-01-01",
+   "price": 25.5,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 32
+  },
+  {
+   "book_id": 160,
+   "title": "Kindred",
+   "category": "Science Fiction",
+   "published_at": "1979-01-01",
+   "price": 18.5,
+   "page_count": 287,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 161,
+   "title": "Dawn",
+   "category": "Science Fiction",
+   "published_at": "1987-01-01",
+   "price": 23.99,
+   "page_count": 252,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 162,
+   "title": "Adulthood Rites",
+   "category": "Science Fiction",
+   "published_at": "1988-01-01",
+   "price": 15.5,
+   "page_count": 288,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 163,
+   "title": "Parable of the Sower",
+   "category": "Science Fiction",
+   "published_at": "1993-01-01",
+   "price": 18.99,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 164,
+   "title": "Parable of the Talents",
+   "category": "Science Fiction",
+   "published_at": "1998-01-01",
+   "price": 15.99,
+   "page_count": 424,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 165,
+   "title": "Fledgling",
+   "category": "Science Fiction",
+   "published_at": "2005-01-01",
+   "price": 19.5,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 33
+  },
+  {
+   "book_id": 166,
+   "title": "Winter's Tale (adaptation)",
+   "category": "Literary Fiction",
+   "published_at": "1869-01-01",
+   "price": 10.5,
+   "page_count": 104,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 167,
+   "title": "The Tragedy of Titus Andronicus",
+   "category": "History",
+   "published_at": "1892-01-01",
+   "price": 24.99,
+   "page_count": 120,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 168,
+   "title": "Dracula's guest, and other weird stories",
+   "category": "Science Fiction",
+   "published_at": "1914-01-01",
+   "price": 21.99,
+   "page_count": 113,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 169,
+   "title": "Dune",
+   "category": "Science Fiction",
+   "published_at": "1965-01-01",
+   "price": 27.5,
+   "page_count": 592,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 170,
+   "title": "Dune Messiah",
+   "category": "Science Fiction",
+   "published_at": "1969-01-01",
+   "price": 16.5,
+   "page_count": 278,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 171,
+   "title": "Henry VI (Part 2) Annotated",
+   "category": "Literary Fiction",
+   "published_at": "1990-01-01",
+   "price": 11.99,
+   "page_count": 136,
+   "language": "en",
+   "author_id": 34
+  },
+  {
+   "book_id": 172,
+   "title": "The Paper Menagerie and Other Stories",
+   "category": "Science Fiction",
+   "published_at": "2001-01-01",
+   "price": 15.99,
+   "page_count": 464,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 173,
+   "title": "Genius Loci",
+   "category": "Fantasy",
+   "published_at": "2016-01-01",
+   "price": 23.99,
+   "page_count": 476,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 174,
+   "title": "Invisible Planets",
+   "category": "Science Fiction",
+   "published_at": "2016-01-01",
+   "price": 22.99,
+   "page_count": 384,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 175,
+   "title": "Broken Stars",
+   "category": "Science Fiction",
+   "published_at": "2019-01-01",
+   "price": 17.5,
+   "page_count": 480,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 176,
+   "title": "Vagabonds",
+   "category": "Science Fiction",
+   "published_at": "2020-01-01",
+   "price": 27.99,
+   "page_count": 608,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 177,
+   "title": "Veiled Throne",
+   "category": "Literary Fiction",
+   "published_at": "2021-01-01",
+   "price": 32.99,
+   "page_count": 784,
+   "language": "en",
+   "author_id": 35
+  },
+  {
+   "book_id": 178,
+   "title": "The Egg",
+   "category": "Science Fiction",
+   "published_at": "2009-01-01",
+   "price": 13.99,
+   "page_count": 1,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 179,
+   "title": "The Martian",
+   "category": "Science Fiction",
+   "published_at": "2011-01-01",
+   "price": 21.99,
+   "page_count": 407,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 180,
+   "title": "Artemis",
+   "category": "Science Fiction",
+   "published_at": "2017-01-01",
+   "price": 23.5,
+   "page_count": 337,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 181,
+   "title": "James Moriarty, Consulting Criminal",
+   "category": "Mystery",
+   "published_at": "2017-01-01",
+   "price": 12.99,
+   "page_count": 1,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 182,
+   "title": "Cheshire Crossing",
+   "category": "Fantasy",
+   "published_at": "2019-01-01",
+   "price": 18.5,
+   "page_count": 128,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 183,
+   "title": "Project Hail Mary",
+   "category": "Science Fiction",
+   "published_at": "2021-01-01",
+   "price": 17.99,
+   "page_count": 496,
+   "language": "en",
+   "author_id": 36
+  },
+  {
+   "book_id": 184,
+   "title": "The United States in Literature [with three long stories] -- Seventh Edition",
+   "category": "Fantasy",
+   "published_at": "1952-01-01",
+   "price": 31.99,
+   "page_count": 820,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 185,
+   "title": "Fifty Best American Short Stories",
+   "category": "Literary Fiction",
+   "published_at": "1965-01-01",
+   "price": 30.99,
+   "page_count": 814,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 186,
+   "title": "The element of fire",
+   "category": "Science Fiction",
+   "published_at": "1993-01-01",
+   "price": 17.5,
+   "page_count": 382,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 187,
+   "title": "Prentice Hall Literature--Timeless Voices, Timeless Themes--The American Experience",
+   "category": "Fantasy",
+   "published_at": "1999-01-01",
+   "price": 33.99,
+   "page_count": 1228,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 188,
+   "title": "All Systems Red",
+   "category": "Science Fiction",
+   "published_at": "2017-01-01",
+   "price": 14.99,
+   "page_count": 158,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 189,
+   "title": "Star Wars - Empire Strikes Back - From a Certain Point of View",
+   "category": "Literary Fiction",
+   "published_at": "2020-01-01",
+   "price": 20.99,
+   "page_count": 400,
+   "language": "en",
+   "author_id": 37
+  },
+  {
+   "book_id": 190,
+   "title": "The Long Way to a Small, Angry Planet",
+   "category": "Science Fiction",
+   "published_at": "2014-01-01",
+   "price": 26.99,
+   "page_count": 445,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 191,
+   "title": "A Closed and Common Orbit",
+   "category": "Science Fiction",
+   "published_at": "2016-01-01",
+   "price": 22.5,
+   "page_count": 416,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 192,
+   "title": "Record of a Spaceborn Few",
+   "category": "Science Fiction",
+   "published_at": "2018-01-01",
+   "price": 16.5,
+   "page_count": 359,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 193,
+   "title": "To Be Taught, If Fortunate",
+   "category": "Science Fiction",
+   "published_at": "2019-01-01",
+   "price": 15.99,
+   "page_count": 140,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 194,
+   "title": "A Psalm for the Wild-Built",
+   "category": "Literary Fiction",
+   "published_at": "2021-01-01",
+   "price": 15.5,
+   "page_count": 160,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 195,
+   "title": "The Galaxy, and the Ground Within",
+   "category": "Science Fiction",
+   "published_at": "2021-01-01",
+   "price": 25.99,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 38
+  },
+  {
+   "book_id": 196,
+   "title": "Ancillary Justice",
+   "category": "Science Fiction",
+   "published_at": "2013-01-01",
+   "price": 24.5,
+   "page_count": 409,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 197,
+   "title": "Ancillary Sword",
+   "category": "Science Fiction",
+   "published_at": "2014-01-01",
+   "price": 16.5,
+   "page_count": 416,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 198,
+   "title": "Ancillary Mercy",
+   "category": "Science Fiction",
+   "published_at": "2015-01-01",
+   "price": 23.99,
+   "page_count": 359,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 199,
+   "title": "Provenance",
+   "category": "Science Fiction",
+   "published_at": "2017-01-01",
+   "price": 23.5,
+   "page_count": 464,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 200,
+   "title": "The Mythic Dream",
+   "category": "Literary Fiction",
+   "published_at": "2019-01-01",
+   "price": 17.99,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 201,
+   "title": "The Raven Tower",
+   "category": "Fantasy",
+   "published_at": "2019-01-01",
+   "price": 24.99,
+   "page_count": 432,
+   "language": "en",
+   "author_id": 39
+  },
+  {
+   "book_id": 202,
+   "title": "Second Variety",
+   "category": "Science Fiction",
+   "published_at": "1853-01-01",
+   "price": 13.99,
+   "page_count": 68,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 203,
+   "title": "The variable man, and other stories",
+   "category": "Science Fiction",
+   "published_at": "1957-01-01",
+   "price": 20.99,
+   "page_count": 96,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 204,
+   "title": "The Man in the High Castle",
+   "category": "Science Fiction",
+   "published_at": "1962-01-01",
+   "price": 20.5,
+   "page_count": 258,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 205,
+   "title": "Do Androids Dream of Electric Sheep?",
+   "category": "Science Fiction",
+   "published_at": "1968-01-01",
+   "price": 20.5,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 206,
+   "title": "Ubik",
+   "category": "Science Fiction",
+   "published_at": "1969-01-01",
+   "price": 20.99,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 207,
+   "title": "Mr. Spaceship",
+   "category": "Science Fiction",
+   "published_at": "2010-01-01",
+   "price": 12.99,
+   "page_count": 39,
+   "language": "en",
+   "author_id": 40
+  },
+  {
+   "book_id": 208,
+   "title": "Rupert of Hentzau [by] Anthony Hope [pseud.] being the sequel to a story by the same writer, entitled The prisoner of Zenda",
+   "category": "Literary Fiction",
+   "published_at": "1800-01-01",
+   "price": 22.5,
+   "page_count": 296,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 209,
+   "title": "The Miracle Worker",
+   "category": "Non-Fiction",
+   "published_at": "1956-01-01",
+   "price": 19.5,
+   "page_count": 122,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 210,
+   "title": "Neuromancer",
+   "category": "Science Fiction",
+   "published_at": "1984-01-01",
+   "price": 16.5,
+   "page_count": 317,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 211,
+   "title": "Count Zero",
+   "category": "Science Fiction",
+   "published_at": "1986-01-01",
+   "price": 23.99,
+   "page_count": 312,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 212,
+   "title": "Mona Lisa Overdrive",
+   "category": "Science Fiction",
+   "published_at": "1987-01-01",
+   "price": 16.5,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 213,
+   "title": "Idoru",
+   "category": "Science Fiction",
+   "published_at": "1996-01-01",
+   "price": 21.99,
+   "page_count": 307,
+   "language": "en",
+   "author_id": 41
+  },
+  {
+   "book_id": 214,
+   "title": "羊をめぐる冒険",
+   "category": "Fantasy",
+   "published_at": "1982-01-01",
+   "price": 19.5,
+   "page_count": 304,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 215,
+   "title": "Norwegian Wood",
+   "category": "Romance",
+   "published_at": "1987-01-01",
+   "price": 14.99,
+   "page_count": 389,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 216,
+   "title": "国境の南、太陽の西",
+   "category": "Romance",
+   "published_at": "1992-01-01",
+   "price": 15.5,
+   "page_count": 236,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 217,
+   "title": "ねじまき鳥クロニクル",
+   "category": "Fantasy",
+   "published_at": "1997-01-01",
+   "price": 29.99,
+   "page_count": 632,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 218,
+   "title": "海辺のカフカ",
+   "category": "Fantasy",
+   "published_at": "2001-01-01",
+   "price": 17.5,
+   "page_count": 576,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 219,
+   "title": "1Q84",
+   "category": "Science Fiction",
+   "published_at": "2009-01-01",
+   "price": 28.5,
+   "page_count": 925,
+   "language": "ja",
+   "author_id": 42
+  },
+  {
+   "book_id": 220,
+   "title": "キッチン",
+   "category": "Literary Fiction",
+   "published_at": "1988-01-01",
+   "price": 20.5,
+   "page_count": 155,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 221,
+   "title": "N.P",
+   "category": "Literary Fiction",
+   "published_at": "1990-01-01",
+   "price": 24.5,
+   "page_count": 201,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 222,
+   "title": "Tokage",
+   "category": "Literary Fiction",
+   "published_at": "1993-01-01",
+   "price": 22.5,
+   "page_count": 180,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 223,
+   "title": "Amrita",
+   "category": "Mystery",
+   "published_at": "1994-01-01",
+   "price": 16.5,
+   "page_count": 375,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 224,
+   "title": "デッドエンドの思い出",
+   "category": "Literary Fiction",
+   "published_at": "2003-01-01",
+   "price": 24.5,
+   "page_count": 237,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 225,
+   "title": "王国",
+   "category": "Literary Fiction",
+   "published_at": "2010-01-01",
+   "price": 11.5,
+   "page_count": 153,
+   "language": "ja",
+   "author_id": 43
+  },
+  {
+   "book_id": 226,
+   "title": "密やかな結晶",
+   "category": "Science Fiction",
+   "published_at": "1994-01-01",
+   "price": 15.5,
+   "page_count": 288,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 227,
+   "title": "博士の愛した数式",
+   "category": "Literary Fiction",
+   "published_at": "2003-01-01",
+   "price": 14.99,
+   "page_count": 253,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 228,
+   "title": "寡黙な死骸みだらな弔い",
+   "category": "Literary Fiction",
+   "published_at": "2003-01-01",
+   "price": 14.99,
+   "page_count": 176,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 229,
+   "title": "Burafuman no maisō",
+   "category": "Literary Fiction",
+   "published_at": "2004-01-01",
+   "price": 11.5,
+   "page_count": 159,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 230,
+   "title": "Genji monogatari kyōjushi no kenkyū",
+   "category": "Literary Fiction",
+   "published_at": "2009-01-01",
+   "price": 22.99,
+   "page_count": 659,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 231,
+   "title": "Saihate ākēdo",
+   "category": "Literary Fiction",
+   "published_at": "2012-01-01",
+   "price": 12.99,
+   "page_count": 233,
+   "language": "ja",
+   "author_id": 44
+  },
+  {
+   "book_id": 232,
+   "title": "放課後",
+   "category": "Literary Fiction",
+   "published_at": "1988-01-01",
+   "price": 15.5,
+   "page_count": 354,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 233,
+   "title": "Byakuyakō",
+   "category": "Literary Fiction",
+   "published_at": "1999-01-01",
+   "price": 28.5,
+   "page_count": 506,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 234,
+   "title": "容疑者Xの献身  (Yōgisha X no kenshin)",
+   "category": "Literary Fiction",
+   "published_at": "2005-01-01",
+   "price": 14.5,
+   "page_count": 352,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 235,
+   "title": "赤い指",
+   "category": "Literary Fiction",
+   "published_at": "2006-01-01",
+   "price": 13.5,
+   "page_count": 270,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 236,
+   "title": "The Miracles of the Namiya General Store",
+   "category": "Fantasy",
+   "published_at": "2012-01-01",
+   "price": 23.99,
+   "page_count": 366,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 237,
+   "title": "Silent Parade",
+   "category": "Mystery",
+   "published_at": "2021-01-01",
+   "price": 16.99,
+   "page_count": 352,
+   "language": "ja",
+   "author_id": 45
+  },
+  {
+   "book_id": 238,
+   "title": "Pʻansori",
+   "category": "History",
+   "published_at": "1977-01-01",
+   "price": 22.5,
+   "page_count": 221,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 239,
+   "title": "여수의 사랑",
+   "category": "Literary Fiction",
+   "published_at": "1995-01-01",
+   "price": 25.5,
+   "page_count": 309,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 240,
+   "title": "채식주의자",
+   "category": "Literary Fiction",
+   "published_at": "2007-01-01",
+   "price": 17.5,
+   "page_count": 190,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 241,
+   "title": "소년이 온다",
+   "category": "Non-Fiction",
+   "published_at": "2014-01-01",
+   "price": 24.99,
+   "page_count": 215,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 242,
+   "title": "흰",
+   "category": "Literary Fiction",
+   "published_at": "2016-01-01",
+   "price": 18.5,
+   "page_count": 152,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 243,
+   "title": "Chakpyŏl haji annŭnda",
+   "category": "History",
+   "published_at": "2021-01-01",
+   "price": 20.99,
+   "page_count": 329,
+   "language": "ko",
+   "author_id": 46
+  },
+  {
+   "book_id": 244,
+   "title": "El coronel no tiene quien le escriba",
+   "category": "Fantasy",
+   "published_at": "1961-01-01",
+   "price": 14.5,
+   "page_count": 105,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 245,
+   "title": "La mala hora",
+   "category": "Fantasy",
+   "published_at": "1962-01-01",
+   "price": 10.5,
+   "page_count": 197,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 246,
+   "title": "Cien años de soledad",
+   "category": "Fantasy",
+   "published_at": "1967-01-01",
+   "price": 19.99,
+   "page_count": 432,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 247,
+   "title": "Otoño Del Patriarca",
+   "category": "Romance",
+   "published_at": "1973-01-01",
+   "price": 9.5,
+   "page_count": 271,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 248,
+   "title": "Crónica de una muerte anunciada",
+   "category": "Fantasy",
+   "published_at": "1980-01-01",
+   "price": 15.99,
+   "page_count": 134,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 249,
+   "title": "El amor en los tiempos del cólera",
+   "category": "Romance",
+   "published_at": "1985-01-01",
+   "price": 21.99,
+   "page_count": 451,
+   "language": "es",
+   "author_id": 47
+  },
+  {
+   "book_id": 250,
+   "title": "La casa de los espíritus",
+   "category": "Fantasy",
+   "published_at": "1982-01-01",
+   "price": 17.5,
+   "page_count": 453,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 251,
+   "title": "De amor y de sombra",
+   "category": "Mystery",
+   "published_at": "1984-01-01",
+   "price": 16.99,
+   "page_count": 298,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 252,
+   "title": "Eva Luna",
+   "category": "Romance",
+   "published_at": "1987-01-01",
+   "price": 20.5,
+   "page_count": 288,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 253,
+   "title": "Paula",
+   "category": "Non-Fiction",
+   "published_at": "1994-01-01",
+   "price": 29.99,
+   "page_count": 384,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 254,
+   "title": "Hija de la fortuna",
+   "category": "Mystery",
+   "published_at": "1998-01-01",
+   "price": 19.99,
+   "page_count": 432,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 255,
+   "title": "Retrato en sepia",
+   "category": "Mystery",
+   "published_at": "2000-01-01",
+   "price": 12.99,
+   "page_count": 352,
+   "language": "es",
+   "author_id": 48
+  },
+  {
+   "book_id": 256,
+   "title": "Ficciones",
+   "category": "Science Fiction",
+   "published_at": "1945-01-01",
+   "price": 23.99,
+   "page_count": 196,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 257,
+   "title": "El Aleph",
+   "category": "Romance",
+   "published_at": "1949-01-01",
+   "price": 12.99,
+   "page_count": 184,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 258,
+   "title": "Otras inquisiciones",
+   "category": "History",
+   "published_at": "1952-01-01",
+   "price": 23.99,
+   "page_count": 226,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 259,
+   "title": "El hacedor",
+   "category": "Romance",
+   "published_at": "1960-01-01",
+   "price": 18.5,
+   "page_count": 113,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 260,
+   "title": "Libro de los seres imaginarios",
+   "category": "Literary Fiction",
+   "published_at": "1967-01-01",
+   "price": 14.5,
+   "page_count": 240,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 261,
+   "title": "El Libro de Arena",
+   "category": "Literary Fiction",
+   "published_at": "1975-01-01",
+   "price": 12.99,
+   "page_count": 176,
+   "language": "es",
+   "author_id": 49
+  },
+  {
+   "book_id": 262,
+   "title": "L'amore molesto",
+   "category": "Literary Fiction",
+   "published_at": "1992-01-01",
+   "price": 21.5,
+   "page_count": 171,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 263,
+   "title": "Storia della bambina perduta",
+   "category": "History",
+   "published_at": "2000-01-01",
+   "price": 30.5,
+   "page_count": 544,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 264,
+   "title": "Storia di chi fugge e di chi resta",
+   "category": "Literary Fiction",
+   "published_at": "2000-01-01",
+   "price": 26.5,
+   "page_count": 418,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 265,
+   "title": "I giorni dell'abbandono",
+   "category": "Romance",
+   "published_at": "2002-01-01",
+   "price": 19.5,
+   "page_count": 202,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 266,
+   "title": "L'amica geniale",
+   "category": "History",
+   "published_at": "2011-01-01",
+   "price": 27.5,
+   "page_count": 336,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 267,
+   "title": "Storia del nuovo cognome",
+   "category": "History",
+   "published_at": "2012-01-01",
+   "price": 21.5,
+   "page_count": 484,
+   "language": "it",
+   "author_id": 50
+  },
+  {
+   "book_id": 268,
+   "title": "Sverigedemokraterna",
+   "category": "Non-Fiction",
+   "published_at": "2001-01-01",
+   "price": 26.99,
+   "page_count": 364,
+   "language": "sv",
+   "author_id": 51
+  },
+  {
+   "book_id": 269,
+   "title": "Män som hatar kvinnor",
+   "category": "Mystery",
+   "published_at": "2005-01-01",
+   "price": 19.99,
+   "page_count": 576,
+   "language": "sv",
+   "author_id": 51
+  },
+  {
+   "book_id": 270,
+   "title": "Flickan som lekte med elden",
+   "category": "Mystery",
+   "published_at": "2006-01-01",
+   "price": 17.99,
+   "page_count": 638,
+   "language": "sv",
+   "author_id": 51
+  },
+  {
+   "book_id": 271,
+   "title": "Luftslottet som sprängdes",
+   "category": "Mystery",
+   "published_at": "2007-01-01",
+   "price": 21.5,
+   "page_count": 626,
+   "language": "sv",
+   "author_id": 51
+  },
+  {
+   "book_id": 272,
+   "title": "En man som heter Ove",
+   "category": "Literary Fiction",
+   "published_at": "2012-01-01",
+   "price": 22.5,
+   "page_count": 346,
+   "language": "sv",
+   "author_id": 52
+  },
+  {
+   "book_id": 273,
+   "title": "The Deal of a Lifetime",
+   "category": "Literary Fiction",
+   "published_at": "2017-01-01",
+   "price": 10.5,
+   "page_count": 72,
+   "language": "sv",
+   "author_id": 52
+  },
+  {
+   "book_id": 274,
+   "title": "Song of Solomon",
+   "category": "Literary Fiction",
+   "published_at": "1634-01-01",
+   "price": 19.99,
+   "page_count": 341,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 275,
+   "title": "The Bluest Eye",
+   "category": "History",
+   "published_at": "1970-01-01",
+   "price": 20.5,
+   "page_count": 181,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 276,
+   "title": "Sula",
+   "category": "Literary Fiction",
+   "published_at": "1973-01-01",
+   "price": 19.99,
+   "page_count": 174,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 277,
+   "title": "Tar Baby",
+   "category": "Mystery",
+   "published_at": "1981-01-01",
+   "price": 19.5,
+   "page_count": 305,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 278,
+   "title": "Beloved",
+   "category": "Mystery",
+   "published_at": "1987-01-01",
+   "price": 22.99,
+   "page_count": 330,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 279,
+   "title": "Love",
+   "category": "Romance",
+   "published_at": "1999-01-01",
+   "price": 18.5,
+   "page_count": 208,
+   "language": "en",
+   "author_id": 53
+  },
+  {
+   "book_id": 280,
+   "title": "The Adventures of Tom Sawyer",
+   "category": "History",
+   "published_at": "1817-01-01",
+   "price": 26.5,
+   "page_count": 253,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 281,
+   "title": "Adventures of Huckleberry Finn",
+   "category": "Non-Fiction",
+   "published_at": "1876-01-01",
+   "price": 22.5,
+   "page_count": 346,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 282,
+   "title": "The Prince and the Pauper",
+   "category": "History",
+   "published_at": "1881-01-01",
+   "price": 26.99,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 283,
+   "title": "A Connecticut Yankee in King Arthur's Court",
+   "category": "Fantasy",
+   "published_at": "1889-01-01",
+   "price": 15.99,
+   "page_count": 397,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 284,
+   "title": "Animal Farm",
+   "category": "Science Fiction",
+   "published_at": "1945-01-01",
+   "price": 17.5,
+   "page_count": 128,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 285,
+   "title": "Nineteen Eighty-Four",
+   "category": "Science Fiction",
+   "published_at": "1949-01-01",
+   "price": 25.5,
+   "page_count": 318,
+   "language": "en",
+   "author_id": 54
+  },
+  {
+   "book_id": 286,
+   "title": "Persuasion",
+   "category": "Romance",
+   "published_at": "1789-01-01",
+   "price": 13.5,
+   "page_count": 268,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 287,
+   "title": "Sense and Sensibility",
+   "category": "Romance",
+   "published_at": "1811-01-01",
+   "price": 15.5,
+   "page_count": 352,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 288,
+   "title": "Pride and Prejudice",
+   "category": "Romance",
+   "published_at": "1813-01-01",
+   "price": 23.5,
+   "page_count": 351,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 289,
+   "title": "Mansfield Park",
+   "category": "Romance",
+   "published_at": "1814-01-01",
+   "price": 18.99,
+   "page_count": 443,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 290,
+   "title": "Emma",
+   "category": "Romance",
+   "published_at": "1815-01-01",
+   "price": 23.5,
+   "page_count": 457,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 291,
+   "title": "Northanger Abbey",
+   "category": "Mystery",
+   "published_at": "1818-01-01",
+   "price": 19.5,
+   "page_count": 251,
+   "language": "en",
+   "author_id": 55
+  },
+  {
+   "book_id": 292,
+   "title": "Voyage Out",
+   "category": "Romance",
+   "published_at": "1915-01-01",
+   "price": 18.99,
+   "page_count": 384,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 293,
+   "title": "Jacob's Room",
+   "category": "Romance",
+   "published_at": "1922-01-01",
+   "price": 10.5,
+   "page_count": 180,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 294,
+   "title": "Mrs. Dalloway",
+   "category": "Romance",
+   "published_at": "1925-01-01",
+   "price": 15.5,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 295,
+   "title": "To the Lighthouse",
+   "category": "Non-Fiction",
+   "published_at": "1927-01-01",
+   "price": 24.99,
+   "page_count": 242,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 296,
+   "title": "Orlando",
+   "category": "Fantasy",
+   "published_at": "1928-01-01",
+   "price": 15.5,
+   "page_count": 226,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 297,
+   "title": "A Room of One's Own",
+   "category": "Non-Fiction",
+   "published_at": "1929-01-01",
+   "price": 25.99,
+   "page_count": 143,
+   "language": "en",
+   "author_id": 56
+  },
+  {
+   "book_id": 298,
+   "title": "The Yellow Wallpaper",
+   "category": "History",
+   "published_at": "1892-01-01",
+   "price": 15.99,
+   "page_count": 34,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 299,
+   "title": "The Sun Also Rises",
+   "category": "Romance",
+   "published_at": "1926-01-01",
+   "price": 21.99,
+   "page_count": 249,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 300,
+   "title": "Men Without Women",
+   "category": "Literary Fiction",
+   "published_at": "1927-01-01",
+   "price": 21.99,
+   "page_count": 159,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 301,
+   "title": "A Farewell to Arms",
+   "category": "Romance",
+   "published_at": "1929-01-01",
+   "price": 19.99,
+   "page_count": 332,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 302,
+   "title": "For Whom the Bell Tolls",
+   "category": "History",
+   "published_at": "1940-01-01",
+   "price": 27.5,
+   "page_count": 480,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 303,
+   "title": "The Old Man and the Sea",
+   "category": "History",
+   "published_at": "1952-01-01",
+   "price": 26.5,
+   "page_count": 132,
+   "language": "en",
+   "author_id": 57
+  },
+  {
+   "book_id": 304,
+   "title": "The Buried Giant",
+   "category": "Fantasy",
+   "published_at": "1900-01-01",
+   "price": 22.5,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 305,
+   "title": "The Unconsoled",
+   "category": "Non-Fiction",
+   "published_at": "1988-01-01",
+   "price": 29.99,
+   "page_count": 544,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 306,
+   "title": "The Remains of the Day",
+   "category": "History",
+   "published_at": "1989-01-01",
+   "price": 18.5,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 307,
+   "title": "When We Were Orphans",
+   "category": "Mystery",
+   "published_at": "2000-01-01",
+   "price": 22.99,
+   "page_count": 348,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 308,
+   "title": "Never Let Me Go",
+   "category": "Science Fiction",
+   "published_at": "2005-01-01",
+   "price": 13.5,
+   "page_count": 288,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 309,
+   "title": "Klara and the Sun",
+   "category": "Science Fiction",
+   "published_at": "2019-01-01",
+   "price": 15.99,
+   "page_count": 330,
+   "language": "en",
+   "author_id": 58
+  },
+  {
+   "book_id": 310,
+   "title": "Midnight's Children",
+   "category": "Fantasy",
+   "published_at": "1981-01-01",
+   "price": 18.5,
+   "page_count": 580,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 311,
+   "title": "The Satanic Verses",
+   "category": "Non-Fiction",
+   "published_at": "1988-01-01",
+   "price": 26.5,
+   "page_count": 560,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 312,
+   "title": "Haroun and the Sea of Stories",
+   "category": "Fantasy",
+   "published_at": "1990-01-01",
+   "price": 11.5,
+   "page_count": 219,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 313,
+   "title": "The Moor's Last Sigh",
+   "category": "Literary Fiction",
+   "published_at": "1995-01-01",
+   "price": 21.5,
+   "page_count": 448,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 314,
+   "title": "Shalimar the Clown",
+   "category": "Literary Fiction",
+   "published_at": "1998-01-01",
+   "price": 17.99,
+   "page_count": 424,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 315,
+   "title": "Fury",
+   "category": "Literary Fiction",
+   "published_at": "2001-01-01",
+   "price": 14.5,
+   "page_count": 272,
+   "language": "en",
+   "author_id": 59
+  },
+  {
+   "book_id": 316,
+   "title": "Americanah",
+   "category": "Romance",
+   "published_at": "1969-01-01",
+   "price": 20.99,
+   "page_count": 592,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 317,
+   "title": "Purple Hibiscus",
+   "category": "Romance",
+   "published_at": "2003-01-01",
+   "price": 17.99,
+   "page_count": 307,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 318,
+   "title": "Half of a Yellow Sun",
+   "category": "Non-Fiction",
+   "published_at": "2006-01-01",
+   "price": 28.5,
+   "page_count": 500,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 319,
+   "title": "The Thing Around Your Neck",
+   "category": "Romance",
+   "published_at": "2009-01-01",
+   "price": 21.99,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 320,
+   "title": "We Should All Be Feminists",
+   "category": "Non-Fiction",
+   "published_at": "2014-01-01",
+   "price": 20.5,
+   "page_count": 64,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 321,
+   "title": "Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",
+   "category": "Non-Fiction",
+   "published_at": "2017-01-01",
+   "price": 18.5,
+   "page_count": 80,
+   "language": "en",
+   "author_id": 60
+  },
+  {
+   "book_id": 322,
+   "title": "White Teeth",
+   "category": "Literary Fiction",
+   "published_at": "2000-01-01",
+   "price": 17.5,
+   "page_count": 528,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 323,
+   "title": "The Autograph Man",
+   "category": "Literary Fiction",
+   "published_at": "2002-01-01",
+   "price": 27.5,
+   "page_count": 395,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 324,
+   "title": "On Beauty",
+   "category": "Literary Fiction",
+   "published_at": "2005-01-01",
+   "price": 25.99,
+   "page_count": 464,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 325,
+   "title": "Changing my mind",
+   "category": "Non-Fiction",
+   "published_at": "2009-01-01",
+   "price": 18.5,
+   "page_count": 306,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 326,
+   "title": "NW",
+   "category": "Literary Fiction",
+   "published_at": "2012-01-01",
+   "price": 17.99,
+   "page_count": 384,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 327,
+   "title": "Swing Time",
+   "category": "Literary Fiction",
+   "published_at": "2016-01-01",
+   "price": 25.99,
+   "page_count": 453,
+   "language": "en",
+   "author_id": 61
+  },
+  {
+   "book_id": 328,
+   "title": "The Edible Woman",
+   "category": "Literary Fiction",
+   "published_at": "1969-01-01",
+   "price": 17.5,
+   "page_count": 295,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 329,
+   "title": "The Handmaid's Tale",
+   "category": "Science Fiction",
+   "published_at": "1985-01-01",
+   "price": 22.5,
+   "page_count": 352,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 330,
+   "title": "Cat's Eye",
+   "category": "Literary Fiction",
+   "published_at": "1988-01-01",
+   "price": 21.5,
+   "page_count": 445,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 331,
+   "title": "The Robber Bride",
+   "category": "Romance",
+   "published_at": "1993-01-01",
+   "price": 18.99,
+   "page_count": 528,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 332,
+   "title": "Alias Grace",
+   "category": "Mystery",
+   "published_at": "1996-01-01",
+   "price": 25.99,
+   "page_count": 549,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 333,
+   "title": "The Blind Assassin",
+   "category": "Science Fiction",
+   "published_at": "2000-01-01",
+   "price": 19.99,
+   "page_count": 628,
+   "language": "en",
+   "author_id": 62
+  },
+  {
+   "book_id": 334,
+   "title": "Dance of the Happy Shades",
+   "category": "Literary Fiction",
+   "published_at": "1968-01-01",
+   "price": 22.5,
+   "page_count": 227,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 335,
+   "title": "Lives of Girls and Women",
+   "category": "Literary Fiction",
+   "published_at": "1971-01-01",
+   "price": 13.99,
+   "page_count": 255,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 336,
+   "title": "Who do you think you are?",
+   "category": "Literary Fiction",
+   "published_at": "1977-01-01",
+   "price": 20.99,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 337,
+   "title": "Hateship, Friendship, Courtship, Loveship, Marriage",
+   "category": "Romance",
+   "published_at": "1998-01-01",
+   "price": 16.99,
+   "page_count": 323,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 338,
+   "title": "The Love of a Good Woman",
+   "category": "Romance",
+   "published_at": "1998-01-01",
+   "price": 15.5,
+   "page_count": 340,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 339,
+   "title": "The View from Castle Rock",
+   "category": "Literary Fiction",
+   "published_at": "2006-01-01",
+   "price": 14.5,
+   "page_count": 352,
+   "language": "en",
+   "author_id": 63
+  },
+  {
+   "book_id": 340,
+   "title": "Special Operations in the Age of Chivalry, 1100-1550 (Warfare in History) (Warfare in History)",
+   "category": "Non-Fiction",
+   "published_at": "2007-01-01",
+   "price": 21.99,
+   "page_count": 248,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 341,
+   "title": "Sapiens",
+   "category": "Non-Fiction",
+   "published_at": "2011-01-01",
+   "price": 23.5,
+   "page_count": 456,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 342,
+   "title": "ההיסטוריה של המחר",
+   "category": "Non-Fiction",
+   "published_at": "2015-01-01",
+   "price": 23.5,
+   "page_count": 464,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 343,
+   "title": "21 Lessons for the 21st Century",
+   "category": "Non-Fiction",
+   "published_at": "2018-01-01",
+   "price": 24.5,
+   "page_count": 400,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 344,
+   "title": "Nexus",
+   "category": "Non-Fiction",
+   "published_at": "2024-01-01",
+   "price": 32.5,
+   "page_count": 544,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 345,
+   "title": "Unstoppable Us Volume 2",
+   "category": "Literary Fiction",
+   "published_at": "2024-01-01",
+   "price": 23.99,
+   "page_count": 216,
+   "language": "en",
+   "author_id": 64
+  },
+  {
+   "book_id": 346,
+   "title": "Educated",
+   "category": "Non-Fiction",
+   "published_at": "2018-01-01",
+   "price": 24.99,
+   "page_count": 388,
+   "language": "en",
+   "author_id": 65
+  },
+  {
+   "book_id": 347,
+   "title": "Isaac Asimov's Choice",
+   "category": "Science Fiction",
+   "published_at": "1986-01-01",
+   "price": 12.99,
+   "page_count": 255,
+   "language": "en",
+   "author_id": 66
+  },
+  {
+   "book_id": 348,
+   "title": "Born a Crime",
+   "category": "Non-Fiction",
+   "published_at": "2016-01-01",
+   "price": 25.99,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 66
+  },
+  {
+   "book_id": 349,
+   "title": "It's Trevor Noah",
+   "category": "Non-Fiction",
+   "published_at": "2019-01-01",
+   "price": 25.99,
+   "page_count": 304,
+   "language": "en",
+   "author_id": 66
+  },
+  {
+   "book_id": 350,
+   "title": "Into the Uncut Grass",
+   "category": "Fantasy",
+   "published_at": "2023-01-01",
+   "price": 11.5,
+   "page_count": 128,
+   "language": "en",
+   "author_id": 66
+  },
+  {
+   "book_id": 351,
+   "title": "The Lost Continent",
+   "category": "Non-Fiction",
+   "published_at": "1989-01-01",
+   "price": 27.5,
+   "page_count": 319,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 352,
+   "title": "Neither here nor there",
+   "category": "Non-Fiction",
+   "published_at": "1991-01-01",
+   "price": 16.5,
+   "page_count": 272,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 353,
+   "title": "Notes from a small island",
+   "category": "Non-Fiction",
+   "published_at": "1995-01-01",
+   "price": 23.5,
+   "page_count": 324,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 354,
+   "title": "A Walk in the Woods",
+   "category": "Non-Fiction",
+   "published_at": "1997-01-01",
+   "price": 22.99,
+   "page_count": 328,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 355,
+   "title": "Down Under (In a Sunburned Country)",
+   "category": "Non-Fiction",
+   "published_at": "2000-01-01",
+   "price": 18.99,
+   "page_count": 348,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 356,
+   "title": "A short history of nearly everything",
+   "category": "Non-Fiction",
+   "published_at": "2003-01-01",
+   "price": 28.5,
+   "page_count": 592,
+   "language": "en",
+   "author_id": 67
+  },
+  {
+   "book_id": 357,
+   "title": "A short history of the American labor movement",
+   "category": "History",
+   "published_at": "1920-01-01",
+   "price": 25.99,
+   "page_count": 206,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 358,
+   "title": "Woman as force in history",
+   "category": "History",
+   "published_at": "1946-01-01",
+   "price": 25.5,
+   "page_count": 382,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 359,
+   "title": "Teaching and learning in higher education",
+   "category": "Literary Fiction",
+   "published_at": "1970-01-01",
+   "price": 22.99,
+   "page_count": 252,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 360,
+   "title": "History of the United States",
+   "category": "Literary Fiction",
+   "published_at": "2014-01-01",
+   "price": 15.99,
+   "page_count": 316,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 361,
+   "title": "SPQR",
+   "category": "History",
+   "published_at": "2015-01-01",
+   "price": 24.99,
+   "page_count": 664,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 362,
+   "title": "Emperor of Rome",
+   "category": "Literary Fiction",
+   "published_at": "2023-01-01",
+   "price": 20.99,
+   "page_count": 493,
+   "language": "en",
+   "author_id": 68
+  },
+  {
+   "book_id": 363,
+   "title": "The Mysterious Affair at Styles",
+   "category": "Mystery",
+   "published_at": "1920-01-01",
+   "price": 21.99,
+   "page_count": 204,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 364,
+   "title": "The Secret Adversary",
+   "category": "Mystery",
+   "published_at": "1922-01-01",
+   "price": 18.99,
+   "page_count": 272,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 365,
+   "title": "Murder on the Links",
+   "category": "Mystery",
+   "published_at": "1923-01-01",
+   "price": 10.5,
+   "page_count": 224,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 366,
+   "title": "Poirot investigates",
+   "category": "Mystery",
+   "published_at": "1924-01-01",
+   "price": 13.99,
+   "page_count": 192,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 367,
+   "title": "The Murder of Roger Ackroyd",
+   "category": "Mystery",
+   "published_at": "1926-01-01",
+   "price": 13.5,
+   "page_count": 256,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 368,
+   "title": "Murder on the Orient Express",
+   "category": "Mystery",
+   "published_at": "1933-01-01",
+   "price": 21.5,
+   "page_count": 240,
+   "language": "en",
+   "author_id": 69
+  },
+  {
+   "book_id": 369,
+   "title": "The Big Sleep",
+   "category": "Mystery",
+   "published_at": "1939-01-01",
+   "price": 11.5,
+   "page_count": 229,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 370,
+   "title": "Farewell, My Lovely",
+   "category": "Mystery",
+   "published_at": "1940-01-01",
+   "price": 14.99,
+   "page_count": 266,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 371,
+   "title": "The Lady in the Lake",
+   "category": "Mystery",
+   "published_at": "1943-01-01",
+   "price": 12.5,
+   "page_count": 239,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 372,
+   "title": "The Little Sister",
+   "category": "Mystery",
+   "published_at": "1949-01-01",
+   "price": 11.5,
+   "page_count": 253,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 373,
+   "title": "The Long Goodbye",
+   "category": "Mystery",
+   "published_at": "1953-01-01",
+   "price": 11.99,
+   "page_count": 320,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 374,
+   "title": "Playback",
+   "category": "Mystery",
+   "published_at": "1958-01-01",
+   "price": 19.99,
+   "page_count": 208,
+   "language": "en",
+   "author_id": 70
+  },
+  {
+   "book_id": 375,
+   "title": "Sharp Objects",
+   "category": "Mystery",
+   "published_at": "2006-01-01",
+   "price": 16.5,
+   "page_count": 312,
+   "language": "en",
+   "author_id": 71
+  },
+  {
+   "book_id": 376,
+   "title": "Cry Baby",
+   "category": "Literary Fiction",
+   "published_at": "2007-01-01",
+   "price": 22.5,
+   "page_count": 319,
+   "language": "de",
+   "author_id": 71
+  },
+  {
+   "book_id": 377,
+   "title": "Dark Places",
+   "category": "Mystery",
+   "published_at": "2009-01-01",
+   "price": 20.99,
+   "page_count": 368,
+   "language": "en",
+   "author_id": 71
+  },
+  {
+   "book_id": 378,
+   "title": "Gone Girl",
+   "category": "Mystery",
+   "published_at": "2011-01-01",
+   "price": 21.99,
+   "page_count": 475,
+   "language": "en",
+   "author_id": 71
+  },
+  {
+   "book_id": 379,
+   "title": "Rogues",
+   "category": "Fantasy",
+   "published_at": "2014-01-01",
+   "price": 25.99,
+   "page_count": 832,
+   "language": "en",
+   "author_id": 71
+  },
+  {
+   "book_id": 380,
+   "title": "The Grownup",
+   "category": "Literary Fiction",
+   "published_at": "2014-01-01",
+   "price": 20.5,
+   "page_count": 79,
+   "language": "en",
+   "author_id": 71
+  }
+ ]
+}
