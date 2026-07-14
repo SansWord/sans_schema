@@ -12,9 +12,9 @@ WANT_OK = {"mapping": {
 WHERE_OK = {"where": {"op": "eq", "field": "books_view.category", "value": "Science Fiction"},
             "confidence": 0.9}
 
-def _run(raw, llm, cache=None):
+def _run(raw, llm, cache=None, debug=False):
     return run_query(raw, FakeConnector(), llm, cache or ResolutionCache(),
-                     GateConfig(threshold=0.7), limit=100)
+                     GateConfig(threshold=0.7), limit=100, debug=debug)
 
 def test_happy_path_returns_rows_in_client_keys():
     raw = RawQuery(["book_title", "genre"], "sci-fi only", "2026-07-06", verbose=True)
@@ -121,3 +121,28 @@ def test_backend_describe_error_is_502():
     with pytest.raises(GatewayError) as e:
         run_query(raw, NoDescribe(), FakeLLM(), ResolutionCache(), GateConfig(0.7), 100)
     assert e.value.status == 502 and e.value.code == "backend_error"
+
+def test_debug_block_reports_cache_threshold_and_execution():
+    cache = ResolutionCache()
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}},
+                  where=WHERE_OK)
+    raw = RawQuery(["book_title"], "sci-fi only", "2026-07-06", verbose=True)
+    dbg = _run(raw, llm, cache, debug=True)["debug"]
+    assert dbg["gate_threshold"] == 0.7
+    assert dbg["cache"] == {"want": {"book_title": "miss"}, "where": "miss"}
+    assert dbg["execution"] == {"engine": "core.predicate", "sql": None, "params": None}
+    # same request again → both caches hit (the "second click is free" beat)
+    raw2 = RawQuery(["book_title"], "sci-fi only", "2026-07-06", verbose=True)
+    dbg2 = _run(raw2, llm, cache, debug=True)["debug"]
+    assert dbg2["cache"] == {"want": {"book_title": "hit"}, "where": "hit"}
+
+def test_debug_block_omits_where_status_without_a_where():
+    raw = RawQuery(["book_title"], None, "2026-07-06")
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    dbg = _run(raw, llm, debug=True)["debug"]
+    assert dbg["cache"] == {"want": {"book_title": "miss"}}
+
+def test_debug_off_omits_block():
+    raw = RawQuery(["book_title"], None, "2026-07-06", verbose=True)
+    llm = FakeLLM(want={"mapping": {"book_title": {"field": "books_view.title", "confidence": 0.95}}})
+    assert "debug" not in _run(raw, llm)
