@@ -30,3 +30,15 @@ def test_limit_is_enforced(pg_connector):
     ir = CanonicalQueryIR(select=[ResolvedField("t", "books_view.title", 0.9)],
                           predicate=None, where_confidence=None, where_raw=None)
     assert len(pg_connector.execute(ir, limit=2)) == 2
+
+def test_execute_fills_trace_with_parameterized_sql(pg_connector):
+    from gateway.connectors.base import ExecutionTrace
+    ir = CanonicalQueryIR(
+        select=[ResolvedField("t", "books_view.title", 0.9)],
+        predicate={"op": "lt", "field": "books_view.price", "value": 30},
+        where_confidence=0.9, where_raw="under $30")
+    trace = ExecutionTrace()
+    pg_connector.execute(ir, limit=5, trace=trace)
+    assert trace.engine == "postgres"
+    assert trace.sql == 'SELECT "title" FROM "books_view" WHERE "price" < %s LIMIT %s'
+    assert trace.params == [30, 5]              # values stay bound, never inlined
